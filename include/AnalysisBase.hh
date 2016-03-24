@@ -25,8 +25,11 @@ public:
   virtual Int_t GetEntry(Long64_t entry);
 
   virtual TVector3 GetMET();
+  //  double btag_cut = -0.0436; // 70% working point
+  //  double btag_cut = -0.4434; // 77% working point
+  //  double btag_cut = -0.7887; // 85% working point
   virtual void GetJets(vector<Jet>& JETs, double pt_cut = -1, 
-		       double eta_cut = -1, double btag_WP_cut = 0.7); //update with correct b-tag WP cut
+		       double eta_cut = -1, double btag_WP_cut = -0.7887);
   double DeltaPhiMin(const vector<Jet>& JETs, const TVector3& MET, int N = -1);
 
 protected:

@@ -1,8 +1,8 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Wed Mar 16 21:41:52 2016 by ROOT version 5.34/34
+// Thu Mar 24 14:59:05 2016 by ROOT version 5.34/25
 // from TTree HFntupleNONE/HFntupleNONE
-// found on file: HFntuple.root
+// found on file: stopdiagonal_500.root
 //////////////////////////////////////////////////////////
 
 #ifndef HFntupleBase_h
@@ -337,6 +337,18 @@ public :
    Double_t        pT_1lightjet;
    Double_t        meff;
    Double_t        MET_sig;
+   Double_t        XSecWeight;
+   Double_t        PTISR;
+   Double_t        PIoPTISR;
+   Double_t        cosS;
+   Double_t        MS;
+   Double_t        MISR;
+   Double_t        MV;
+   Double_t        NbV;
+   Double_t        NbISR;
+   Double_t        NjV;
+   Double_t        NjISR;
+   Double_t        dphiCMV;
 
    // List of branches
    TBranch        *b_RunNumber;   //!
@@ -652,6 +664,18 @@ public :
    TBranch        *b_pT_1lightjet;   //!
    TBranch        *b_meff;   //!
    TBranch        *b_MET_sig;   //!
+   TBranch        *b_XSecWeight;   //!
+   TBranch        *b_PTISR;   //!
+   TBranch        *b_PIoPTISR;   //!
+   TBranch        *b_cosS;   //!
+   TBranch        *b_MS;   //!
+   TBranch        *b_MISR;   //!
+   TBranch        *b_MV;   //!
+   TBranch        *b_NbV;   //!
+   TBranch        *b_NbISR;   //!
+   TBranch        *b_NjV;   //!
+   TBranch        *b_NjISR;   //!
+   TBranch        *b_dphiCMV;   //!
 
    HFntupleBase(TTree *tree=0);
    virtual ~HFntupleBase();
@@ -670,9 +694,9 @@ inline HFntupleBase::HFntupleBase(TTree *tree) : fChain(0)
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
    if (tree == 0) {
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("HFntuple.root");
+      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("stopdiagonal_500.root");
       if (!f || !f->IsOpen()) {
-         f = new TFile("HFntuple.root");
+         f = new TFile("stopdiagonal_500.root");
       }
       f->GetObject("HFntupleNONE",tree);
 
@@ -1065,6 +1089,18 @@ inline void HFntupleBase::Init(TTree *tree)
    fChain->SetBranchAddress("pT_1lightjet", &pT_1lightjet, &b_pT_1lightjet);
    fChain->SetBranchAddress("meff", &meff, &b_meff);
    fChain->SetBranchAddress("MET_sig", &MET_sig, &b_MET_sig);
+   fChain->SetBranchAddress("XSecWeight", &XSecWeight, &b_XSecWeight);
+   fChain->SetBranchAddress("PTISR", &PTISR, &b_PTISR);
+   fChain->SetBranchAddress("PIoPTISR", &PIoPTISR, &b_PIoPTISR);
+   fChain->SetBranchAddress("cosS", &cosS, &b_cosS);
+   fChain->SetBranchAddress("MS", &MS, &b_MS);
+   fChain->SetBranchAddress("MISR", &MISR, &b_MISR);
+   fChain->SetBranchAddress("MV", &MV, &b_MV);
+   fChain->SetBranchAddress("NbV", &NbV, &b_NbV);
+   fChain->SetBranchAddress("NbISR", &NbISR, &b_NbISR);
+   fChain->SetBranchAddress("NjV", &NjV, &b_NjV);
+   fChain->SetBranchAddress("NjISR", &NjISR, &b_NjISR);
+   fChain->SetBranchAddress("dphiCMV", &dphiCMV, &b_dphiCMV);
    Notify();
 }
 
@@ -1086,7 +1122,6 @@ inline void HFntupleBase::Show(Long64_t entry)
    if (!fChain) return;
    fChain->Show(entry);
 }
-
 inline Int_t HFntupleBase::Cut(Long64_t entry)
 {
 // This function may be called from Loop.
@@ -1094,3 +1129,4 @@ inline Int_t HFntupleBase::Cut(Long64_t entry)
 // returns -1 otherwise.
    return 1;
 }
+

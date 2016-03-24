@@ -98,8 +98,11 @@ void CompressedNtuple::FillOutputTree(){
 
   TVector3 ETMiss = GetMET(); 
       
+  //  double btag_cut = -0.0436; // 70% working point
+  //  double btag_cut = -0.4434; // 77% working point
+  //  double btag_cut = -0.7887; // 85% working point
   vector<Jet> Jets; 
-  GetJets(Jets, 30., 2.8); 
+  GetJets(Jets, 30., -0.7887); 
 
   // need two jets to play
   if(Jets.size() < 2) 

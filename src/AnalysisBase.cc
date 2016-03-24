@@ -52,8 +52,7 @@ void AnalysisBase<Base>::GetJets(vector<Jet>& JETs, double pt_cut,
 ///////////////// HFntupleBase ///////////////////////////////////
 template <>
 double AnalysisBase<HFntupleBase>::GetEventWeight(){
-  // to be updated with x-section normalization
-  return  pileupweight*AnalysisWeight*EventWeight;
+  return  max(1.,pileupweight)*XSecWeight*AnalysisWeight*EventWeight;
 }
 
 template <>
