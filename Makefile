@@ -22,11 +22,15 @@ CC_FILES := $(wildcard src/*.cc)
 HH_FILES := $(wildcard include/*.hh)
 OBJ_FILES := $(addprefix $(OUTOBJ),$(notdir $(CC_FILES:.cc=.o)))
 
-all: MakeCompressedNtuple.x 
+all: MakeCompressedNtuple.x DoStopOptimization.x
 
 MakeCompressedNtuple.x:  $(SRCDIR)MakeCompressedNtuple.C $(OBJ_FILES) $(HH_FILES)
 	$(CXX) $(CXXFLAGS) -o MakeCompressedNtuple.x $(OUTOBJ)/*.o $(GLIBS) $ $<
 	touch MakeCompressedNtuple.x
+
+DoStopOptimization.x:  $(SRCDIR)DoStopOptimization.C $(OBJ_FILES) $(HH_FILES)
+	$(CXX) $(CXXFLAGS) -o DoStopOptimization.x $(OUTOBJ)/*.o $(GLIBS) $ $<
+	touch DoStopOptimization.x
 
 $(OUTOBJ)%.o: src/%.cc include/%.hh
 	mkdir -p obj/
