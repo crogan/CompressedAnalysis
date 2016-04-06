@@ -10,6 +10,8 @@ using namespace RestFrames;
 
 class CompressedNtuple : public NtupleBase<HFntupleBase> {
 
+  static const int g_N_algo = 5;
+
 public:
   CompressedNtuple(TTree* tree = 0);
   virtual ~CompressedNtuple();
@@ -24,17 +26,17 @@ private:
   double m_MET;
 
   // compressed variables
-  double m_PTISR;
-  double m_PIoPTISR;
-  double m_cosS;
-  double m_MS;
-  double m_MISR;
-  double m_MV;
-  int m_NbV;
-  int m_NbISR;
-  int m_NjV;
-  int m_NjISR;
-  double m_dphiCMV;
+  double m_PTISR[g_N_algo];
+  double m_PIoPTISR[g_N_algo];
+  double m_cosS[g_N_algo];
+  double m_MS[g_N_algo];
+  double m_MISR[g_N_algo];
+  double m_MV[g_N_algo];
+  double m_dphiCMV[g_N_algo];
+  int m_NbV[g_N_algo];
+  int m_NbISR[g_N_algo];
+  int m_NjV[g_N_algo];
+  int m_NjISR[g_N_algo];
   
   // RestFrames stuff
   LabRecoFrame*       LAB;
@@ -44,9 +46,9 @@ private:
   VisibleRecoFrame*   V;
   InvisibleRecoFrame* I;
   InvisibleGroup*  INV;
-  CombinatoricGroup*  VIS;
   SetMassInvJigsaw*   InvMass;
-  MinMassesCombJigsaw* SplitVis;
+  // CombinatoricGroup*  VIS;
+  // MinMassesCombJigsaw* SplitVis;
 
 };
 

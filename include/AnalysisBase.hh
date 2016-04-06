@@ -29,8 +29,11 @@ public:
   //  double btag_cut = -0.4434; // 77% working point
   //  double btag_cut = -0.7887; // 85% working point
   virtual void GetJets(vector<Jet>& JETs, double pt_cut = -1, 
-		       double eta_cut = -1, double btag_WP_cut = -0.7887);
+		       double eta_cut = -1, double btag_WP_cut = -0.4434);
   double DeltaPhiMin(const vector<Jet>& JETs, const TVector3& MET, int N = -1);
+
+  virtual void GetPartition(vector<Jet>& V_JETs, vector<Jet>& ISR_JETs, 
+			    vector<Jet>& inputJETs, TVector3& MET, int algo = 0);
 
 protected:
   virtual double GetEventWeight();

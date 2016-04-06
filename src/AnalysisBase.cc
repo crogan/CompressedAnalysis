@@ -32,6 +32,106 @@ double AnalysisBase<Base>::DeltaPhiMin(const vector<Jet>& JETs, const TVector3& 
 }
 
 template <class Base>
+void AnalysisBase<Base>::GetPartition(vector<Jet>& V_JETs, vector<Jet>& ISR_JETs, 
+				      vector<Jet>& inputJETs, TVector3& MET, int algo){
+  int Ninput = inputJETs.size();
+  
+  // DO 4 N^3 calculation
+  vector<TLorentzVector> inputs;
+  for(int i = 0; i < Ninput; i++)
+    inputs.push_back(inputJETs[i].P);
+
+  TLorentzVector vMET;
+  vMET.SetVectM(MET,0.);
+
+  inputs.push_back(vMET);
+  Ninput++;
+    
+  // boost input vectors to CM frame
+  TLorentzVector TOT(0.,0.,0.,0.);
+  for(int i = 0; i < Ninput; i++) TOT += inputs[i];
+  TVector3 boost = TOT.BoostVector();
+  for(int i = 0; i < Ninput; i++) inputs[i].Boost(-boost);
+  
+  int ip_max[2];
+  int jp_max[2];
+  for(int i = 0; i < 2; i++) ip_max[i] = -1;
+  for(int i = 0; i < 2; i++) jp_max[i] = -1;
+  double metric_max = -1.;
+  // Loop over all 2-jet seed probes
+  int ip[2], jp[2];
+  for(ip[0] = 0; ip[0] < Ninput-1; ip[0]++){
+    for(ip[1] = ip[0]+1; ip[1] < Ninput; ip[1]++){
+      TVector3 nRef = inputs[ip[0]].Vect().Cross(inputs[ip[1]].Vect());
+      int Nhem[2];
+      TLorentzVector hem[2];
+      for(int i = 0; i < 2; i++){
+	Nhem[i] = 0;
+	hem[i].SetPxPyPzE(0.,0.,0.,0.);
+      }
+      // Loop over all jets
+      for(int i = 0; i < Ninput; i++){
+	if((i == ip[0]) || (i ==ip[1])) continue;
+	int ihem = int(inputs[i].Vect().Dot(nRef) > 0.);
+	Nhem[ihem]++;
+	hem[ihem] += inputs[i];
+      }
+      // assign 2 probes
+      for(jp[0] = 0; jp[0] < 2; jp[0]++){
+	for(jp[1] = 0; jp[1] < 2; jp[1]++){
+	  if(jp[0] == jp[1] && Nhem[!jp[0]] == 0) continue;
+	  TLorentzVector hem_probes[2];
+	  for(int i = 0; i < 2; i++) hem_probes[i] = hem[i];
+	  for(int i = 0; i < 2; i++) hem_probes[jp[i]] += inputs[ip[i]];
+	  double metric = hem_probes[0].P() + hem_probes[1].P();
+	  if(metric > metric_max){
+	    metric_max = metric;
+	    for(int i = 0; i < 2; i++) ip_max[i] = ip[i];
+	    for(int i = 0; i < 2; i++) jp_max[i] = jp[i];
+	  }
+	}
+      }
+    }
+  }
+  if(metric_max < 0){
+    cout << "Negative metric ... wtf" << endl;
+    return;
+  }
+  
+  // fill output vectors
+  TVector3 HEMs[2];
+
+  for(int i = 0; i < 2; i++) HEMs[jp_max[i]] += inputs[ip_max[i]].Vect();
+  TVector3 nRef = inputs[ip_max[0]].Vect().Cross(inputs[ip_max[1]].Vect());
+  for(int i = 0; i < Ninput; i++){
+    if((i == ip_max[0]) || (i == ip_max[1])) continue;
+    int ihem = int(inputs[i].Vect().Dot(nRef) > 0.);
+    HEMs[ihem] += inputs[i].Vect();
+  }
+ 
+  if(MET.Dot(HEMs[1]) > 0){
+    TVector3 temp = HEMs[0];
+    HEMs[0] = HEMs[1];
+    HEMs[1] = temp;
+  }
+
+  // g_N_algo = 5;
+  double thresh[5];
+  for(int i = 0; i < 5; i++){
+    thresh[i] = -1.*double(i)*50.;
+  }
+
+  V_JETs.clear();
+  ISR_JETs.clear();
+  for(int i = 0; i < Ninput-1; i++){
+    if(inputs[i].Vect().Dot(HEMs[0].Unit()) >= thresh[algo])
+      V_JETs.push_back(inputJETs[i]);
+    else
+      ISR_JETs.push_back(inputJETs[i]);
+  }
+}
+
+template <class Base>
 double AnalysisBase<Base>::GetEventWeight(){
   return 0;
 }
@@ -52,7 +152,9 @@ void AnalysisBase<Base>::GetJets(vector<Jet>& JETs, double pt_cut,
 ///////////////// HFntupleBase ///////////////////////////////////
 template <>
 double AnalysisBase<HFntupleBase>::GetEventWeight(){
-  return  max(1.,pileupweight)*XSecWeight*AnalysisWeight*EventWeight;
+  if(pileupweight <= 0.)
+    pileupweight = 1.;
+  return  pileupweight*XSecWeight*AnalysisWeight;
 }
 
 template <>
