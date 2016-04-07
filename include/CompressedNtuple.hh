@@ -24,7 +24,17 @@ private:
   double m_weight;
 
   double m_MET;
+  double m_TrkMET;
+  double m_dphi_MET_TrkMET;
+
+  double m_dphiMin1;
+  double m_dphiMin2;
+  double m_dphiMin3;
+  double m_dphiMinAll;
+
+  // for vetoes, 1 -> pass, 0 -> fail
   bool m_LepVeto;
+  bool m_TauVeto;
 
   // compressed variables
   double m_PTISR[g_N_algo];
@@ -34,6 +44,10 @@ private:
   double m_MISR[g_N_algo];
   double m_MV[g_N_algo];
   double m_dphiCMV[g_N_algo];
+  double m_pTjV5[g_N_algo];
+  double m_pTjV6[g_N_algo];
+  double m_pTbV1[g_N_algo];
+  double m_pTbV2[g_N_algo];
   int m_NbV[g_N_algo];
   int m_NbISR[g_N_algo];
   int m_NjV[g_N_algo];

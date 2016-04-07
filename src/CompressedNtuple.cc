@@ -77,7 +77,15 @@ void CompressedNtuple::InitOutputTree(){
  
   m_Tree->Branch("weight", &m_weight);
   m_Tree->Branch("MET", &m_MET);
+  m_Tree->Branch("TrkMET", &m_TrkMET);
+  m_Tree->Branch("dphi_MET_TrkMET", &m_dphi_MET_TrkMET);
+  m_Tree->Branch("dphiMin1", &m_dphiMin1);
+  m_Tree->Branch("dphiMin2", &m_dphiMin2);
+  m_Tree->Branch("dphiMin3", &m_dphiMin3);
+  m_Tree->Branch("dphiMinAll", &m_dphiMinAll);
+
   m_Tree->Branch("LepVeto", &m_LepVeto);
+  m_Tree->Branch("TauVeto", &m_TauVeto);
 
   // compressed 
   string posti = "["+to_string(g_N_algo)+"]/I";
@@ -93,6 +101,10 @@ void CompressedNtuple::InitOutputTree(){
   m_Tree->Branch("NbISR", m_NbISR, ("NbISR"+posti).c_str());
   m_Tree->Branch("NjV", m_NjV, ("NjV"+posti).c_str());
   m_Tree->Branch("NjISR", m_NjISR, ("NjISR"+posti).c_str());
+  m_Tree->Branch("pTjV5", m_pTjV5, ("m_pTjV5"+postf).c_str());
+  m_Tree->Branch("pTjV6", m_pTjV6, ("m_pTjV6"+postf).c_str());
+  m_Tree->Branch("pTbV1", m_pTbV1, ("m_pTbV1"+postf).c_str());
+  m_Tree->Branch("pTbV2", m_pTbV2, ("m_pTbV2"+postf).c_str());
 
   // m_Tree->Branch("PTISR", &m_PTISR);
   // m_Tree->Branch("PIoPTISR", &m_PIoPTISR);
@@ -139,7 +151,7 @@ void CompressedNtuple::FillOutputTree(){
   //  double btag_cut = -0.4434; // 77% working point
   //  double btag_cut = -0.7887; // 85% working point
   vector<Jet> Jets; 
-  GetJets(Jets, 30., 2.8, -0.4434); 
+  GetJets(Jets, 20., 2.8, -0.4434); 
 
   // need two jets to play
   if(Jets.size() < 2) 
@@ -162,12 +174,25 @@ void CompressedNtuple::FillOutputTree(){
 
     m_NjV[a] = 0;
     m_NbV[a] = 0;
+    m_pTjV5[a] = 0.;
+    m_pTjV6[a] = 0.;
+    m_pTbV1[a] = 0.;
+    m_pTbV2[a] = 0.;
     TLorentzVector pV_lab(0.,0.,0.,0.);
     for(int i = 0; i < int(V_JETs.size()); i++){
       m_NjV[a]++;
       pV_lab += V_JETs[i].P;
-      if(V_JETs[i].btag)
+      if(m_NjV[a] == 5)
+	m_pTjV5[a] = V_JETs[i].P.Pt();
+      if(m_NjV[a] == 6)
+	m_pTjV6[a] = V_JETs[i].P.Pt();
+      if(V_JETs[i].btag){
 	m_NbV[a]++;
+	if(m_NbV[a] == 1)
+	  m_pTbV1[a] = V_JETs[i].P.Pt();
+	if(m_NbV[a] == 2)
+	  m_pTbV2[a] = V_JETs[i].P.Pt();
+      }
     }
     m_NbISR[a] = 0;
     m_NjISR[a] = 0;
@@ -261,7 +286,16 @@ void CompressedNtuple::FillOutputTree(){
   */
 
   m_MET = ETMiss.Pt();
+  m_TrkMET = eT_miss_track;
+  m_dphi_MET_TrkMET = dPhi_met_trackmet;
+
+  m_dphiMin1 = DeltaPhiMin(Jets, ETMiss, 1);
+  m_dphiMin2 = DeltaPhiMin(Jets, ETMiss, 2);
+  m_dphiMin3 = DeltaPhiMin(Jets, ETMiss, 3);
+  m_dphiMinAll = DeltaPhiMin(Jets, ETMiss);
+
   m_LepVeto = (nEl_baseline+nMu_baseline < 1);
+  m_TauVeto = (passtauveto > 0);
   m_weight = GetEventWeight();
 
   if(m_Tree)

@@ -38,29 +38,35 @@ void StopOptimization::InitCuts(){
   m_CutN.push_back(2);
   m_CutVal.push_back(0.);
 
+  // // tau veto
+  m_CutMin.push_back(-0.5);
+  m_CutMax.push_back(1.5);
+  m_CutN.push_back(2);
+  m_CutVal.push_back(0.);
+
    // PTISR
-  m_CutMin.push_back(500.);
-  m_CutMax.push_back(900.);
+  m_CutMin.push_back(400.);
+  m_CutMax.push_back(800.);
   m_CutN.push_back(4);
   m_CutVal.push_back(0.);
 
   // MS
-  // m_CutMin.push_back(0.);
-  // m_CutMax.push_back(400.);
-  // m_CutN.push_back(8);
+  m_CutMin.push_back(0.);
+  m_CutMax.push_back(500.);
+  m_CutN.push_back(10);
+  m_CutVal.push_back(0.);
+
+  // // dphiCMV
+  // m_CutMin.push_back(0.0);
+  // m_CutMax.push_back(1.);
+  // m_CutN.push_back(4);
   // m_CutVal.push_back(0.);
 
   // // dphiCMV
-  m_CutMin.push_back(0.0);
-  m_CutMax.push_back(1.);
-  m_CutN.push_back(4);
-  m_CutVal.push_back(0.);
-
-  // dphiCMV
-  m_CutMin.push_back(0.0);
-  m_CutMax.push_back(0.5);
-  m_CutN.push_back(4);
-  m_CutVal.push_back(0.);
+  // m_CutMin.push_back(0.0);
+  // m_CutMax.push_back(0.5);
+  // m_CutN.push_back(4);
+  // m_CutVal.push_back(0.);
 
    // PIoHT1CM
   m_CutMin.push_back(0.3);
@@ -117,22 +123,27 @@ int StopOptimization::EvaluateCuts(){
     if(!m_Base->LepVeto)
       return icut;
   icut++;
+  
+  if(m_CutVal[icut] > 0.)
+    if(!m_Base->TauVeto)
+      return icut;
+  icut++;
 
   if(m_Base->PTISR[0] < m_CutVal[icut])
     return icut;
   icut++;
 
-  // if(m_Base->MS < m_CutVal[icut])
+  if(m_Base->MS[0] < m_CutVal[icut])
+    return icut;
+  icut++;
+
+  //  if(m_Base->dphiCMV[0] < m_CutVal[icut])
   //   return icut;
   // icut++;
 
-   if(m_Base->dphiCMV[0] < m_CutVal[icut])
-    return icut;
-  icut++;
-
-  if(fabs(m_Base->dphiCMV[0]-acos(-1.)) < m_CutVal[icut])
-    return icut;
-  icut++;
+  // if(fabs(m_Base->dphiCMV[0]-acos(-1.)) < m_CutVal[icut])
+  //   return icut;
+  // icut++;
 
   if(m_Base->PIoPTISR[0] < m_CutVal[icut])
     return icut;
