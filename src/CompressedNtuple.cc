@@ -76,7 +76,8 @@ void CompressedNtuple::InitOutputTree(){
   m_Tree = (TTree*) new TTree(name.c_str(), name.c_str());
  
   m_Tree->Branch("weight", &m_weight);
-  m_Tree->Branch("m_MET", &m_MET);
+  m_Tree->Branch("MET", &m_MET);
+  m_Tree->Branch("LepVeto", &m_LepVeto);
 
   // compressed 
   string posti = "["+to_string(g_N_algo)+"]/I";
@@ -138,7 +139,7 @@ void CompressedNtuple::FillOutputTree(){
   //  double btag_cut = -0.4434; // 77% working point
   //  double btag_cut = -0.7887; // 85% working point
   vector<Jet> Jets; 
-  GetJets(Jets, 20., -0.4434); 
+  GetJets(Jets, 30., 2.8, -0.4434); 
 
   // need two jets to play
   if(Jets.size() < 2) 
@@ -260,7 +261,7 @@ void CompressedNtuple::FillOutputTree(){
   */
 
   m_MET = ETMiss.Pt();
-
+  m_LepVeto = (nEl_baseline+nMu_baseline < 1);
   m_weight = GetEventWeight();
 
   if(m_Tree)

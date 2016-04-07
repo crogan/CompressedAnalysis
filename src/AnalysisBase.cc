@@ -154,7 +154,7 @@ template <>
 double AnalysisBase<HFntupleBase>::GetEventWeight(){
   if(pileupweight <= 0.)
     pileupweight = 1.;
-  return  pileupweight*XSecWeight*AnalysisWeight;
+  return  pileupweight*XSecWeight*AnalysisWeight*1000.;
 }
 
 template <>
@@ -175,7 +175,7 @@ void AnalysisBase<HFntupleBase>::GetJets(vector<Jet>& JETs, double pt_cut,
     JET.P.SetPxPyPzE(jet_px->at(i)/1000., jet_py->at(i)/1000.,
 		     jet_pz->at(i)/1000., jet_e->at(i)/1000.);
     if((JET.P.Pt() >= pt_cut) && (fabs(JET.P.Eta()) < eta_cut || eta_cut < 0)){
-      if(jet_MV2c20->at(i) > btag_WP_cut)
+      if(jet_MV2c20->at(i) > btag_WP_cut && fabs(JET.P.Eta()) < 2.5)
 	JET.btag = true;
       else
 	JET.btag = false;

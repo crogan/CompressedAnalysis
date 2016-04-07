@@ -1,7 +1,7 @@
 #include "StopOptimization.hh"
 
 StopOptimization::StopOptimization()
-  : OptimizationBase<RJWorkshopBase>() {}
+  : OptimizationBase<CompressedBase>() {}
 
 StopOptimization::~StopOptimization() {}
 
@@ -14,7 +14,7 @@ double StopOptimization::GetEventWeight(){
 
 bool StopOptimization::PassBaseline(){
 
-  if(m_Base->NbV < 1)
+  if(m_Base->NbV[0] < 1)
     return false;
 
   return true;
@@ -27,21 +27,21 @@ void StopOptimization::InitCuts(){
   m_CutVal.clear();
 
   // NV
-  m_CutMin.push_back(6.);
-  m_CutMax.push_back(7);
-  m_CutN.push_back(1);
+  m_CutMin.push_back(5.);
+  m_CutMax.push_back(8);
+  m_CutN.push_back(3);
   m_CutVal.push_back(0.);
 
   // // lep veto
-  m_CutMin.push_back(0.5);
+  m_CutMin.push_back(-0.5);
   m_CutMax.push_back(1.5);
-  m_CutN.push_back(1);
+  m_CutN.push_back(2);
   m_CutVal.push_back(0.);
 
-   // HT1CM
+   // PTISR
   m_CutMin.push_back(500.);
   m_CutMax.push_back(900.);
-  m_CutN.push_back(1);
+  m_CutN.push_back(4);
   m_CutVal.push_back(0.);
 
   // MS
@@ -51,27 +51,27 @@ void StopOptimization::InitCuts(){
   // m_CutVal.push_back(0.);
 
   // // dphiCMV
-  m_CutMin.push_back(0.4);
+  m_CutMin.push_back(0.0);
   m_CutMax.push_back(1.);
-  m_CutN.push_back(1);
+  m_CutN.push_back(4);
   m_CutVal.push_back(0.);
 
   // dphiCMV
-  m_CutMin.push_back(0.4);
+  m_CutMin.push_back(0.0);
   m_CutMax.push_back(0.5);
-  m_CutN.push_back(1);
+  m_CutN.push_back(4);
   m_CutVal.push_back(0.);
 
    // PIoHT1CM
-  m_CutMin.push_back(0.35);
+  m_CutMin.push_back(0.3);
   m_CutMax.push_back(0.7);
-  m_CutN.push_back(1);
+  m_CutN.push_back(8);
   m_CutVal.push_back(0.);
 
   // // NbV
-  m_CutMin.push_back(2.);
+  m_CutMin.push_back(1.);
   m_CutMax.push_back(3.);
-  m_CutN.push_back(1);
+  m_CutN.push_back(2);
   m_CutVal.push_back(0.);
 
   
@@ -109,16 +109,16 @@ int StopOptimization::EvaluateCuts(){
   // //double METsig = m_Base->MET/sqrt(HTN);
   // double METsig = m_Base->MET/sqrt(m_Base->Meff-m_Base->MET);
 
-  if(m_Base->NV < m_CutVal[icut])
+  if(m_Base->NjV[0] < m_CutVal[icut])
     return icut;
   icut++;
 
   if(m_CutVal[icut] > 0.)
-    if(m_Base->LepVeto)
+    if(!m_Base->LepVeto)
       return icut;
   icut++;
 
-  if(m_Base-> HT1CM < m_CutVal[icut])
+  if(m_Base->PTISR[0] < m_CutVal[icut])
     return icut;
   icut++;
 
@@ -126,28 +126,19 @@ int StopOptimization::EvaluateCuts(){
   //   return icut;
   // icut++;
 
-   if(m_Base->dphiCMV < m_CutVal[icut])
+   if(m_Base->dphiCMV[0] < m_CutVal[icut])
     return icut;
   icut++;
 
-  if(fabs(m_Base->dphiCMV-acos(-1.)) < m_CutVal[icut])
+  if(fabs(m_Base->dphiCMV[0]-acos(-1.)) < m_CutVal[icut])
     return icut;
   icut++;
 
-  if(m_Base->PIoHT1CM < m_CutVal[icut])
+  if(m_Base->PIoPTISR[0] < m_CutVal[icut])
     return icut;
   icut++;
 
-  // if(m_CutVal[icut] > 0.)
-  //   if(m_Base->NbISR > 0.)
-  //     return icut;
-  // icut++;
-  
-  // if(m_Base->NbISR < m_CutVal[icut])
-  //   return icut;
-  // icut++;
-
-  if(m_Base->NbV < m_CutVal[icut])
+  if(m_Base->NbV[0] < m_CutVal[icut])
     return icut;
   icut++;
   

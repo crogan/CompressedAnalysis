@@ -24,6 +24,7 @@ private:
   double m_weight;
 
   double m_MET;
+  bool m_LepVeto;
 
   // compressed variables
   double m_PTISR[g_N_algo];

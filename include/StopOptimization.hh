@@ -2,9 +2,9 @@
 #define StopOptimization_h
 
 #include "OptimizationBase.hh"
-#include "RJWorkshopBase.hh"
+#include "CompressedBase.hh"
 
-class StopOptimization : public OptimizationBase<RJWorkshopBase> {
+class StopOptimization : public OptimizationBase<CompressedBase> {
 
 public:
   StopOptimization();

@@ -5,13 +5,13 @@
 #include <string>
 
 #include "OptimizationBase.hh"
-#include "RJWorkshopBase.hh"
+#include "CompressedBase.hh"
 
 using namespace std;
 
 template <class Base>
 OptimizationBase<Base>::OptimizationBase(){
-  m_Chain = (TChain*) new TChain("physics");
+  m_Chain = (TChain*) new TChain("Analysis");
   m_Base = nullptr;
   m_Tree = nullptr;
   m_NSIG = 0;
@@ -132,7 +132,7 @@ void OptimizationBase<Base>::Loop(int Njob, int ijob){
   
 template <class Base>
 void OptimizationBase<Base>::AddSignal(string filename){
-  
+  /*
   std::cout << "Adding signal trees from file " << filename << " :" << endl;
   TFile* F = new TFile(filename.c_str(),"READ");
   TObjLink* link = F->GetListOfKeys()->FirstLink();
@@ -292,11 +292,12 @@ void OptimizationBase<Base>::AddSignal(string filename){
     m_SignalName.push_back(sname);
     m_NSIG++;
   }
+  */
 
-  /*  
+  
   std::cout << "Adding signal trees from file " << filename << " :" << endl;
   cout << "   adding tree Analysis" << endl;
-  TChain* chain = new TChain("Analysis");
+  TChain* chain = new TChain("CompressedAnalysis");
   chain->Add(filename.c_str());
   m_Chain->Add(chain);
   m_Signal.push_back(m_NSIG);
@@ -307,7 +308,7 @@ void OptimizationBase<Base>::AddSignal(string filename){
     name.erase(name.find(".root"),5);
   m_SignalName.push_back(name);
   m_NSIG++;
-  */
+  
 }
 
 template <class Base>
@@ -318,8 +319,8 @@ void OptimizationBase<Base>::AddBackground(string filename){
   vector<string> treenames;
   while(link){
     string name = link->GetObject()->GetName();
-    //if(name.find("Analysis") != string::npos){ //STOP
-    if(name.find("SRAll") != string::npos){ //0-lep
+    if(name.find("CompressedAnalysis") != string::npos){ //STOP
+    //if(name.find("SRAll") != string::npos){ //0-lep
       int Nt = treenames.size();
       bool isnew = true;
       for(int i = 0; i < Nt; i++){
@@ -365,4 +366,4 @@ void OptimizationBase<Base>::InitBase(){
   m_Base = new Base(m_Chain);
 }
 
-template class OptimizationBase<RJWorkshopBase>;
+template class OptimizationBase<CompressedBase>;
