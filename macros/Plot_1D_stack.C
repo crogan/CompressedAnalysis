@@ -111,8 +111,8 @@ void Plot_1D_stack(){
   //g_Xname = "#Delta #phi_{CM, V}";
   g_Xname = "#vec{p}_{I}^{ CM}. #hat{p}_{T S}^{ CM} / p_{T S}^{ CM}";
   g_Xmin = 0.;
-  g_Xmax = 600.;
-  g_NX = 25;
+  g_Xmax = acos(-1.);
+  g_NX = 30;
 
 
   TH1D* hist[Nhist];
@@ -134,35 +134,50 @@ void Plot_1D_stack(){
       base->GetEntry(e);
       if(e%(max(1,Nentry/10)) == 0)
 	cout << "event " << e << " | " << Nentry << endl;
+
+      if(!base->HLT_xe70_tc_lcw)
+       	continue;
+      
+      if(base->MET < 200.)
+       	continue;
+
+      if(fabs(base->dphi_MET_TrkMET) > acos(-1.)/2.)
+	continue;
       
       if(base->PTISR[0] < 500.)
        	continue;
 
-      // if(base->PIoPTISR[0] < 0.6)
-      // 	continue;
+      if(base->PIoPTISR[0] < 0.3)
+      	continue;
 
-      // if(base->MS < 250)
-      // 	 continue;
+      if(base->MS[0] < 250)
+      	 continue;
 
-      if(base->NjV[0] < 6)
+      if(base->NjV[0] < 5)
       	 continue;
 
       if(!base->LepVeto)
       	 continue;
 
-      if(base->dphiCMV[0] < 0.4)
-      	 continue;
+      // if(!base->TauVeto)
+      // 	 continue;
 
-      if(acos(-1.)-base->dphiCMV[0] < 0.1)
-      	 continue;
+      // if(base->dphiCMV[0] < 0.4)
+      // 	 continue;
 
-      if(base->NbV[0] < 2)
+      // if(acos(-1.)-base->dphiCMV[0] < 0.1)
+      // 	 continue;
+
+      if(base->NbV[0] < 1)
+      	continue;
+
+      if(base->pTjV5[0] < 40.)
       	continue;
 
       // if(base->RPT_HT1CM > 0.1)
       // 	 continue;
 
-      hist[g_Hist[s]]->Fill(base->MET, base->weight*g_Lumi);
+      hist[g_Hist[s]]->Fill(fabs(base->dphiISRI[0]), base->weight*g_Lumi);
 
     }
 

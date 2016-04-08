@@ -79,6 +79,7 @@ void CompressedNtuple::InitOutputTree(){
   m_Tree->Branch("MET", &m_MET);
   m_Tree->Branch("TrkMET", &m_TrkMET);
   m_Tree->Branch("dphi_MET_TrkMET", &m_dphi_MET_TrkMET);
+  m_Tree->Branch("HLT_xe70_tc_lcw", &m_HLT_xe70_tc_lcw);
   m_Tree->Branch("dphiMin1", &m_dphiMin1);
   m_Tree->Branch("dphiMin2", &m_dphiMin2);
   m_Tree->Branch("dphiMin3", &m_dphiMin3);
@@ -97,6 +98,7 @@ void CompressedNtuple::InitOutputTree(){
   m_Tree->Branch("MISR", m_MISR, ("MISR"+postf).c_str());
   m_Tree->Branch("MV", m_MV, ("MV"+postf).c_str());
   m_Tree->Branch("dphiCMV", m_dphiCMV, ("dphiCMV"+postf).c_str());
+  m_Tree->Branch("dphiISRI", m_dphiISRI, ("dphiISRI"+postf).c_str());
   m_Tree->Branch("NbV", m_NbV, ("NbV"+posti).c_str());
   m_Tree->Branch("NbISR", m_NbISR, ("NbISR"+posti).c_str());
   m_Tree->Branch("NjV", m_NjV, ("NjV"+posti).c_str());
@@ -236,6 +238,7 @@ void CompressedNtuple::FillOutputTree(){
     m_MV[a] = V->GetMass();
     m_MISR[a] = ISR->GetMass();
     m_dphiCMV[a] = CM->GetDeltaPhiBoostVisible();
+    m_dphiISRI[a] = fabs(vP_ISR.DeltaPhi(vP_I));
   }
 
   /*
@@ -288,6 +291,7 @@ void CompressedNtuple::FillOutputTree(){
   m_MET = ETMiss.Pt();
   m_TrkMET = eT_miss_track;
   m_dphi_MET_TrkMET = dPhi_met_trackmet;
+  m_HLT_xe70_tc_lcw = (HLT_xe70_tc_lcw > 0);
 
   m_dphiMin1 = DeltaPhiMin(Jets, ETMiss, 1);
   m_dphiMin2 = DeltaPhiMin(Jets, ETMiss, 2);

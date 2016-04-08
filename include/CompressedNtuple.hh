@@ -27,6 +27,8 @@ private:
   double m_TrkMET;
   double m_dphi_MET_TrkMET;
 
+  bool m_HLT_xe70_tc_lcw;
+  
   double m_dphiMin1;
   double m_dphiMin2;
   double m_dphiMin3;
@@ -44,6 +46,7 @@ private:
   double m_MISR[g_N_algo];
   double m_MV[g_N_algo];
   double m_dphiCMV[g_N_algo];
+  double m_dphiISRI[g_N_algo];
   double m_pTjV5[g_N_algo];
   double m_pTjV6[g_N_algo];
   double m_pTbV1[g_N_algo];

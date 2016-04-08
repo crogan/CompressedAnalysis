@@ -1,8 +1,8 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Thu Apr  7 13:41:12 2016 by ROOT version 5.34/25
+// Fri Apr  8 00:15:12 2016 by ROOT version 5.34/34
 // from TTree CompressedAnalysis/CompressedAnalysis
-// found on file: NTUPLES/SIG/TT_500_327.root
+// found on file: SIG/TT_500_327.root
 //////////////////////////////////////////////////////////
 
 #ifndef CompressedBase_h
@@ -26,6 +26,7 @@ public :
    Double_t        MET;
    Double_t        TrkMET;
    Double_t        dphi_MET_TrkMET;
+   Bool_t          HLT_xe70_tc_lcw;
    Double_t        dphiMin1;
    Double_t        dphiMin2;
    Double_t        dphiMin3;
@@ -39,6 +40,7 @@ public :
    Double_t        MISR[5];
    Double_t        MV[5];
    Double_t        dphiCMV[5];
+   Double_t        dphiISRI[5];
    Int_t           NbV[5];
    Int_t           NbISR[5];
    Int_t           NjV[5];
@@ -53,6 +55,7 @@ public :
    TBranch        *b_MET;   //!
    TBranch        *b_TrkMET;   //!
    TBranch        *b_dphi_MET_TrkMET;   //!
+   TBranch        *b_HLT_xe70_tc_lcw;   //!
    TBranch        *b_dphiMin1;   //!
    TBranch        *b_dphiMin2;   //!
    TBranch        *b_dphiMin3;   //!
@@ -66,6 +69,7 @@ public :
    TBranch        *b_MISR;   //!
    TBranch        *b_MV;   //!
    TBranch        *b_dphiCMV;   //!
+   TBranch        *b_dphiISRI;   //!
    TBranch        *b_NbV;   //!
    TBranch        *b_NbISR;   //!
    TBranch        *b_NjV;   //!
@@ -80,7 +84,7 @@ public :
    virtual Int_t    Cut(Long64_t entry);
    virtual Int_t    GetEntry(Long64_t entry);
    virtual Long64_t LoadTree(Long64_t entry);
-  virtual void     Init(TTree *tree);
+   virtual void     Init(TTree *tree);
    virtual Bool_t   Notify();
    virtual void     Show(Long64_t entry = -1);
 };
@@ -92,9 +96,9 @@ inline CompressedBase::CompressedBase(TTree *tree) : fChain(0)
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
    if (tree == 0) {
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("NTUPLES/SIG/TT_500_327.root");
+      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("SIG/TT_500_327.root");
       if (!f || !f->IsOpen()) {
-         f = new TFile("NTUPLES/SIG/TT_500_327.root");
+         f = new TFile("SIG/TT_500_327.root");
       }
       f->GetObject("CompressedAnalysis",tree);
 
@@ -147,6 +151,7 @@ inline void CompressedBase::Init(TTree *tree)
    fChain->SetBranchAddress("MET", &MET, &b_MET);
    fChain->SetBranchAddress("TrkMET", &TrkMET, &b_TrkMET);
    fChain->SetBranchAddress("dphi_MET_TrkMET", &dphi_MET_TrkMET, &b_dphi_MET_TrkMET);
+   fChain->SetBranchAddress("HLT_xe70_tc_lcw", &HLT_xe70_tc_lcw, &b_HLT_xe70_tc_lcw);
    fChain->SetBranchAddress("dphiMin1", &dphiMin1, &b_dphiMin1);
    fChain->SetBranchAddress("dphiMin2", &dphiMin2, &b_dphiMin2);
    fChain->SetBranchAddress("dphiMin3", &dphiMin3, &b_dphiMin3);
@@ -160,6 +165,7 @@ inline void CompressedBase::Init(TTree *tree)
    fChain->SetBranchAddress("MISR", MISR, &b_MISR);
    fChain->SetBranchAddress("MV", MV, &b_MV);
    fChain->SetBranchAddress("dphiCMV", dphiCMV, &b_dphiCMV);
+   fChain->SetBranchAddress("dphiISRI", dphiISRI, &b_dphiISRI);
    fChain->SetBranchAddress("NbV", NbV, &b_NbV);
    fChain->SetBranchAddress("NbISR", NbISR, &b_NbISR);
    fChain->SetBranchAddress("NjV", NjV, &b_NjV);
