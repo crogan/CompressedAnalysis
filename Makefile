@@ -39,3 +39,4 @@ $(OUTOBJ)%.o: src/%.cc include/%.hh
 clean:
 	rm -f $(OUTOBJ)*.o 
 	rm -f *.x
+	rm -rf *.dSYM

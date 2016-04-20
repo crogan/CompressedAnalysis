@@ -28,17 +28,17 @@ CompressedNtuple::CompressedNtuple(TTree* tree)
   INV = new InvisibleGroup("INV","Invisible System");
   INV->AddFrame(*I);
 
-  // VIS = new CombinatoricGroup("VIS","Visible Objects");
-  // VIS->AddFrame(*ISR);
-  // VIS->SetNElementsForFrame(*ISR,1,false);
-  // VIS->AddFrame(*V);
-  // VIS->SetNElementsForFrame(*V,0,false);
+  VIS = new CombinatoricGroup("VIS","Visible Objects");
+  VIS->AddFrame(*ISR);
+  VIS->SetNElementsForFrame(*ISR,1,false);
+  VIS->AddFrame(*V);
+  VIS->SetNElementsForFrame(*V,0,false);
 
   // set the invisible system mass to zero
   InvMass = new SetMassInvJigsaw("InvMass", "Invisible system mass Jigsaw");
   INV->AddJigsaw(*InvMass);
 
-  /*
+  
   // define the rule for partitioning objects between "ISR" and "V"
   SplitVis = new MinMassesCombJigsaw("SplitVis","Minimize M_{ISR} and M_{S} Jigsaw");
   VIS->AddJigsaw(*SplitVis);
@@ -47,7 +47,7 @@ CompressedNtuple::CompressedNtuple(TTree* tree)
   // "1" group (V + I)
   SplitVis->AddFrame(*V,1);
   SplitVis->AddFrame(*I,1);
-  */
+  
   LAB->InitializeAnalysis(); 
    ////////////// Jigsaw rules set-up /////////////////
 }
@@ -61,8 +61,8 @@ CompressedNtuple::~CompressedNtuple() {
   delete I;
   delete INV;
   delete InvMass;
-  // delete VIS;
-  // delete SplitVis;
+  delete VIS;
+  delete SplitVis;
 }
 
 void CompressedNtuple::InitOutputTree(){
@@ -88,37 +88,27 @@ void CompressedNtuple::InitOutputTree(){
   m_Tree->Branch("LepVeto", &m_LepVeto);
   m_Tree->Branch("TauVeto", &m_TauVeto);
 
-  // compressed 
-  string posti = "["+to_string(g_N_algo)+"]/I";
-  string postf = "["+to_string(g_N_algo)+"]/D";
-  m_Tree->Branch("PTISR", m_PTISR, ("PTISR"+postf).c_str());
-  m_Tree->Branch("PIoPTISR", m_PIoPTISR, ("PIoPTISR"+postf).c_str());
-  m_Tree->Branch("cosS", m_cosS, ("cosS"+postf).c_str());
-  m_Tree->Branch("MS", m_MS, ("MS"+postf).c_str());
-  m_Tree->Branch("MISR", m_MISR, ("MISR"+postf).c_str());
-  m_Tree->Branch("MV", m_MV, ("MV"+postf).c_str());
-  m_Tree->Branch("dphiCMV", m_dphiCMV, ("dphiCMV"+postf).c_str());
-  m_Tree->Branch("dphiISRI", m_dphiISRI, ("dphiISRI"+postf).c_str());
-  m_Tree->Branch("NbV", m_NbV, ("NbV"+posti).c_str());
-  m_Tree->Branch("NbISR", m_NbISR, ("NbISR"+posti).c_str());
-  m_Tree->Branch("NjV", m_NjV, ("NjV"+posti).c_str());
-  m_Tree->Branch("NjISR", m_NjISR, ("NjISR"+posti).c_str());
-  m_Tree->Branch("pTjV5", m_pTjV5, ("m_pTjV5"+postf).c_str());
-  m_Tree->Branch("pTjV6", m_pTjV6, ("m_pTjV6"+postf).c_str());
-  m_Tree->Branch("pTbV1", m_pTbV1, ("m_pTbV1"+postf).c_str());
-  m_Tree->Branch("pTbV2", m_pTbV2, ("m_pTbV2"+postf).c_str());
-
-  // m_Tree->Branch("PTISR", &m_PTISR);
-  // m_Tree->Branch("PIoPTISR", &m_PIoPTISR);
-  // m_Tree->Branch("cosS", &m_cosS);
-  // m_Tree->Branch("MS", &m_MS);
-  // m_Tree->Branch("MISR", &m_MISR);
-  // m_Tree->Branch("MV", &m_MV);
-  // m_Tree->Branch("NbV", &m_NbV);
-  // m_Tree->Branch("NbISR", &m_NbISR);
-  // m_Tree->Branch("NjV", &m_NjV);
-  // m_Tree->Branch("NjISR", &m_NjISR);
-  // m_Tree->Branch("dphiCMV", &m_dphiCMV);
+  // compressed tree variables
+  m_Tree->Branch("PTISR", &m_PTISR);
+  m_Tree->Branch("RISR", &m_RISR);
+  m_Tree->Branch("cosS", &m_cosS);
+  m_Tree->Branch("MS", &m_MS);
+  m_Tree->Branch("MISR", &m_MISR);
+  m_Tree->Branch("MV", &m_MV);
+  m_Tree->Branch("dphiCMI", &m_dphiCMI);
+  m_Tree->Branch("dphiISRI", &m_dphiCMI);
+  m_Tree->Branch("pTjV1", &m_pTjV1);
+  m_Tree->Branch("pTjV2", &m_pTjV2);
+  m_Tree->Branch("pTjV3", &m_pTjV3);
+  m_Tree->Branch("pTjV4", &m_pTjV4);
+  m_Tree->Branch("pTjV5", &m_pTjV5);
+  m_Tree->Branch("pTjV6", &m_pTjV6);
+  m_Tree->Branch("pTbV1", &m_pTbV1);
+  m_Tree->Branch("pTbV2", &m_pTbV2);
+  m_Tree->Branch("NbV", &m_NbV);
+  m_Tree->Branch("NbISR", &m_NbISR);
+  m_Tree->Branch("NjV", &m_NjV);
+  m_Tree->Branch("NjISR", &m_NjISR);
 
 }
 
@@ -137,15 +127,17 @@ void CompressedNtuple::FillOutputTree(){
   if(!MuonCleaning) 
     return;
   
+  // cosmic mu rejection
   if(nMu_cosmic > 0) 
     return;
 
+  // vertex requirement
   if(numVtx <= 0) 
     return;
 
   // trigger
-  // if(!HLT_xe70_tc_lcw) 
-  //   return;
+  if(!HLT_xe70_tc_lcw) 
+    return;
 
   TVector3 ETMiss = GetMET(); 
       
@@ -163,85 +155,21 @@ void CompressedNtuple::FillOutputTree(){
   if(Jets[0].P.Pt() < 60. || Jets[1].P.Pt() < 60.)
     return;
 
-  // make jets 'transverse'
-  for(int i = 0; i < int(Jets.size()); i++){
-    Jets[i].P.SetPtEtaPhiM(Jets[i].P.Pt(), 0.0,
-			   Jets[i].P.Phi(), Jets[i].P.M());
-  }
+  // other observables
+  m_MET = ETMiss.Pt();
+  m_TrkMET = eT_miss_track;
+  m_dphi_MET_TrkMET = dPhi_met_trackmet;
+  m_HLT_xe70_tc_lcw = (HLT_xe70_tc_lcw > 0);
 
-  for(int a = 0; a < g_N_algo; a++){
-    vector<Jet> V_JETs;
-    vector<Jet> ISR_JETs;
-    GetPartition(V_JETs, ISR_JETs, Jets, ETMiss, a);
+  m_dphiMin1   = DeltaPhiMin(Jets, ETMiss, 1);
+  m_dphiMin2   = DeltaPhiMin(Jets, ETMiss, 2);
+  m_dphiMin3   = DeltaPhiMin(Jets, ETMiss, 3);
+  m_dphiMinAll = DeltaPhiMin(Jets, ETMiss);
 
-    m_NjV[a] = 0;
-    m_NbV[a] = 0;
-    m_pTjV5[a] = 0.;
-    m_pTjV6[a] = 0.;
-    m_pTbV1[a] = 0.;
-    m_pTbV2[a] = 0.;
-    TLorentzVector pV_lab(0.,0.,0.,0.);
-    for(int i = 0; i < int(V_JETs.size()); i++){
-      m_NjV[a]++;
-      pV_lab += V_JETs[i].P;
-      if(m_NjV[a] == 5)
-	m_pTjV5[a] = V_JETs[i].P.Pt();
-      if(m_NjV[a] == 6)
-	m_pTjV6[a] = V_JETs[i].P.Pt();
-      if(V_JETs[i].btag){
-	m_NbV[a]++;
-	if(m_NbV[a] == 1)
-	  m_pTbV1[a] = V_JETs[i].P.Pt();
-	if(m_NbV[a] == 2)
-	  m_pTbV2[a] = V_JETs[i].P.Pt();
-      }
-    }
-    m_NbISR[a] = 0;
-    m_NjISR[a] = 0;
-    TLorentzVector pISR_lab(0.,0.,0.,0.);
-    for(int i = 0; i < int(ISR_JETs.size()); i++){
-      m_NjISR[a]++;
-      pISR_lab += ISR_JETs[i].P;
-      if(ISR_JETs[i].btag)
-	m_NbISR[a]++;
-    }
+  m_LepVeto = (nEl_baseline+nMu_baseline < 1);
+  m_TauVeto = (passtauveto > 0);
+  m_weight = GetEventWeight();
 
-    if(m_NjV[a] < 1 || m_NjISR[a] < 1){
-      m_PTISR[a] = 0.;
-      m_PIoPTISR[a] = 0.;
-      m_cosS[a] = 0.;
-      m_MS[a] = 0.;
-      m_MV[a] = 0.;
-      m_MISR[a] = 0.;
-      m_dphiCMV[a] = 0.;
-      continue;
-    }
-
-    // analyze event in RestFrames tree
-    LAB->ClearEvent();
-    
-    V->SetLabFrameFourVector(pV_lab);
-    ISR->SetLabFrameFourVector(pISR_lab);
-    INV->SetLabFrameThreeVector(ETMiss);
-    
-    if(!LAB->AnalyzeEvent()) cout << "Something went wrong..." << endl;
- 
-    // Compressed variables from tree
-
-    TVector3 vP_ISR = ISR->GetFourVector(*CM).Vect();
-    TVector3 vP_I   = I->GetFourVector(*CM).Vect();
-
-    m_PTISR[a] = vP_ISR.Mag();
-    m_PIoPTISR[a] = fabs(vP_I.Dot(vP_ISR.Unit())) / m_PTISR[a];
-    m_cosS[a] = S->GetCosDecayAngle();
-    m_MS[a] = S->GetMass();
-    m_MV[a] = V->GetMass();
-    m_MISR[a] = ISR->GetMass();
-    m_dphiCMV[a] = CM->GetDeltaPhiBoostVisible();
-    m_dphiISRI[a] = fabs(vP_ISR.DeltaPhi(vP_I));
-  }
-
-  /*
   // analyze event in RestFrames tree
   LAB->ClearEvent();
   vector<RFKey> jetID; 
@@ -255,52 +183,69 @@ void CompressedNtuple::FillOutputTree(){
   if(!LAB->AnalyzeEvent()) cout << "Something went wrong..." << endl;
  
   // Compressed variables from tree
-  m_NjV = VIS->GetNElementsInFrame(*V);
-  m_NjISR = VIS->GetNElementsInFrame(*ISR);
+  m_NjV = 0;
   m_NbV = 0;
-  m_NbISR = 0;
-
-  // need at least one jet associated with MET-side of event
-  if(m_NjV < 1)
-    return;
-
-  // count b-jets in each half of the event
-  int Nj = jetID.size();
-  for(int i = 0; i < Nj; i++){
-    if(Jets[i].btag){
-      if(VIS->GetFrame(jetID[i]) == *ISR){ // ISR group
-	m_NbISR++;
-      } else {                             // sparticle group
+  m_pTjV1 = 0.;
+  m_pTjV2 = 0.;
+  m_pTjV3 = 0.;
+  m_pTjV4 = 0.;
+  m_pTjV5 = 0.;
+  m_pTjV6 = 0.;
+  m_pTbV1 = 0.;
+  m_pTbV2 = 0.;
+  for(int i = 0; i < int(Jets.size()); i++){
+    if(VIS->GetFrame(jetID[i]) == *V){ // sparticle group
+      m_NjV++;
+      if(m_NjV == 1)
+	m_pTjV1 = Jets[i].P.Pt();
+      if(m_NjV == 2)
+	m_pTjV2 = Jets[i].P.Pt();
+      if(m_NjV == 3)
+	m_pTjV3 = Jets[i].P.Pt();
+      if(m_NjV == 4)
+	m_pTjV4 = Jets[i].P.Pt();
+      if(m_NjV == 5)
+	m_pTjV5 = Jets[i].P.Pt();
+      if(m_NjV == 6)
+	m_pTjV6 = Jets[i].P.Pt();
+      if(Jets[i].btag){
 	m_NbV++;
+	if(m_NbV == 1)
+	  m_pTbV1 = Jets[i].P.Pt();
+	if(m_NbV == 2)
+	  m_pTbV2 = Jets[i].P.Pt();
       }
+    } else {
+      m_NjISR++;
+      if(Jets[i].btag)
+	m_NbISR++;
     }
   }
 
-  TVector3 vP_ISR = ISR->GetFourVector(*CM).Vect();
-  TVector3 vP_I   = I->GetFourVector(*CM).Vect();
+  // need at least one jet associated with sparticle-side of event
+  if(m_NjV < 1){
+    m_PTISR = 0.;
+    m_RISR = 0.;
+    m_cosS = 0.;
+    m_MS = 0.;
+    m_MV = 0.;
+    m_MISR = 0.;
+    m_dphiCMI = 0.;
+    m_dphiISRI = 0.;
+  } else {
 
-  m_PTISR = vP_ISR.Mag();
-  m_PIoPTISR = fabs(vP_I.Dot(vP_ISR.Unit())) / m_PTISR;
-  m_cosS = S->GetCosDecayAngle();
-  m_MS = S->GetMass();
-  m_MV = V->GetMass();
-  m_MISR = ISR->GetMass();
-  m_dphiCMV = CM->GetDeltaPhiBoostVisible();
-  */
-
-  m_MET = ETMiss.Pt();
-  m_TrkMET = eT_miss_track;
-  m_dphi_MET_TrkMET = dPhi_met_trackmet;
-  m_HLT_xe70_tc_lcw = (HLT_xe70_tc_lcw > 0);
-
-  m_dphiMin1 = DeltaPhiMin(Jets, ETMiss, 1);
-  m_dphiMin2 = DeltaPhiMin(Jets, ETMiss, 2);
-  m_dphiMin3 = DeltaPhiMin(Jets, ETMiss, 3);
-  m_dphiMinAll = DeltaPhiMin(Jets, ETMiss);
-
-  m_LepVeto = (nEl_baseline+nMu_baseline < 1);
-  m_TauVeto = (passtauveto > 0);
-  m_weight = GetEventWeight();
+    TVector3 vP_ISR = ISR->GetFourVector(*CM).Vect();
+    TVector3 vP_I   = I->GetFourVector(*CM).Vect();
+  
+    m_PTISR = vP_ISR.Mag();
+    m_RISR = fabs(vP_I.Dot(vP_ISR.Unit())) / m_PTISR;
+    m_cosS = S->GetCosDecayAngle();
+    m_MS = S->GetMass();
+    m_MV = V->GetMass();
+    m_MISR = ISR->GetMass();
+    m_dphiCMI = acos(-1.)-fabs(CM->GetDeltaPhiBoostVisible());
+    m_dphiISRI = fabs(vP_ISR.DeltaPhi(vP_I));
+  }
 
   if(m_Tree)
     m_Tree->Fill();

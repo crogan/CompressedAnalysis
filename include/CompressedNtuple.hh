@@ -10,8 +10,6 @@ using namespace RestFrames;
 
 class CompressedNtuple : public NtupleBase<HFntupleBase> {
 
-  static const int g_N_algo = 5;
-
 public:
   CompressedNtuple(TTree* tree = 0);
   virtual ~CompressedNtuple();
@@ -39,34 +37,38 @@ private:
   bool m_TauVeto;
 
   // compressed variables
-  double m_PTISR[g_N_algo];
-  double m_PIoPTISR[g_N_algo];
-  double m_cosS[g_N_algo];
-  double m_MS[g_N_algo];
-  double m_MISR[g_N_algo];
-  double m_MV[g_N_algo];
-  double m_dphiCMV[g_N_algo];
-  double m_dphiISRI[g_N_algo];
-  double m_pTjV5[g_N_algo];
-  double m_pTjV6[g_N_algo];
-  double m_pTbV1[g_N_algo];
-  double m_pTbV2[g_N_algo];
-  int m_NbV[g_N_algo];
-  int m_NbISR[g_N_algo];
-  int m_NjV[g_N_algo];
-  int m_NjISR[g_N_algo];
+  double m_PTISR;
+  double m_RISR;
+  double m_cosS;
+  double m_MS;
+  double m_MISR;
+  double m_MV;
+  double m_dphiCMI;
+  double m_dphiISRI;
+  double m_pTjV1;
+  double m_pTjV2;
+  double m_pTjV3;
+  double m_pTjV4;
+  double m_pTjV5;
+  double m_pTjV6;
+  double m_pTbV1;
+  double m_pTbV2;
+  int m_NbV;
+  int m_NbISR;
+  int m_NjV;
+  int m_NjISR;
   
-  // RestFrames stuff
-  LabRecoFrame*       LAB;
-  DecayRecoFrame*     CM;
-  DecayRecoFrame*     S;
-  VisibleRecoFrame*   ISR;
-  VisibleRecoFrame*   V;
-  InvisibleRecoFrame* I;
-  InvisibleGroup*  INV;
-  SetMassInvJigsaw*   InvMass;
-  // CombinatoricGroup*  VIS;
-  // MinMassesCombJigsaw* SplitVis;
+  // RestFrames frames and friends
+  LabRecoFrame*        LAB;
+  DecayRecoFrame*      CM;
+  DecayRecoFrame*      S;
+  VisibleRecoFrame*    ISR;
+  VisibleRecoFrame*    V;
+  InvisibleRecoFrame*  I;
+  InvisibleGroup*      INV;
+  SetMassInvJigsaw*    InvMass;
+  CombinatoricGroup*   VIS;
+  MinMassesCombJigsaw* SplitVis;
 
 };
 

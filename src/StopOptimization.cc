@@ -14,8 +14,31 @@ double StopOptimization::GetEventWeight(){
 
 bool StopOptimization::PassBaseline(){
 
-  if(m_Base->NbV[0] < 1)
+  if(!m_Base->HLT_xe70_tc_lcw)
     return false;
+      
+  if(m_Base->MET < 200.)
+    return false;
+
+  if(m_Base->NbV < 1)
+    return false;
+
+  if(m_Base->pTbV1 < 40.)
+    return false;
+
+  if(m_Base->NjV < 5)
+    return false;
+
+  if(!m_Base->LepVeto)
+     return false;
+
+  if(m_Base->TrkMET < 30.)
+    return false;
+
+  if(fabs(m_Base->dphi_MET_TrkMET) > acos(-1.)/2.)
+    return false;
+
+  /////////////////////
 
   return true;
 }
@@ -26,83 +49,53 @@ void StopOptimization::InitCuts(){
   m_CutN.clear();
   m_CutVal.clear();
 
-  // NV
-  m_CutMin.push_back(5.);
-  m_CutMax.push_back(8);
-  m_CutN.push_back(3);
+  // NjV cut
+  m_CutMin.push_back(2.);
+  m_CutMax.push_back(7);
+  m_CutN.push_back(5);
   m_CutVal.push_back(0.);
 
-  // // lep veto
-  m_CutMin.push_back(-0.5);
-  m_CutMax.push_back(1.5);
-  m_CutN.push_back(2);
+  // RISR cut
+  m_CutMin.push_back(0.0);
+  m_CutMax.push_back(1.);
+  m_CutN.push_back(20);
   m_CutVal.push_back(0.);
 
-  // // tau veto
-  m_CutMin.push_back(-0.5);
-  m_CutMax.push_back(1.5);
-  m_CutN.push_back(2);
+  // RISR window
+  m_CutMin.push_back(0.5);
+  m_CutMax.push_back(0.0);
+  m_CutN.push_back(50);
   m_CutVal.push_back(0.);
 
-   // PTISR
-  m_CutMin.push_back(400.);
-  m_CutMax.push_back(800.);
-  m_CutN.push_back(4);
+   // PTISR cut
+  m_CutMin.push_back(0.);
+  m_CutMax.push_back(700.);
+  m_CutN.push_back(7);
   m_CutVal.push_back(0.);
 
-  // MS
+  // MS cut
   m_CutMin.push_back(0.);
   m_CutMax.push_back(500.);
-  m_CutN.push_back(10);
+  m_CutN.push_back(20);
   m_CutVal.push_back(0.);
 
-  // // dphiCMV
-  // m_CutMin.push_back(0.0);
-  // m_CutMax.push_back(1.);
-  // m_CutN.push_back(4);
-  // m_CutVal.push_back(0.);
-
-  // // dphiCMV
-  // m_CutMin.push_back(0.0);
-  // m_CutMax.push_back(0.5);
-  // m_CutN.push_back(4);
-  // m_CutVal.push_back(0.);
-
-   // PIoHT1CM
-  m_CutMin.push_back(0.3);
-  m_CutMax.push_back(0.7);
-  m_CutN.push_back(8);
-  m_CutVal.push_back(0.);
-
-  // // NbV
+  // NbV
   m_CutMin.push_back(1.);
   m_CutMax.push_back(3.);
-  m_CutN.push_back(2);
+  m_CutN.push_back(1);
   m_CutVal.push_back(0.);
 
-  
-  // m_CutMin.push_back(0);
-  // m_CutMax.push_back(3.);
-  // m_CutN.push_back(3);
-  // m_CutVal.push_back(0.);
+  // m_pTjV5
+  m_CutMin.push_back(20);
+  m_CutMax.push_back(80.);
+  m_CutN.push_back(6);
+  m_CutVal.push_back(0.);
 
-  // // Rsib
-  // m_CutMin.push_back(0.5);
-  // m_CutMax.push_back(0.0);
-  // m_CutN.push_back(10);
-  // m_CutVal.push_back(0.);
-
-  // // RPT_HT1CM
-  // m_CutMin.push_back(0.3);
-  // m_CutMax.push_back(0.);
-  // m_CutN.push_back(30);
-  // m_CutVal.push_back(0.);
-
-  // Rsib
-  // m_CutMin.push_back(0.5);
-  // m_CutMax.push_back(0.);
-  // m_CutN.push_back(200);
-  // m_CutVal.push_back(0.);
+  // dphiISRI
+  m_CutMin.push_back(2.);
+  m_CutMax.push_back(acos(-1.));
+  m_CutN.push_back(40);
+  m_CutVal.push_back(0.);
 
   m_N_Cut = m_CutN.size();
 }
@@ -110,62 +103,37 @@ void StopOptimization::InitCuts(){
 int StopOptimization::EvaluateCuts(){
   int icut = 0;
 
-  // double MeffN = m_Base->pT_jet1+m_Base->pT_jet2+m_Base->pT_jet3+m_Base->pT_jet4+m_Base->MET;
-  // double HTN = m_Base->pT_jet1+m_Base->pT_jet2;
-  // //double METsig = m_Base->MET/sqrt(HTN);
-  // double METsig = m_Base->MET/sqrt(m_Base->Meff-m_Base->MET);
-
-  if(m_Base->NjV[0] < m_CutVal[icut])
+  if(m_Base->NjV < m_CutVal[icut])
     return icut;
   icut++;
 
-  if(m_CutVal[icut] > 0.)
-    if(!m_Base->LepVeto)
-      return icut;
-  icut++;
-  
-  if(m_CutVal[icut] > 0.)
-    if(!m_Base->TauVeto)
-      return icut;
-  icut++;
-
-  if(m_Base->PTISR[0] < m_CutVal[icut])
+  if(m_Base->RISR < m_CutVal[icut])
     return icut;
   icut++;
 
-  if(m_Base->MS[0] < m_CutVal[icut])
+  if(m_Base->RISR > m_CutVal[icut-1]+m_CutVal[icut])
     return icut;
   icut++;
 
-  //  if(m_Base->dphiCMV[0] < m_CutVal[icut])
-  //   return icut;
-  // icut++;
-
-  // if(fabs(m_Base->dphiCMV[0]-acos(-1.)) < m_CutVal[icut])
-  //   return icut;
-  // icut++;
-
-  if(m_Base->PIoPTISR[0] < m_CutVal[icut])
+  if(m_Base->PTISR < m_CutVal[icut])
     return icut;
   icut++;
 
-  if(m_Base->NbV[0] < m_CutVal[icut])
+  if(m_Base->MS < m_CutVal[icut])
     return icut;
   icut++;
-  
-  // if(m_Base->Rsib > m_CutVal[icut])
-  //   return icut;
-  // icut++;
 
-  // if(m_Base->RPT_HT1CM > m_CutVal[icut])
-  //   return icut;
-  // icut++;
-  
-  // if(m_Base->deltaQCD < m_CutVal[icut])
-  //   return false;
+  if(m_Base->NbV < m_CutVal[icut])
+    return icut;
+  icut++;
 
-  // if(m_Base->Rsib > m_CutVal[icut])
-  //   return false;
+  if(m_Base->pTjV5 < m_CutVal[icut])
+    return icut;
+  icut++;
+
+  if(m_Base->dphiISRI < m_CutVal[icut])
+    return icut;
+  icut++;
       
   return -1;
 }

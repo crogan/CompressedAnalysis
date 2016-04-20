@@ -20,14 +20,14 @@ double g_lumi;
 double g_minBKG;
 
 void PlotOpt(){
-  g_deltaNbkg = 15;
+  g_deltaNbkg = 25;
   g_lumi = 10.;
   g_minBKG = 0.5;
 
   TFile* input = new TFile("temp.root","READ");
 
-  int ParentMass = 350;
-  int LSPMass    = 177;
+  int ParentMass = 500;
+  int LSPMass    = 327;
 
   double Sscale = 1.;
   double Bscale = 1.;
