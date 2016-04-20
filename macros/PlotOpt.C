@@ -20,12 +20,15 @@ double g_lumi;
 double g_minBKG;
 
 void PlotOpt(){
+  // fixed background uncertainty (%)
   g_deltaNbkg = 25;
+  // integrated luminosity (fb^-1)
   g_lumi = 10.;
+  // minimum number of expected background events
   g_minBKG = 0.5;
 
   TFile* input = new TFile("temp.root","READ");
-
+xc
   int ParentMass = 500;
   int LSPMass    = 327;
 
@@ -35,15 +38,6 @@ void PlotOpt(){
   string SignalModel = "TT";
   string plot_title = "#tilde{t} #tilde{t} #rightarrow (t #tilde{#chi})(t #tilde{#chi}); m_{#tilde{t}} = ";
   plot_title += to_string(ParentMass)+", m_{#tilde{#chi}} = "+to_string(LSPMass)+" GeV";
-
-  // string SignalModel = "GG_direct";
-  // string plot_title = "#tilde{g} #tilde{g} #rightarrow (qq #tilde{#chi})(qq #tilde{#chi}); m_{#tilde{g}} = ";
-  // plot_title += to_string(ParentMass)+", m_{#tilde{#chi}} = "+to_string(LSPMass)+" GeV";
-
-  // string SignalModel = "SS_direct";
-  // string plot_title = "#tilde{q} #tilde{q} #rightarrow (q #tilde{#chi})(q #tilde{#chi}); m_{#tilde{q}} = ";
-  // plot_title += to_string(ParentMass)+", m_{#tilde{#chi}} = "+to_string(LSPMass)+" GeV";
-  // Sscale = 0.8;
   
   TTree* tree  = (TTree*) input->Get("optimization");
   double Nsig, Nbkg;

@@ -42,8 +42,7 @@ void setstyle(int istyle);
 void Plot_1D_stack(){
   setstyle(0);
 
-  //g_PlotTitle = "Baseline Selection";
-  g_PlotTitle = "p_{T S}^{ CM} > 600+R_{ISR} > 0.6+N_{b-tag}^{ V} #geq 1";
+  g_PlotTitle = "p_{T}^{ ISR} > 400+N_{b-tag}^{ V} #geq 1";
   g_Lumi = 10.;
 
   int ihist = 0;
@@ -62,7 +61,6 @@ void Plot_1D_stack(){
   g_Bkg.push_back(true);
   ihist++;
 
-   
   g_File.push_back("NTUPLES/BKG/Wjets.root");
   g_Tree.push_back("CompressedAnalysis");
   g_Hist.push_back(ihist);
@@ -72,14 +70,6 @@ void Plot_1D_stack(){
   g_Title.push_back("V + jets");
   g_Bkg.push_back(true);
   ihist++;
-   
-
-  // g_File.push_back("/Users/crogan/Dropbox/SAMPLES/STOP_ntuple/STOP_Feb16/BKG/DiBoson.root");
-  // g_Tree.push_back("Analysis");
-  // g_Hist.push_back(ihist);
-  // g_Title.push_back("Di-boson");
-  // g_Bkg.push_back(true);
-  // ihist++;
 
   g_File.push_back("NTUPLES/SIG/TT_300_127.root");
   g_Tree.push_back("CompressedAnalysis");
@@ -108,10 +98,9 @@ void Plot_1D_stack(){
   int Nsample = g_File.size();
   int Nhist = ihist;
 
-  //g_Xname = "#Delta #phi_{CM, V}";
-  g_Xname = "#vec{p}_{I}^{ CM}. #hat{p}_{T S}^{ CM} / p_{T S}^{ CM}";
+  g_Xname = "R_{ISR}";
   g_Xmin = 0.;
-  g_Xmax = acos(-1.);
+  g_Xmax = 1.;
   g_NX = 30;
 
 
@@ -144,40 +133,28 @@ void Plot_1D_stack(){
       if(fabs(base->dphi_MET_TrkMET) > acos(-1.)/2.)
 	continue;
       
-      if(base->PTISR[0] < 500.)
+      if(base->PTISR < 400.)
        	continue;
 
-      if(base->PIoPTISR[0] < 0.3)
+      if(base->NbV < 1)
       	continue;
 
-      if(base->MS[0] < 250)
-      	 continue;
+      // if(base->RISR < 0.4)
+      // 	continue;
 
-      if(base->NjV[0] < 5)
-      	 continue;
-
-      if(!base->LepVeto)
-      	 continue;
-
-      // if(!base->TauVeto)
+      // if(base->MS < 250)
       // 	 continue;
 
-      // if(base->dphiCMV[0] < 0.4)
+      // if(base->NjV < 5)
       // 	 continue;
 
-      // if(acos(-1.)-base->dphiCMV[0] < 0.1)
+      // if(!base->LepVeto)
       // 	 continue;
 
-      if(base->NbV[0] < 1)
-      	continue;
+      // if(base->pTjV5[0] < 40.)
+      // 	continue;
 
-      if(base->pTjV5[0] < 40.)
-      	continue;
-
-      // if(base->RPT_HT1CM > 0.1)
-      // 	 continue;
-
-      hist[g_Hist[s]]->Fill(fabs(base->dphiISRI[0]), base->weight*g_Lumi);
+      hist[g_Hist[s]]->Fill(base->RISR, base->weight*g_Lumi);
 
     }
 
@@ -284,7 +261,6 @@ void Plot_1D_stack(){
     }
   }
 
-
   TLegend* leg = new TLegend(0.688,0.22,0.93,0.42);
   leg->SetTextFont(132);
   leg->SetTextSize(0.045);
@@ -307,7 +283,6 @@ void Plot_1D_stack(){
   l.SetNDC();
   l.SetTextSize(0.05);
   l.SetTextFont(132);
-  // l.DrawLatex(0.17,0.855,g_PlotTitle.c_str());
   l.DrawLatex(0.65,0.943,g_PlotTitle.c_str());
   l.SetTextSize(0.04);
   l.SetTextFont(42);
@@ -316,13 +291,6 @@ void Plot_1D_stack(){
   l.SetTextFont(132);
   string s_lumi = "#scale[0.6]{#int} #it{L dt} = "+to_string(int(g_Lumi))+" fb^{-1}";
   l.DrawLatex(0.43,0.79,s_lumi.c_str());	
-
-  // l.SetTextSize(0.045);
-  // l.SetTextFont(132);
-  // string bla = "#scale[0.6]{#int} #it{L dt} = "+to_string(int(g_lumi))+" fb^{-1},  #Delta_{N#scale[0.8]{bkg}} = ";
-  // bla += to_string(int(g_deltaNbkg))+" %";
-  // l.DrawLatex(0.61,0.943,bla.c_str());
-
 
 }
 
