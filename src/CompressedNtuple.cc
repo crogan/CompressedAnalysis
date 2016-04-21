@@ -96,7 +96,7 @@ void CompressedNtuple::InitOutputTree(){
   m_Tree->Branch("MISR", &m_MISR);
   m_Tree->Branch("MV", &m_MV);
   m_Tree->Branch("dphiCMI", &m_dphiCMI);
-  m_Tree->Branch("dphiISRI", &m_dphiCMI);
+  m_Tree->Branch("dphiISRI", &m_dphiISRI);
   m_Tree->Branch("pTjV1", &m_pTjV1);
   m_Tree->Branch("pTjV2", &m_pTjV2);
   m_Tree->Branch("pTjV3", &m_pTjV3);
