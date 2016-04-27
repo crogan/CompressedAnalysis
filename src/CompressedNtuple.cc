@@ -185,6 +185,8 @@ void CompressedNtuple::FillOutputTree(){
   // Compressed variables from tree
   m_NjV = 0;
   m_NbV = 0;
+  m_NjISR = 0;
+  m_NbISR = 0;
   m_pTjV1 = 0.;
   m_pTjV2 = 0.;
   m_pTjV3 = 0.;
