@@ -161,6 +161,8 @@ void CompressedNtuple::FillOutputTree(){
   m_dphi_MET_TrkMET = dPhi_met_trackmet;
   m_HLT_xe70_tc_lcw = (HLT_xe70_tc_lcw > 0);
 
+  cout << m_TrkMET << endl;
+
   m_dphiMin1   = DeltaPhiMin(Jets, ETMiss, 1);
   m_dphiMin2   = DeltaPhiMin(Jets, ETMiss, 2);
   m_dphiMin3   = DeltaPhiMin(Jets, ETMiss, 3);
