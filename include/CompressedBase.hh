@@ -34,6 +34,7 @@ public :
    Bool_t          LepVeto;
    Bool_t          TauVeto;
    Double_t        PTISR;
+   Double_t        PTCM;
    Double_t        RISR;
    Double_t        cosS;
    Double_t        MS;
@@ -67,6 +68,7 @@ public :
    TBranch        *b_LepVeto;   //!
    TBranch        *b_TauVeto;   //!
    TBranch        *b_PTISR;   //!
+   TBranch        *b_PTCM;   //!
    TBranch        *b_RISR;   //!
    TBranch        *b_cosS;   //!
    TBranch        *b_MS;   //!
@@ -167,6 +169,7 @@ inline void CompressedBase::Init(TTree *tree)
    fChain->SetBranchAddress("LepVeto", &LepVeto, &b_LepVeto);
    fChain->SetBranchAddress("TauVeto", &TauVeto, &b_TauVeto);
    fChain->SetBranchAddress("PTISR", &PTISR, &b_PTISR);
+   fChain->SetBranchAddress("PTCM", &PTCM, &b_PTCM);
    fChain->SetBranchAddress("RISR", &RISR, &b_RISR);
    fChain->SetBranchAddress("cosS", &cosS, &b_cosS);
    fChain->SetBranchAddress("MS", &MS, &b_MS);

@@ -2,6 +2,7 @@
 
 #include "AnalysisBase.hh"
 #include "HFntupleBase.hh"
+#include "SussexBase.hh"
 
 using namespace std;
 
@@ -33,7 +34,7 @@ double AnalysisBase<Base>::DeltaPhiMin(const vector<Jet>& JETs, const TVector3& 
 
 template <class Base>
 void AnalysisBase<Base>::GetPartition(vector<Jet>& V_JETs, vector<Jet>& ISR_JETs, 
-				      vector<Jet>& inputJETs, TVector3& MET, int algo){
+				      const vector<Jet>& inputJETs, const TVector3& MET, int algo){
   int Ninput = inputJETs.size();
   
   // DO 4 N^3 calculation
@@ -94,7 +95,7 @@ void AnalysisBase<Base>::GetPartition(vector<Jet>& V_JETs, vector<Jet>& ISR_JETs
     }
   }
   if(metric_max < 0){
-    cout << "Negative metric ... wtf" << endl;
+    cout << "Negative metric ... " << endl;
     return;
   }
   
@@ -145,20 +146,29 @@ template <class Base>
 void AnalysisBase<Base>::GetJets(vector<Jet>& JETs, double pt_cut, 
 				 double eta_cut, double btag_WP_cut) {}
 
+template <class Base>
+void AnalysisBase<Base>::GetMuons(vector<TLorentzVector>& MUs, 
+				  double pt_cut, double eta_cut) {}
+
+template <class Base>
+void AnalysisBase<Base>::GetElectrons(vector<TLorentzVector>& ELs, 
+				      double pt_cut, double eta_cut) {}
+
 /////////////////////////////////////////////////////////////////////
 // specialized template method instances for different ntuple formats
 /////////////////////////////////////////////////////////////////////
 
 ///////////////// HFntupleBase ///////////////////////////////////
 template <>
-double AnalysisBase<HFntupleBase>::GetEventWeight(){
+double AnalysisBase<SussexBase>::GetEventWeight(){
   if(pileupweight <= 0.)
     pileupweight = 1.;
   return XSecWeight*AnalysisWeight*btagSFCentral*1000.;
+  //return XSecWeight*AnalysisWeight*btagSFCentral*1000.*0.301190/0.33198; // for 400_227 temporarily
 }
 
 template <>
-TVector3 AnalysisBase<HFntupleBase>::GetMET(){
+TVector3 AnalysisBase<SussexBase>::GetMET(){
   TVector3 met;
   // units GeV -> GeV
   met.SetXYZ(MET_px, MET_py, 0.0);
@@ -166,8 +176,10 @@ TVector3 AnalysisBase<HFntupleBase>::GetMET(){
 }
 
 template <>
-void AnalysisBase<HFntupleBase>::GetJets(vector<Jet>& JETs, double pt_cut, 
+void AnalysisBase<SussexBase>::GetJets(vector<Jet>& JETs, double pt_cut, 
 					 double eta_cut, double btag_WP_cut){
+  JETs.clear();
+
   int Njet = jet_px->size();
   for(int i = 0; i < Njet; i++){
     Jet JET;
@@ -175,7 +187,8 @@ void AnalysisBase<HFntupleBase>::GetJets(vector<Jet>& JETs, double pt_cut,
     JET.P.SetPxPyPzE(jet_px->at(i)/1000., jet_py->at(i)/1000.,
 		     jet_pz->at(i)/1000., jet_e->at(i)/1000.);
     if((JET.P.Pt() >= pt_cut) && (fabs(JET.P.Eta()) < eta_cut || eta_cut < 0)){
-      if(jet_MV2c20->at(i) > btag_WP_cut && fabs(JET.P.Eta()) < 2.4)
+      //if(jet_MV2c20->at(i) > btag_WP_cut)
+      if(jet_MV2c10->at(i) > btag_WP_cut)
 	JET.btag = true;
       else
 	JET.btag = false;
@@ -184,5 +197,39 @@ void AnalysisBase<HFntupleBase>::GetJets(vector<Jet>& JETs, double pt_cut,
   }
 }
 
-template class AnalysisBase<HFntupleBase>;
+template <>
+void AnalysisBase<SussexBase>::GetMuons(vector<TLorentzVector>& MUs, 
+					double pt_cut, double eta_cut) {
+  MUs.clear();
 
+  int Nmu = mu_px->size();
+  for(int i = 0; i < Nmu; i++){
+    TLorentzVector MU;
+    // units MeV -> GeV
+    MU.SetPxPyPzE(mu_px->at(i)/1000., mu_py->at(i)/1000.,
+		  mu_pz->at(i)/1000., mu_e->at(i)/1000.);
+    if((MU.Pt() >= pt_cut) && (fabs(MU.Eta()) < eta_cut || eta_cut < 0)){
+      MUs.push_back(MU);
+    }
+  }
+}
+
+template <>
+void AnalysisBase<SussexBase>::GetElectrons(vector<TLorentzVector>& ELs, 
+					    double pt_cut, double eta_cut) {
+  ELs.clear();
+
+  int Nel = el_px->size();
+  for(int i = 0; i < Nel; i++){
+    TLorentzVector EL;
+    // units MeV -> GeV
+    EL.SetPxPyPzE(el_px->at(i)/1000., el_py->at(i)/1000.,
+		  el_pz->at(i)/1000., el_e->at(i)/1000.);
+    if((EL.Pt() >= pt_cut) && (fabs(EL.Eta()) < eta_cut || eta_cut < 0)){
+      ELs.push_back(EL);
+    }
+  }
+}
+
+template class AnalysisBase<HFntupleBase>;
+template class AnalysisBase<SussexBase>;

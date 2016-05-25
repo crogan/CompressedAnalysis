@@ -16,7 +16,7 @@
 #include <TH1D.h>
 #include <TStyle.h>
 
-#include "include/CompressedBase.hh"
+#include "include/SussexBase.hh"
 
 
 using namespace std;
@@ -26,6 +26,7 @@ vector<string> g_Tree;
 vector<int> g_Hist;
 vector<string> g_Title;
 vector<bool> g_Bkg;
+vector<int> g_Color;
 double g_Lumi;
 string g_PlotTitle;
 string g_Xname;
@@ -39,83 +40,131 @@ int style_list[4][10];
 
 void setstyle(int istyle);
 
-void Plot_1D_stack(){
+void Plot_1D_stack_HF(){
   setstyle(0);
-
-  g_PlotTitle = "t#bar{t} CR (0L)";
-  g_Lumi = 10.;
 
   int ihist = 0;
    
-  g_File.push_back("NTUPLES/BKG/Top.root");
-  g_Tree.push_back("CompressedAnalysis");
+  g_File.push_back("/Users/crogan/Dropbox/SAMPLES/SussexNt/Wjets.root");
+  g_Tree.push_back("HFntupleNONE");
   g_Hist.push_back(ihist);
-  g_Title.push_back("Top + X");
+  g_Title.push_back("W + jets");
   g_Bkg.push_back(true);
+  g_Color.push_back(kAzure+1);
   ihist++;
 
-  g_File.push_back("NTUPLES/BKG/QCD.root");
-  g_Tree.push_back("CompressedAnalysis");
+  g_File.push_back("/Users/crogan/Dropbox/SAMPLES/SussexNt/Top/ttbar.root");
+  g_Tree.push_back("HFntupleNONE");
   g_Hist.push_back(ihist);
-  g_Title.push_back("QCD multijets");
+  g_Title.push_back("t #bar{t}");
   g_Bkg.push_back(true);
+  g_Color.push_back(kGreen-9);
   ihist++;
 
-  g_File.push_back("NTUPLES/BKG/Wjets.root");
-  g_Tree.push_back("CompressedAnalysis");
+  g_File.push_back("/Users/crogan/Dropbox/SAMPLES/SussexNt/QCD.root");
+  g_Tree.push_back("HFntupleNONE");
   g_Hist.push_back(ihist);
-  g_File.push_back("NTUPLES/BKG/Zjets.root");
-  g_Tree.push_back("CompressedAnalysis");
-  g_Hist.push_back(ihist);
-  g_Title.push_back("V + jets");
+  g_Title.push_back("QCD");
   g_Bkg.push_back(true);
+  g_Color.push_back(10);
   ihist++;
 
-  g_File.push_back("NTUPLES/BKG/Diboson.root");
-  g_Tree.push_back("CompressedAnalysis");
+  g_File.push_back("/Users/crogan/Dropbox/SAMPLES/SussexNt/Top/SingleTop.root");
+  g_Tree.push_back("HFntupleNONE");
   g_Hist.push_back(ihist);
-  g_Title.push_back("Diboson");
+  g_Title.push_back("single top");
   g_Bkg.push_back(true);
+  g_Color.push_back(kGreen+3);
   ihist++;
 
-  g_File.push_back("NTUPLES/SIG/TT_250_77.root");
-  g_Tree.push_back("CompressedAnalysis");
+  g_File.push_back("/Users/crogan/Dropbox/SAMPLES/SussexNt/Zjets.root");
+  g_Tree.push_back("HFntupleNONE");
   g_Hist.push_back(ihist);
-  g_Title.push_back("m_{#tilde{t}} = 250, m_{#tilde{#chi}} = 77");
-  g_Bkg.push_back(false);
+  g_Title.push_back("Z + jets");
+  g_Bkg.push_back(true);
+  g_Color.push_back(603);
   ihist++;
 
-  g_File.push_back("NTUPLES/SIG/TT_300_127.root");
-  g_Tree.push_back("CompressedAnalysis");
+  g_File.push_back("/Users/crogan/Dropbox/SAMPLES/SussexNt/Diboson.root");
+  g_Tree.push_back("HFntupleNONE");
   g_Hist.push_back(ihist);
-  g_Title.push_back("m_{#tilde{t}} = 300, m_{#tilde{#chi}} = 127");
-  g_Bkg.push_back(false);
+  g_Title.push_back("di-boson");
+  g_Bkg.push_back(true);
+  g_Color.push_back(kYellow);
   ihist++;
 
-  g_File.push_back("NTUPLES/SIG/TT_350_150.root");
-  g_Tree.push_back("CompressedAnalysis");
+  g_File.push_back("/Users/crogan/Dropbox/SAMPLES/SussexNt/Top/ttbarV.root");
+  g_Tree.push_back("HFntupleNONE");
   g_Hist.push_back(ihist);
-  g_Title.push_back("m_{#tilde{t}} = 350, m_{#tilde{#chi}} = 150");
-  g_Bkg.push_back(false);
+  g_File.push_back("/Users/crogan/Dropbox/SAMPLES/SussexNt/Top/MadGraphPythia8EvtGen_A14NNPDF23_4topSM.root");
+  g_Tree.push_back("HFntupleNONE");
+  g_Hist.push_back(ihist);
+  g_File.push_back("/Users/crogan/Dropbox/SAMPLES/SussexNt/Top/MadGraphPythia8EvtGen_A14NNPDF23_ttbarWW.root");
+  g_Tree.push_back("HFntupleNONE");
+  g_Hist.push_back(ihist);
+  g_Title.push_back("Others");
+  g_Bkg.push_back(true);
+  g_Color.push_back(kRed+3);
   ihist++;
 
-  // g_File.push_back("NTUPLES/SIG/TT_500_327.root");
-  // g_Tree.push_back("CompressedAnalysis");
-  // g_Hist.push_back(ihist);
-  // g_Title.push_back("m_{#tilde{t}} = 500, m_{#tilde{#chi}} = 327");
-  // g_Bkg.push_back(false);
-  // ihist++;
-   
-  
+  g_File.push_back("/Users/crogan/Dropbox/SAMPLES/SussexNt/Signal/TT_250_77.root");
+   g_Tree.push_back("HFntupleNONE");
+   g_Hist.push_back(ihist);
+   g_Title.push_back("m_{#tilde{t}} = 250, m_{#tilde{#chi}} = 77");
+   g_Bkg.push_back(false);
+   g_Color.push_back(kMagenta+1);
+   ihist++;
+
+   g_File.push_back("/Users/crogan/Dropbox/SAMPLES/SussexNt/Signal/TT_300_127.root");
+   g_Tree.push_back("HFntupleNONE");
+   g_Hist.push_back(ihist);
+   g_Title.push_back("m_{#tilde{t}} = 300, m_{#tilde{#chi}} = 127");
+   g_Bkg.push_back(false);
+   g_Color.push_back(kRed+2);
+   ihist++;
+
+   g_File.push_back("/Users/crogan/Dropbox/SAMPLES/SussexNt/Signal/TT_350_150.root");
+   g_Tree.push_back("HFntupleNONE");
+   g_Hist.push_back(ihist);
+   g_Title.push_back("m_{#tilde{t}} = 350, m_{#tilde{#chi}} = 150");
+   g_Bkg.push_back(false);
+   g_Color.push_back(kBlack);
+   ihist++;
+
+   /*
+   g_File.push_back("/Users/crogan/Dropbox/SAMPLES/SussexNt/Signal/TT_500_327.root");
+   g_Tree.push_back("HFntupleNONE");
+   g_Hist.push_back(ihist);
+   g_Title.push_back("m_{#tilde{t}} = 500, m_{#tilde{#chi}} = 327");
+   g_Bkg.push_back(false);
+   ihist++;
+
+   g_File.push_back("/Users/crogan/Dropbox/SAMPLES/SussexNt/Signal/TT_450_250.root");
+   g_Tree.push_back("HFntupleNONE");
+   g_Hist.push_back(ihist);
+   g_Title.push_back("m_{#tilde{t}} = 450, m_{#tilde{#chi}} = 250");
+   g_Bkg.push_back(false);
+   ihist++;
+
+   g_File.push_back("/Users/crogan/Dropbox/SAMPLES/SussexNt/Signal/TT_500_300.root");
+   g_Tree.push_back("HFntupleNONE");
+   g_Hist.push_back(ihist);
+   g_Title.push_back("m_{#tilde{t}} = 500, m_{#tilde{#chi}} = 300");
+   g_Bkg.push_back(false);
+   ihist++;
+   */
 
 
   int Nsample = g_File.size();
   int Nhist = ihist;
 
+  g_PlotTitle = "CR0L (a)";
+  g_Lumi = 10.;
+
   g_Xname = "R_{ISR}";
   g_Xmin = 0.;
   g_Xmax = 1.;
-  g_NX = 30;
+  g_NX = 40;
 
 
   TH1D* hist[Nhist];
@@ -128,7 +177,7 @@ void Plot_1D_stack(){
     TChain* chain = new TChain(g_Tree[s].c_str());
     chain->Add(g_File[s].c_str());
 
-    CompressedBase* base = new CompressedBase(chain);
+    SussexBase* base = new SussexBase(chain);
 
     int Nentry = base->fChain->GetEntries();
 
@@ -138,71 +187,87 @@ void Plot_1D_stack(){
       if(e%(max(1,Nentry/10)) == 0)
 	cout << "event " << e << " | " << Nentry << endl;
 
-      if(!base->HLT_xe70_tc_lcw)
-       	continue;
-      
-      if(base->MET < 200.)
-       	continue;
-
-      if(fabs(base->dphi_MET_TrkMET) > acos(-1.)/3.)
+      if (!(base->truthMETfilter < 200 || base->RunNumber == 407012 || 
+	    base->RunNumber == 407019 || base->RunNumber == 407021) ) 
 	continue;
 
-      if(base->TrkMET < 30.)
-      	continue;
-      
-      if(base->PTISR < 400.)
+      if(base->HLT_xe70_tc_lcw < 1)
        	continue;
 
-      if(!base->LepVeto)
-      	 continue;
+      if(base->eT_miss < 200.)
+       	continue;
 
-      if(base->NbV < 1)
+      if(fabs(base->dPhi_met_trackmet) > acos(-1.)/3.)
+	continue;
+
+      if(fabs(base->dPhi_1jet) < 0.4 ||
+	 fabs(base->dPhi_2jet) < 0.4)
       	continue;
 
-      // if(base->NbISR < 1)
+      if(base->eT_miss_track < 30.)
+      	continue;
+
+      // if(base->nMu_baseline > 0 ||
+      // 	 base->nEl_baseline > 0)
+      // 	 continue;
+
+      if((base->nEl+base->nMu) != 1)
+      	continue;
+
+      if(base->pT_2jet < 80.)
+	continue;
+      
+      if(base->pT_3jet < 20.)
+	continue;
+ 
+      // if(base->RISR < 0.35)
+      //  	continue;
+
+      // if(base->PTISR < 400.)
+      //  	continue;
+
+      if(base->NbISR > 1)
+      	continue;
+
+      if(base->NbV > 0)
+      	continue;
+
+      // if(base->NjV < 1)
       // 	continue;
-
-      if(base->NjV < 4)
-      	continue;
 
       // if(base->pTbV1 < 40.)
       // 	continue;
 
-      // if(base->pTjV5 < 50.)
+      // if(base->pTjV4 > 50.)
       // 	continue;
 
-      if(base->MS > 250)
-       	 continue;
+      // if(base->MS > 300)
+      //  	 continue;
 
       // if(base->MS < 100)
       // 	 continue;
 
-      if(base->dphiMin2 < 0.4)
-      	continue;
+      // if(base->MV/base->MS > 0.6)
+      // 	 continue;
 
-      if(base->MV/base->MS > 0.6)
+      if(base->MT > 120.)
       	 continue;
+
+      if(base->pT_1lep < 20.)
+	continue;
+
+      if(base->mj0_12 > 60)
+	continue;
 
       // if(base->dphiISRI > 3.0)
       // 	continue;
 
-      // if(base->RISR < 0.6)
-      // 	 continue;
-
-      // if(base->RISR > 0.5)
-      // 	 continue;
-
-      // if(base->dphiMin2 < acos(-1.)/5.)
-      // 	continue;
-
-      // if(base->dphiCMI < 0.3)
-      // 	continue;
-
-      // if(acos(-1.) - base->dphiCMI < 0.1)
-      // 	continue;
+      double weight = base->XSecWeight*
+	base->AnalysisWeight*
+	base->btagSFCentral*1000.;
      
 
-      hist[g_Hist[s]]->Fill(base->RISR, base->weight*g_Lumi);
+      hist[g_Hist[s]]->Fill(base->RISR, weight*g_Lumi);
 
     }
 
@@ -239,7 +304,8 @@ void Plot_1D_stack(){
   }
   float width = hist[0]->GetBinWidth(1);
   char *yaxis = new char[100];
-  sprintf(yaxis,"Events / %f", width);
+  //sprintf(yaxis,"Events / %f", width);
+  sprintf(yaxis,"Events / bin", width);
 
   gStyle->SetOptTitle(0);
   gStyle->SetOptStat(0);
@@ -278,11 +344,11 @@ void Plot_1D_stack(){
   for(int i = 0; i < Nhist; i++){
     if(g_Bkg[i]){
       hist[i]->SetLineColor(kBlack);
-      if(style_list[1][Ntype[0]+1] > 1001) 
-	hist[i]->SetLineColor(color_list[1][Ntype[0]+1]);
+      // if(style_list[1][Ntype[0]+1] > 1001) 
+      // 	hist[i]->SetLineColor(color_list[1][Ntype[0]+1]);
       hist[i]->SetLineWidth(1.0);
-      hist[i]->SetFillColor(color_list[1][Ntype[0]+1]);
-      hist[i]->SetFillStyle(style_list[1][Ntype[0]+1]);
+      hist[i]->SetFillColor(g_Color[i]);
+      hist[i]->SetFillStyle(1001);
       Ntype[0]++;
       hist[i]->Draw("SAME");
     }
@@ -290,7 +356,7 @@ void Plot_1D_stack(){
 
   if(Ntype[0] > 0 && h_BKG){
     h_BKG->SetLineWidth(3.0);
-    h_BKG->SetLineColor(color_list[3][0]);
+    h_BKG->SetLineColor(kRed);
     h_BKG->SetMarkerSize(0);
     h_BKG->Draw("SAME");
   }
@@ -301,9 +367,9 @@ void Plot_1D_stack(){
       hist[i]->SetLineWidth(3.0);
       hist[i]->SetMarkerSize(0.);
       hist[i]->SetMarkerColor(kBlack);
-      hist[i]->SetLineColor(color_list[2][Ntype[1]]);
+      //hist[i]->SetLineColor(color_list[2][Ntype[1]]);
       hist[i]->SetLineStyle(style_list[2][Ntype[1]]);
-      hist[i]->SetLineColor(kRed+2);
+      hist[i]->SetLineColor(g_Color[i]);
       Ntype[1]++;
       hist[i]->Draw("SAME");
     }
@@ -315,7 +381,7 @@ void Plot_1D_stack(){
   leg->SetFillColor(kWhite);
   leg->SetLineColor(kWhite);
   leg->SetShadowColor(kWhite);
-  if(Ntype[0] > 0) leg->AddEntry(h_BKG, "Total Bkg.");
+  if(Ntype[0] > 0) leg->AddEntry(h_BKG, "SM total");
   for(int i = 0; i < Nhist; i++)
     if(g_Bkg[i])
       leg->AddEntry(hist[i],g_Title[i].c_str(),"F");

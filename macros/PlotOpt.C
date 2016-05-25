@@ -21,14 +21,14 @@ double g_minBKG;
 
 void PlotOpt(){
   // fixed background uncertainty (%)
-  g_deltaNbkg = 25;
+  g_deltaNbkg = 20.;
   // integrated luminosity (fb^-1)
   g_lumi = 10.;
   // minimum number of expected background events
   g_minBKG = 0.5;
 
-  TFile* input = new TFile("temp.root","READ");
-xc
+  TFile* input = new TFile("test.root","READ");
+
   int ParentMass = 500;
   int LSPMass    = 327;
 
@@ -232,7 +232,7 @@ xc
     l.SetTextFont(132);
     string bla = "#scale[0.6]{#int} #it{L dt} = "+to_string(int(g_lumi))+" fb^{-1},  #Delta_{N#scale[0.8]{bkg}} = ";
     bla += to_string(int(g_deltaNbkg))+" %";
-    l.DrawLatex(0.61,0.943,bla.c_str());
+    l.DrawLatex(0.55,0.943,bla.c_str());
   }
   
 }
