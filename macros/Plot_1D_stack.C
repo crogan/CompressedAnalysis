@@ -16,9 +16,11 @@
 #include <TH1D.h>
 #include <TStyle.h>
 
+#include "RestFrames/RestFrames.hh"
+
 #include "include/CompressedBase.hh"
 
-
+using namespace RestFrames;
 using namespace std;
 
 vector<string> g_File;
@@ -26,6 +28,7 @@ vector<string> g_Tree;
 vector<int> g_Hist;
 vector<string> g_Title;
 vector<bool> g_Bkg;
+vector<int> g_Color;
 double g_Lumi;
 string g_PlotTitle;
 string g_Xname;
@@ -33,89 +36,133 @@ double g_Xmin;
 double g_Xmax;
 double g_NX;
 
-TColor *icolor[9][2];
-int color_list[4][10];
-int style_list[4][10];
-
-void setstyle(int istyle);
-
 void Plot_1D_stack(){
-  setstyle(0);
-
-  g_PlotTitle = "t#bar{t} CR (0L)";
-  g_Lumi = 10.;
+  RFPlot::SetStyle();
 
   int ihist = 0;
    
-  g_File.push_back("NTUPLES/BKG/Top.root");
+  g_File.push_back("NTUPLES/BKG/Wjets.root");
   g_Tree.push_back("CompressedAnalysis");
   g_Hist.push_back(ihist);
-  g_Title.push_back("Top + X");
+  g_Title.push_back("W + jets");
   g_Bkg.push_back(true);
+  g_Color.push_back(kAzure+1);
+  ihist++;
+
+  g_File.push_back("NTUPLES/BKG/ttbar.root");
+  g_Tree.push_back("CompressedAnalysis");
+  g_Hist.push_back(ihist);
+  g_Title.push_back("t #bar{t}");
+  g_Bkg.push_back(true);
+  g_Color.push_back(kGreen-9);
   ihist++;
 
   g_File.push_back("NTUPLES/BKG/QCD.root");
   g_Tree.push_back("CompressedAnalysis");
   g_Hist.push_back(ihist);
-  g_Title.push_back("QCD multijets");
+  g_Title.push_back("QCD");
   g_Bkg.push_back(true);
+  g_Color.push_back(10);
   ihist++;
 
-  g_File.push_back("NTUPLES/BKG/Wjets.root");
+  g_File.push_back("NTUPLES/BKG/SingleTop.root");
   g_Tree.push_back("CompressedAnalysis");
   g_Hist.push_back(ihist);
+  g_Title.push_back("single top");
+  g_Bkg.push_back(true);
+  g_Color.push_back(kGreen+3);
+  ihist++;
+
   g_File.push_back("NTUPLES/BKG/Zjets.root");
   g_Tree.push_back("CompressedAnalysis");
   g_Hist.push_back(ihist);
-  g_Title.push_back("V + jets");
+  g_Title.push_back("Z + jets");
   g_Bkg.push_back(true);
+  g_Color.push_back(603);
   ihist++;
 
   g_File.push_back("NTUPLES/BKG/Diboson.root");
   g_Tree.push_back("CompressedAnalysis");
   g_Hist.push_back(ihist);
-  g_Title.push_back("Diboson");
+  g_Title.push_back("di-boson");
   g_Bkg.push_back(true);
+  g_Color.push_back(kYellow);
+  ihist++;
+
+  g_File.push_back("NTUPLES/BKG/ttbarV.root");
+  g_Tree.push_back("CompressedAnalysis");
+  g_Hist.push_back(ihist);
+  g_File.push_back("NTUPLES/BKG/SM4top.root");
+  g_Tree.push_back("CompressedAnalysis");
+  g_Hist.push_back(ihist);
+  g_File.push_back("NTUPLES/BKG/ttbarWW.root");
+  g_Tree.push_back("CompressedAnalysis");
+  g_Hist.push_back(ihist);
+  g_Title.push_back("Others");
+  g_Bkg.push_back(true);
+  g_Color.push_back(kRed+3);
   ihist++;
 
   g_File.push_back("NTUPLES/SIG/TT_250_77.root");
-  g_Tree.push_back("CompressedAnalysis");
-  g_Hist.push_back(ihist);
-  g_Title.push_back("m_{#tilde{t}} = 250, m_{#tilde{#chi}} = 77");
-  g_Bkg.push_back(false);
-  ihist++;
+   g_Tree.push_back("CompressedAnalysis");
+   g_Hist.push_back(ihist);
+   g_Title.push_back("m_{#tilde{t}} = 250, m_{#tilde{#chi}} = 77");
+   g_Bkg.push_back(false);
+   g_Color.push_back(kMagenta+1);
+   ihist++;
 
-  g_File.push_back("NTUPLES/SIG/TT_300_127.root");
-  g_Tree.push_back("CompressedAnalysis");
-  g_Hist.push_back(ihist);
-  g_Title.push_back("m_{#tilde{t}} = 300, m_{#tilde{#chi}} = 127");
-  g_Bkg.push_back(false);
-  ihist++;
+   g_File.push_back("NTUPLES/SIG/TT_300_127.root");
+   g_Tree.push_back("CompressedAnalysis");
+   g_Hist.push_back(ihist);
+   g_Title.push_back("m_{#tilde{t}} = 300, m_{#tilde{#chi}} = 127");
+   g_Bkg.push_back(false);
+   g_Color.push_back(kRed+2);
+   ihist++;
 
-  g_File.push_back("NTUPLES/SIG/TT_350_150.root");
-  g_Tree.push_back("CompressedAnalysis");
-  g_Hist.push_back(ihist);
-  g_Title.push_back("m_{#tilde{t}} = 350, m_{#tilde{#chi}} = 150");
-  g_Bkg.push_back(false);
-  ihist++;
+   g_File.push_back("NTUPLES/SIG/TT_350_177.root");
+   g_Tree.push_back("CompressedAnalysis");
+   g_Hist.push_back(ihist);
+   g_Title.push_back("m_{#tilde{t}} = 350, m_{#tilde{#chi}} = 177");
+   g_Bkg.push_back(false);
+   g_Color.push_back(kBlack);
+   ihist++;
 
-  // g_File.push_back("NTUPLES/SIG/TT_500_327.root");
-  // g_Tree.push_back("CompressedAnalysis");
-  // g_Hist.push_back(ihist);
-  // g_Title.push_back("m_{#tilde{t}} = 500, m_{#tilde{#chi}} = 327");
-  // g_Bkg.push_back(false);
-  // ihist++;
+   g_File.push_back("NTUPLES/SIG/TT_350_150.root");
+   g_Tree.push_back("CompressedAnalysis");
+   g_Hist.push_back(ihist);
+   g_Title.push_back("m_{#tilde{t}} = 350, m_{#tilde{#chi}} = 150");
+   g_Bkg.push_back(false);
+   g_Color.push_back(kGreen-1);
+   ihist++;
+
+   g_File.push_back("NTUPLES/SIG/TT_400_227.root");
+   g_Tree.push_back("CompressedAnalysis");
+   g_Hist.push_back(ihist);
+   g_Title.push_back("m_{#tilde{t}} = 400, m_{#tilde{#chi}} = 227");
+   g_Bkg.push_back(false);
+   g_Color.push_back(kCyan+2);
+   ihist++;
    
-  
+   g_File.push_back("NTUPLES/SIG/TT_500_327.root");
+   g_Tree.push_back("CompressedAnalysis");
+   g_Hist.push_back(ihist);
+   g_Title.push_back("m_{#tilde{t}} = 500, m_{#tilde{#chi}} = 327");
+   g_Bkg.push_back(false);
+   g_Color.push_back(kOrange+1);
+   ihist++;
+   
 
 
   int Nsample = g_File.size();
   int Nhist = ihist;
 
+  g_PlotTitle = "CR0L (a)";
+  g_Lumi = 10.;
+
   g_Xname = "R_{ISR}";
   g_Xmin = 0.;
-  g_Xmax = 1.;
-  g_NX = 30;
+  g_Xmax = acos(-1.);
+  g_NX = 20;
 
 
   TH1D* hist[Nhist];
@@ -138,71 +185,92 @@ void Plot_1D_stack(){
       if(e%(max(1,Nentry/10)) == 0)
 	cout << "event " << e << " | " << Nentry << endl;
 
-      if(!base->HLT_xe70_tc_lcw)
+      if(base->HLT_xe70_tc_lcw < 1)
        	continue;
-      
+
       if(base->MET < 200.)
        	continue;
 
-      if(fabs(base->dphi_MET_TrkMET) > acos(-1.)/3.)
-	continue;
+      // if(fabs(base->dphi_MET_TrkMET) > acos(-1.)/3.)
+      // 	continue;
 
-      if(base->TrkMET < 30.)
+      // if(base->dphiMin2 < 0.4)
+      // 	continue;
+
+      // if(base->TrkMET < 30.)
+      // 	continue;
+
+      // if(base->nMu_baseline > 0 ||
+      // 	 base->nEl_baseline > 0)
+      // 	 continue;
+
+      if((base->nEl+base->nMu) != 1)
+      	continue;
+
+      if(base->NlV < 1)
       	continue;
       
+      if(base->pT_2jet < 80.)
+	continue;
+      
+      // if(base->pT_3jet < 20.)
+      // 	continue;
+ 
+      // if(base->RISR < 0.35)
+      //  	continue;
+
       if(base->PTISR < 400.)
        	continue;
 
-      if(!base->LepVeto)
-      	 continue;
+      // if(base->NbISR > 1)
+      // 	continue;
 
       if(base->NbV < 1)
       	continue;
 
-      // if(base->NbISR < 1)
-      // 	continue;
-
-      if(base->NjV < 4)
+      if(base->NjV < 3)
       	continue;
 
-      // if(base->pTbV1 < 40.)
-      // 	continue;
+      if(base->pTbV1 < 40.)
+      	continue;
 
-      // if(base->pTjV5 < 50.)
-      // 	continue;
+      if(base->pTjV3 < 45.)
+      	continue;
 
-      if(base->MS > 250)
-       	 continue;
+      // if(base->MS > 300)
+      //  	 continue;
 
       // if(base->MS < 100)
       // 	 continue;
 
-      if(base->dphiMin2 < 0.4)
-      	continue;
+      // if(base->MV/base->MS > 0.6)
+      // 	 continue;
 
-      if(base->MV/base->MS > 0.6)
+      if(base->MT < 125.)
       	 continue;
 
-      // if(base->dphiISRI > 3.0)
+      // if(base->pT_1lep < 20.)
       // 	continue;
 
-      // if(base->RISR < 0.6)
-      // 	 continue;
-
-      // if(base->RISR > 0.5)
-      // 	 continue;
-
-      // if(base->dphiMin2 < acos(-1.)/5.)
+      // if(base->mj0_12 > 60)
       // 	continue;
 
-      // if(base->dphiCMI < 0.3)
+      // if(base->dRMinbl1 < 3.3)
       // 	continue;
 
-      // if(acos(-1.) - base->dphiCMI < 0.1)
+      if(base->dphiISRI < 2.95)
+      	continue;
+
+      // if(base->dphiCML1 > 1.5)
       // 	continue;
+
+      // if(base->dphiCMI > 2.5)
+      // 	continue;
+
+      double weight = base->weight;
      
 
-      hist[g_Hist[s]]->Fill(base->RISR, base->weight*g_Lumi);
+      hist[g_Hist[s]]->Fill(base->dphiCMI, weight*g_Lumi);
 
     }
 
@@ -239,7 +307,8 @@ void Plot_1D_stack(){
   }
   float width = hist[0]->GetBinWidth(1);
   char *yaxis = new char[100];
-  sprintf(yaxis,"Events / %f", width);
+  //sprintf(yaxis,"Events / %f", width);
+  sprintf(yaxis,"Events / bin", width);
 
   gStyle->SetOptTitle(0);
   gStyle->SetOptStat(0);
@@ -278,11 +347,11 @@ void Plot_1D_stack(){
   for(int i = 0; i < Nhist; i++){
     if(g_Bkg[i]){
       hist[i]->SetLineColor(kBlack);
-      if(style_list[1][Ntype[0]+1] > 1001) 
-	hist[i]->SetLineColor(color_list[1][Ntype[0]+1]);
+      // if(style_list[1][Ntype[0]+1] > 1001) 
+      // 	hist[i]->SetLineColor(color_list[1][Ntype[0]+1]);
       hist[i]->SetLineWidth(1.0);
-      hist[i]->SetFillColor(color_list[1][Ntype[0]+1]);
-      hist[i]->SetFillStyle(style_list[1][Ntype[0]+1]);
+      hist[i]->SetFillColor(g_Color[i]);
+      hist[i]->SetFillStyle(1001);
       Ntype[0]++;
       hist[i]->Draw("SAME");
     }
@@ -290,7 +359,7 @@ void Plot_1D_stack(){
 
   if(Ntype[0] > 0 && h_BKG){
     h_BKG->SetLineWidth(3.0);
-    h_BKG->SetLineColor(color_list[3][0]);
+    h_BKG->SetLineColor(kRed);
     h_BKG->SetMarkerSize(0);
     h_BKG->Draw("SAME");
   }
@@ -301,9 +370,8 @@ void Plot_1D_stack(){
       hist[i]->SetLineWidth(3.0);
       hist[i]->SetMarkerSize(0.);
       hist[i]->SetMarkerColor(kBlack);
-      hist[i]->SetLineColor(color_list[2][Ntype[1]]);
-      hist[i]->SetLineStyle(style_list[2][Ntype[1]]);
-      hist[i]->SetLineColor(kRed+2);
+      hist[i]->SetLineStyle(7);
+      hist[i]->SetLineColor(g_Color[i]);
       Ntype[1]++;
       hist[i]->Draw("SAME");
     }
@@ -315,7 +383,7 @@ void Plot_1D_stack(){
   leg->SetFillColor(kWhite);
   leg->SetLineColor(kWhite);
   leg->SetShadowColor(kWhite);
-  if(Ntype[0] > 0) leg->AddEntry(h_BKG, "Total Bkg.");
+  if(Ntype[0] > 0) leg->AddEntry(h_BKG, "SM total");
   for(int i = 0; i < Nhist; i++)
     if(g_Bkg[i])
       leg->AddEntry(hist[i],g_Title[i].c_str(),"F");
@@ -344,196 +412,3 @@ void Plot_1D_stack(){
 
 
 
-void setstyle(int istyle) {
-	
-  // For the canvas:
-  gStyle->SetCanvasBorderMode(0);
-  gStyle->SetCanvasColor(kWhite);
-  gStyle->SetCanvasDefH(300); //Height of canvas
-  gStyle->SetCanvasDefW(600); //Width of canvas
-  gStyle->SetCanvasDefX(0);   //POsition on screen
-  gStyle->SetCanvasDefY(0);
-	
-  // For the Pad:
-  gStyle->SetPadBorderMode(0);
-  // gStyle->SetPadBorderSize(Width_t size = 1);
-  gStyle->SetPadColor(kWhite);
-  gStyle->SetPadGridX(false);
-  gStyle->SetPadGridY(false);
-  gStyle->SetGridColor(0);
-  gStyle->SetGridStyle(3);
-  gStyle->SetGridWidth(1);
-	
-  // For the frame:
-  gStyle->SetFrameBorderMode(0);
-  gStyle->SetFrameBorderSize(1);
-  gStyle->SetFrameFillColor(0);
-  gStyle->SetFrameFillStyle(0);
-  gStyle->SetFrameLineColor(1);
-  gStyle->SetFrameLineStyle(1);
-  gStyle->SetFrameLineWidth(1);
-	
-  // set the paper & margin sizes
-  gStyle->SetPaperSize(20,26);
-  gStyle->SetPadTopMargin(0.065);
-  gStyle->SetPadRightMargin(0.065);
-  gStyle->SetPadBottomMargin(0.15);
-  gStyle->SetPadLeftMargin(0.17);
-	
-  // use large Times-Roman fonts
-  gStyle->SetTitleFont(132,"xyz");  // set the all 3 axes title font
-  gStyle->SetTitleFont(132," ");    // set the pad title font
-  gStyle->SetTitleSize(0.06,"xyz"); // set the 3 axes title size
-  gStyle->SetTitleSize(0.06," ");   // set the pad title size
-  gStyle->SetLabelFont(132,"xyz");
-  gStyle->SetLabelSize(0.05,"xyz");
-  gStyle->SetLabelColor(1,"xyz");
-  gStyle->SetTextFont(132);
-  gStyle->SetTextSize(0.08);
-  gStyle->SetStatFont(132);
-	
-  // use bold lines and markers
-  gStyle->SetMarkerStyle(8);
-  gStyle->SetHistLineWidth(1.85);
-  gStyle->SetLineStyleString(2,"[12 12]"); // postscript dashes
-	
-  //..Get rid of X error bars
-  gStyle->SetErrorX(0.001);
-	
-  // do not display any of the standard histogram decorations
-  gStyle->SetOptTitle(0);
-  gStyle->SetOptStat(0);
-  gStyle->SetOptFit(11111111);
-	
-  // put tick marks on top and RHS of plots
-  gStyle->SetPadTickX(1);
-  gStyle->SetPadTickY(1);
-	
-  // set a decent palette
-  gStyle->SetPalette(1);
-	
-  gStyle->cd();
-	
-  TColorWheel *w = new TColorWheel();
-	
-  icolor[0][1] = new TColor(1390, 0.90, 0.60, 0.60, ""); //red
-  icolor[0][0] = new TColor(1391, 0.70, 0.25, 0.25, "");
-  icolor[1][1] = new TColor(1392, 0.87, 0.87, 0.91, ""); //blue
-  icolor[1][0] = new TColor(1393, 0.59, 0.58, 0.91, "");
-  icolor[2][1] = new TColor(1394, 0.65, 0.55, 0.85, ""); //violet (gamma)
-  icolor[2][0] = new TColor(1395, 0.49, 0.26, 0.64, "");
-  icolor[3][1] = new TColor(1396, 0.95, 0.95, 0.60, ""); // yellow (alpha)
-  icolor[3][0] = new TColor(1397, 0.95, 0.95, 0.00, "");
-  icolor[4][1] = new TColor(1398, 0.75, 0.92, 0.68, ""); //green (2beta+gamma)
-  icolor[4][0] = new TColor(1399, 0.36, 0.57, 0.30, "");
-  icolor[5][1] = new TColor(1400, 0.97, 0.50, 0.09, ""); // orange
-  icolor[5][0] = new TColor(1401, 0.76, 0.34, 0.09, "");
-  icolor[6][1] = new TColor(1402, 0.97, 0.52, 0.75, ""); // pink
-  icolor[6][0] = new TColor(1403, 0.76, 0.32, 0.51, "");
-  icolor[7][1] = new TColor(1404, 0.49, 0.60, 0.82, ""); // dark blue (kpnn)
-  icolor[7][0] = new TColor(1405, 0.43, 0.48, 0.52, "");
-  icolor[8][1] = new TColor(1406, 0.70, 0.70, 0.70, "");  // black
-  icolor[8][0] = new TColor(1407, 0.40, 0.40, 0.40, "");
-	
-	
-  if(istyle == 0){
-		
-    //SM MC
-    color_list[3][0] = kCyan+3;
-		
-    //DATA
-    color_list[0][0] = 1;
-    color_list[0][1] = 2;
-    color_list[0][2] = 4;
-    style_list[0][0] = 20;
-    style_list[0][1] = 23;
-		
-    //BKG MC
-    color_list[1][0] = 0;
-    color_list[1][3] = kGreen-9; //Light green
-    color_list[1][5] = kOrange-2; //dark blue
-    color_list[1][4] = kGreen+3; //yellow
-    color_list[1][1] = kBlue-10; //light blue
-    color_list[1][2] = kBlue+4; //dark green
-    style_list[1][0] = 1001;
-    style_list[1][1] = 1001;
-    style_list[1][2] = 3002;
-    style_list[1][3] = 1001;
-    style_list[1][4] = 1001;
-    style_list[1][5] = 1001;
-		
-    //SIG MC
-    color_list[2][0] = 1;
-    color_list[2][1] = 1;
-    color_list[2][2] = 1;
-    style_list[2][0] = 2;
-    style_list[2][1] = 5;
-  }
-  if(istyle == 1){
-		
-    //SM MC
-    color_list[3][0] = kSpring+4;
-		
-    //DATA
-    color_list[0][0] = 1;
-    color_list[0][1] = 2;
-    color_list[0][2] = 4;
-    style_list[0][0] = 20;
-    style_list[0][1] = 23;
-		
-    //BKG MC
-    color_list[1][0] = 0;
-    color_list[1][1] = kGreen-9; //Light green
-    color_list[1][2] = kGreen+3; //dark blue
-    color_list[1][3] = kYellow-7; //yellow
-    color_list[1][4] = kBlue-10; //light blue
-    color_list[1][5] = kBlue+4; //dark blue
-    style_list[1][0] = 1001;
-    style_list[1][1] = 1001;
-    style_list[1][2] = 3002;
-    style_list[1][3] = 1001;
-    style_list[1][4] = 1001;
-    style_list[1][5] = 1001;
-		
-    //SIG MC
-    color_list[2][0] = 1;
-    color_list[2][1] = 1;
-    color_list[2][2] = 1;
-    style_list[2][0] = 2;
-    style_list[2][1] = 5;
-  }
-  if(istyle == 2){
-		
-    //SM MC
-    color_list[3][0] = kMagenta+2;
-		
-    //DATA
-    color_list[0][0] = 1;
-    color_list[0][1] = 2;
-    color_list[0][2] = 4;
-    style_list[0][0] = 20;
-    style_list[0][1] = 23;
-		
-    //BKG MC
-    color_list[1][0] = 0;
-    color_list[1][3] = kRed-9; //Light green
-    color_list[1][5] = kRed+3; //dark blue
-    color_list[1][4] = kYellow-7; //yellow
-    color_list[1][1] = kMagenta-10; //light blue
-    color_list[1][2] = kMagenta+4; //dark green
-    style_list[1][0] = 1001;
-    style_list[1][1] = 1001;
-    style_list[1][2] = 3002;
-    style_list[1][3] = 1001;
-    style_list[1][4] = 1001;
-    style_list[1][5] = 1001;
-		
-    //SIG MC
-    color_list[2][0] = 1;
-    color_list[2][1] = 1;
-    color_list[2][2] = 1;
-    style_list[2][0] = 2;
-    style_list[2][1] = 5;
-  }
-	
-}

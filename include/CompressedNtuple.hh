@@ -53,6 +53,8 @@ private:
   double m_dphiMin3;
   double m_dphiMinAll;
   double m_Mbb;
+  double m_dphiMinbl1;
+  double m_dphiMinbl2;
   double m_dRMinbl1;
   double m_dRMinbl2;
 

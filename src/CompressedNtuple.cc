@@ -103,6 +103,8 @@ void CompressedNtuple::InitOutputTree(){
   m_Tree->Branch("dphiMin3", &m_dphiMin3);
   m_Tree->Branch("dphiMinAll", &m_dphiMinAll);
   m_Tree->Branch("Mbb", &m_Mbb);
+  m_Tree->Branch("dphiMinbl1", &m_dphiMinbl1);
+  m_Tree->Branch("dphiMinbl2", &m_dphiMinbl2);
   m_Tree->Branch("dRMinbl1", &m_dRMinbl1);
   m_Tree->Branch("dRMinbl2", &m_dRMinbl2);
 
@@ -182,8 +184,8 @@ void CompressedNtuple::FillOutputTree(){
   //  double btag_cut = 0.6459; // 77% working point
   //  double btag_cut = 0.1758; // 85% working point
   vector<Jet> Jets; 
-  //GetJets(Jets, 20., 2.8, -0.4434); 
-  GetJets(Jets, 20., 2.8, 0.6459); 
+  GetJets(Jets, 20., 2.8, -0.4434); 
+  //GetJets(Jets, 20., 2.8, 0.6459); 
 
   vector<TLorentzVector> Muons; 
   GetMuons(Muons); 
@@ -315,7 +317,8 @@ void CompressedNtuple::FillOutputTree(){
   m_cosIL2 = 0;
   m_dRMinbl1 = -1.;
   m_dRMinbl2 = -1.;
-
+  m_dphiMinbl1 = -1.;
+  m_dphiMinbl2 = -1.;
   // assuming pT ordered muons
   for(int i = 0; i < int(Muons.size()); i++){
     if(VIS->GetFrame(muID[i]) == *V) // sparticle group
@@ -338,6 +341,9 @@ void CompressedNtuple::FillOutputTree(){
       for(int j = 0; j < int(Btags.size()); j++)
 	if(m_dRMinbl1 > Muons[i].DeltaR(Btags[j]) || m_dRMinbl1 < 0.)
 	  m_dRMinbl1 = Muons[i].DeltaR(Btags[j]);
+      for(int j = 0; j < int(Btags.size()); j++)
+	if(m_dphiMinbl1 > fabs(Muons[i].DeltaR(Btags[j])) || m_dphiMinbl1 < 0.)
+	  m_dphiMinbl1 = fabs(Muons[i].DeltaR(Btags[j]));
     }
     if(m_NlV+m_NlISR == 2){
       m_dphiCML2 = acos( vL_CM.Vect().Unit().Dot(vCM_lab.Vect().Unit()) );
@@ -348,6 +354,9 @@ void CompressedNtuple::FillOutputTree(){
       for(int j = 0; j < int(Btags.size()); j++)
 	if(m_dRMinbl2 > Muons[i].DeltaR(Btags[j]) || m_dRMinbl2 < 0.)
 	  m_dRMinbl2 = Muons[i].DeltaR(Btags[j]);
+      for(int j = 0; j < int(Btags.size()); j++)
+	if(m_dphiMinbl2 > fabs(Muons[i].DeltaR(Btags[j])) || m_dphiMinbl2 < 0.)
+	  m_dphiMinbl2 = fabs(Muons[i].DeltaR(Btags[j]));
     }
   }
   // assuming pT ordered electrons
@@ -372,6 +381,9 @@ void CompressedNtuple::FillOutputTree(){
       for(int j = 0; j < int(Btags.size()); j++)
 	if(m_dRMinbl1 > Elecs[i].DeltaR(Btags[j]) || m_dRMinbl1 < 0.)
 	  m_dRMinbl1 = Elecs[i].DeltaR(Btags[j]);
+      for(int j = 0; j < int(Btags.size()); j++)
+	if(m_dphiMinbl1 > fabs(Elecs[i].DeltaR(Btags[j])) || m_dphiMinbl1 < 0.)
+	  m_dphiMinbl1 = fabs(Elecs[i].DeltaR(Btags[j]));
     }
     if(m_NlV+m_NlISR == 2){
       m_dphiCML2 = acos( vL_CM.Vect().Unit().Dot(vCM_lab.Vect().Unit()) );
@@ -382,6 +394,9 @@ void CompressedNtuple::FillOutputTree(){
       for(int j = 0; j < int(Btags.size()); j++)
 	if(m_dRMinbl2 > Elecs[i].DeltaR(Btags[j]) || m_dRMinbl2 < 0.)
 	  m_dRMinbl2 = Elecs[i].DeltaR(Btags[j]);
+      for(int j = 0; j < int(Btags.size()); j++)
+	if(m_dphiMinbl2 > fabs(Elecs[i].DeltaR(Btags[j])) || m_dphiMinbl2 < 0.)
+	  m_dphiMinbl2 = fabs(Elecs[i].DeltaR(Btags[j]));
     }
   }
   

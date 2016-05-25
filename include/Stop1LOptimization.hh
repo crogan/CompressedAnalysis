@@ -1,14 +1,14 @@
-#ifndef StopOptimization_h
-#define StopOptimization_h
+#ifndef Stop1LOptimization_h
+#define Stop1LOptimization_h
 
 #include "OptimizationBase.hh"
 #include "CompressedBase.hh"
 
-class StopOptimization : public OptimizationBase<CompressedBase> {
+class Stop1LOptimization : public OptimizationBase<CompressedBase> {
 
 public:
-  StopOptimization();
-  virtual ~StopOptimization();
+  Stop1LOptimization();
+  virtual ~Stop1LOptimization();
 
 protected:
   virtual double GetEventWeight();

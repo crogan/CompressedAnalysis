@@ -187,8 +187,8 @@ void AnalysisBase<SussexBase>::GetJets(vector<Jet>& JETs, double pt_cut,
     JET.P.SetPxPyPzE(jet_px->at(i)/1000., jet_py->at(i)/1000.,
 		     jet_pz->at(i)/1000., jet_e->at(i)/1000.);
     if((JET.P.Pt() >= pt_cut) && (fabs(JET.P.Eta()) < eta_cut || eta_cut < 0)){
-      //if(jet_MV2c20->at(i) > btag_WP_cut)
-      if(jet_MV2c10->at(i) > btag_WP_cut)
+      if(jet_MV2c20->at(i) > btag_WP_cut)
+      //if(jet_MV2c10->at(i) > btag_WP_cut)
 	JET.btag = true;
       else
 	JET.btag = false;

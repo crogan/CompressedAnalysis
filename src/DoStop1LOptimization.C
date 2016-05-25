@@ -10,7 +10,7 @@
 #include <TTree.h>
 #include <TChain.h>
 
-#include "StopOptimization.hh"
+#include "Stop1LOptimization.hh"
 
 using namespace std;
 
@@ -37,8 +37,8 @@ int main(int argc, char* argv[]) {
   if ( argc < 3 ){
     cout << "Error at Input: please specify an signal file name/folder, a folder path for backgrounds"; 
     cout << " and an output filename" << endl; 
-    cout << "Example:   ./DoStopOptimization.x -sfile=signal.root -bfold=bkg_folder -ofile=output.root -Njob=1 -ijob=0" << endl;
-    cout << "Example:   ./DoStopOptimization.x -sfold=sig_folder -bfold=bkg_folder -ofile=output.root -Njob=1 -ijob=0" << endl;
+    cout << "Example:   ./DoStop1LOptimization.x -sfile=signal.root -bfold=bkg_folder -ofile=output.root -Njob=1 -ijob=0" << endl;
+    cout << "Example:   ./DoStop1LOptimization.x -sfold=sig_folder -bfold=bkg_folder -ofile=output.root -Njob=1 -ijob=0" << endl;
     return 1;
   }
 
@@ -70,7 +70,7 @@ int main(int argc, char* argv[]) {
 
   gROOT->ProcessLine("#include <vector>");
 
-  StopOptimization Optimization;
+  Stop1LOptimization Optimization;
   
   if(GOT_SIG_FILE){
     std::cout << "Chaining signal tree from input file: " << sigFileName << std::endl;

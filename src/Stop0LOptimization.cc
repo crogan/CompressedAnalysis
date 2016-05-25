@@ -1,18 +1,18 @@
-#include "StopOptimization.hh"
+#include "Stop0LOptimization.hh"
 
-StopOptimization::StopOptimization()
+Stop0LOptimization::Stop0LOptimization()
   : OptimizationBase<CompressedBase>() {}
 
-StopOptimization::~StopOptimization() {}
+Stop0LOptimization::~Stop0LOptimization() {}
 
-double StopOptimization::GetEventWeight(){
+double Stop0LOptimization::GetEventWeight(){
   if(m_Base)
     return m_Base->weight;
   else
     return 0.;
 }
 
-bool StopOptimization::PassBaseline(){
+bool Stop0LOptimization::PassBaseline(){
 
   if(!m_Base->HLT_xe70_tc_lcw)
     return false;
@@ -49,7 +49,7 @@ bool StopOptimization::PassBaseline(){
   return true;
 }
 
-void StopOptimization::InitCuts(){
+void Stop0LOptimization::InitCuts(){
   m_CutMin.clear();
   m_CutMax.clear();
   m_CutN.clear();
@@ -112,7 +112,7 @@ void StopOptimization::InitCuts(){
   m_N_Cut = m_CutN.size();
 }
 
-int StopOptimization::EvaluateCuts(){
+int Stop0LOptimization::EvaluateCuts(){
   int icut = 0;
 
   // if(m_Base->NjV < m_CutVal[icut])

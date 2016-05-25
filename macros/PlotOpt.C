@@ -25,12 +25,12 @@ void PlotOpt(){
   // integrated luminosity (fb^-1)
   g_lumi = 10.;
   // minimum number of expected background events
-  g_minBKG = 0.5;
+  g_minBKG = 0.01;
 
   TFile* input = new TFile("test.root","READ");
 
-  int ParentMass = 500;
-  int LSPMass    = 327;
+  int ParentMass = 250;
+  int LSPMass    = 77;
 
   double Sscale = 1.;
   double Bscale = 1.;

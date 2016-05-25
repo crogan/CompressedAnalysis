@@ -1,8 +1,8 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Wed Apr 20 09:51:11 2016 by ROOT version 5.34/25
+// Tue May 24 23:51:15 2016 by ROOT version 5.34/34
 // from TTree CompressedAnalysis/CompressedAnalysis
-// found on file: CompressedNtuple.root
+// found on file: BKG/ttbar.root
 //////////////////////////////////////////////////////////
 
 #ifndef CompressedBase_h
@@ -22,17 +22,32 @@ public :
    Int_t           fCurrent; //!current Tree number in a TChain
 
    // Declaration of leaf types
-   Double_t        weight;
    Double_t        MET;
    Double_t        TrkMET;
    Double_t        dphi_MET_TrkMET;
    Bool_t          HLT_xe70_tc_lcw;
+   Double_t        pT_1jet;
+   Double_t        pT_2jet;
+   Double_t        pT_3jet;
+   Double_t        pT_4jet;
+   Double_t        mj0_12;
+   Double_t        mj1_12;
+   Bool_t          LepVeto;
+   Bool_t          TauVeto;
+   Int_t           nEl;
+   Int_t           nMu;
+   Double_t        MT;
+   Double_t        pT_1lep;
+   Double_t        pT_2lep;
+   Double_t        weight;
+   Double_t        HT;
    Double_t        dphiMin1;
    Double_t        dphiMin2;
    Double_t        dphiMin3;
    Double_t        dphiMinAll;
-   Bool_t          LepVeto;
-   Bool_t          TauVeto;
+   Double_t        Mbb;
+   Double_t        dRMinbl1;
+   Double_t        dRMinbl2;
    Double_t        PTISR;
    Double_t        PTCM;
    Double_t        RISR;
@@ -40,8 +55,14 @@ public :
    Double_t        MS;
    Double_t        MISR;
    Double_t        MV;
+   Double_t        MW1;
+   Double_t        MW2;
    Double_t        dphiCMI;
    Double_t        dphiISRI;
+   Double_t        dphiCML1;
+   Double_t        dphiCML2;
+   Double_t        cosIL1;
+   Double_t        cosIL2;
    Double_t        pTjV1;
    Double_t        pTjV2;
    Double_t        pTjV3;
@@ -54,19 +75,36 @@ public :
    Int_t           NbISR;
    Int_t           NjV;
    Int_t           NjISR;
+   Int_t           NlV;
+   Int_t           NlISR;
 
    // List of branches
-   TBranch        *b_weight;   //!
    TBranch        *b_MET;   //!
    TBranch        *b_TrkMET;   //!
    TBranch        *b_dphi_MET_TrkMET;   //!
    TBranch        *b_HLT_xe70_tc_lcw;   //!
+   TBranch        *b_pT_1jet;   //!
+   TBranch        *b_pT_2jet;   //!
+   TBranch        *b_pT_3jet;   //!
+   TBranch        *b_pT_4jet;   //!
+   TBranch        *b_mj0_12;   //!
+   TBranch        *b_mj1_12;   //!
+   TBranch        *b_LepVeto;   //!
+   TBranch        *b_TauVeto;   //!
+   TBranch        *b_nEl;   //!
+   TBranch        *b_nMu;   //!
+   TBranch        *b_MT;   //!
+   TBranch        *b_pT_1lep;   //!
+   TBranch        *b_pT_2lep;   //!
+   TBranch        *b_weight;   //!
+   TBranch        *b_HT;   //!
    TBranch        *b_dphiMin1;   //!
    TBranch        *b_dphiMin2;   //!
    TBranch        *b_dphiMin3;   //!
    TBranch        *b_dphiMinAll;   //!
-   TBranch        *b_LepVeto;   //!
-   TBranch        *b_TauVeto;   //!
+   TBranch        *b_Mbb;   //!
+   TBranch        *b_dRMinbl1;   //!
+   TBranch        *b_dRMinbl2;   //!
    TBranch        *b_PTISR;   //!
    TBranch        *b_PTCM;   //!
    TBranch        *b_RISR;   //!
@@ -74,8 +112,14 @@ public :
    TBranch        *b_MS;   //!
    TBranch        *b_MISR;   //!
    TBranch        *b_MV;   //!
+   TBranch        *b_MW1;   //!
+   TBranch        *b_MW2;   //!
    TBranch        *b_dphiCMI;   //!
    TBranch        *b_dphiISRI;   //!
+   TBranch        *b_dphiCML1;   //!
+   TBranch        *b_dphiCML2;   //!
+   TBranch        *b_cosIL1;   //!
+   TBranch        *b_cosIL2;   //!
    TBranch        *b_pTjV1;   //!
    TBranch        *b_pTjV2;   //!
    TBranch        *b_pTjV3;   //!
@@ -88,6 +132,8 @@ public :
    TBranch        *b_NbISR;   //!
    TBranch        *b_NjV;   //!
    TBranch        *b_NjISR;   //!
+   TBranch        *b_NlV;   //!
+   TBranch        *b_NlISR;   //!
 
    CompressedBase(TTree *tree=0);
    virtual ~CompressedBase();
@@ -106,9 +152,9 @@ inline CompressedBase::CompressedBase(TTree *tree) : fChain(0)
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
    if (tree == 0) {
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("CompressedNtuple.root");
+      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("BKG/ttbar.root");
       if (!f || !f->IsOpen()) {
-         f = new TFile("CompressedNtuple.root");
+         f = new TFile("BKG/ttbar.root");
       }
       f->GetObject("CompressedAnalysis",tree);
 
@@ -157,17 +203,32 @@ inline void CompressedBase::Init(TTree *tree)
    fCurrent = -1;
    fChain->SetMakeClass(1);
 
-   fChain->SetBranchAddress("weight", &weight, &b_weight);
    fChain->SetBranchAddress("MET", &MET, &b_MET);
    fChain->SetBranchAddress("TrkMET", &TrkMET, &b_TrkMET);
    fChain->SetBranchAddress("dphi_MET_TrkMET", &dphi_MET_TrkMET, &b_dphi_MET_TrkMET);
    fChain->SetBranchAddress("HLT_xe70_tc_lcw", &HLT_xe70_tc_lcw, &b_HLT_xe70_tc_lcw);
+   fChain->SetBranchAddress("pT_1jet", &pT_1jet, &b_pT_1jet);
+   fChain->SetBranchAddress("pT_2jet", &pT_2jet, &b_pT_2jet);
+   fChain->SetBranchAddress("pT_3jet", &pT_3jet, &b_pT_3jet);
+   fChain->SetBranchAddress("pT_4jet", &pT_4jet, &b_pT_4jet);
+   fChain->SetBranchAddress("mj0_12", &mj0_12, &b_mj0_12);
+   fChain->SetBranchAddress("mj1_12", &mj1_12, &b_mj1_12);
+   fChain->SetBranchAddress("LepVeto", &LepVeto, &b_LepVeto);
+   fChain->SetBranchAddress("TauVeto", &TauVeto, &b_TauVeto);
+   fChain->SetBranchAddress("nEl", &nEl, &b_nEl);
+   fChain->SetBranchAddress("nMu", &nMu, &b_nMu);
+   fChain->SetBranchAddress("MT", &MT, &b_MT);
+   fChain->SetBranchAddress("pT_1lep", &pT_1lep, &b_pT_1lep);
+   fChain->SetBranchAddress("pT_2lep", &pT_2lep, &b_pT_2lep);
+   fChain->SetBranchAddress("weight", &weight, &b_weight);
+   fChain->SetBranchAddress("HT", &HT, &b_HT);
    fChain->SetBranchAddress("dphiMin1", &dphiMin1, &b_dphiMin1);
    fChain->SetBranchAddress("dphiMin2", &dphiMin2, &b_dphiMin2);
    fChain->SetBranchAddress("dphiMin3", &dphiMin3, &b_dphiMin3);
    fChain->SetBranchAddress("dphiMinAll", &dphiMinAll, &b_dphiMinAll);
-   fChain->SetBranchAddress("LepVeto", &LepVeto, &b_LepVeto);
-   fChain->SetBranchAddress("TauVeto", &TauVeto, &b_TauVeto);
+   fChain->SetBranchAddress("Mbb", &Mbb, &b_Mbb);
+   fChain->SetBranchAddress("dRMinbl1", &dRMinbl1, &b_dRMinbl1);
+   fChain->SetBranchAddress("dRMinbl2", &dRMinbl2, &b_dRMinbl2);
    fChain->SetBranchAddress("PTISR", &PTISR, &b_PTISR);
    fChain->SetBranchAddress("PTCM", &PTCM, &b_PTCM);
    fChain->SetBranchAddress("RISR", &RISR, &b_RISR);
@@ -175,8 +236,14 @@ inline void CompressedBase::Init(TTree *tree)
    fChain->SetBranchAddress("MS", &MS, &b_MS);
    fChain->SetBranchAddress("MISR", &MISR, &b_MISR);
    fChain->SetBranchAddress("MV", &MV, &b_MV);
+   fChain->SetBranchAddress("MW1", &MW1, &b_MW1);
+   fChain->SetBranchAddress("MW2", &MW2, &b_MW2);
    fChain->SetBranchAddress("dphiCMI", &dphiCMI, &b_dphiCMI);
    fChain->SetBranchAddress("dphiISRI", &dphiISRI, &b_dphiISRI);
+   fChain->SetBranchAddress("dphiCML1", &dphiCML1, &b_dphiCML1);
+   fChain->SetBranchAddress("dphiCML2", &dphiCML2, &b_dphiCML2);
+   fChain->SetBranchAddress("cosIL1", &cosIL1, &b_cosIL1);
+   fChain->SetBranchAddress("cosIL2", &cosIL2, &b_cosIL2);
    fChain->SetBranchAddress("pTjV1", &pTjV1, &b_pTjV1);
    fChain->SetBranchAddress("pTjV2", &pTjV2, &b_pTjV2);
    fChain->SetBranchAddress("pTjV3", &pTjV3, &b_pTjV3);
@@ -189,6 +256,8 @@ inline void CompressedBase::Init(TTree *tree)
    fChain->SetBranchAddress("NbISR", &NbISR, &b_NbISR);
    fChain->SetBranchAddress("NjV", &NjV, &b_NjV);
    fChain->SetBranchAddress("NjISR", &NjISR, &b_NjISR);
+   fChain->SetBranchAddress("NlV", &NlV, &b_NlV);
+   fChain->SetBranchAddress("NlISR", &NlISR, &b_NlISR);
    Notify();
 }
 
