@@ -122,6 +122,8 @@ void CompressedNtuple::InitOutputTree(){
   m_Tree->Branch("dphiISRI", &m_dphiISRI);
   m_Tree->Branch("dphiCML1", &m_dphiCML1);
   m_Tree->Branch("dphiCML2", &m_dphiCML2);
+  m_Tree->Branch("dphiSL1", &m_dphiSL1);
+  m_Tree->Branch("dphiSL2", &m_dphiSL2);
   m_Tree->Branch("cosIL1", &m_cosIL1);
   m_Tree->Branch("cosIL2", &m_cosIL2);
   m_Tree->Branch("pTjV1", &m_pTjV1);
@@ -145,7 +147,7 @@ void CompressedNtuple::FillOutputTree(){
 
   // MET filter
   if (!(truthMETfilter < 200 || RunNumber == 407012 || 
-	RunNumber == 407019 || RunNumber == 407021) ) 
+  	RunNumber == 407019 || RunNumber == 407021) ) 
     return;
 
   // Event cleaning, GRL, cosmic mu baseline requirements
@@ -184,8 +186,8 @@ void CompressedNtuple::FillOutputTree(){
   //  double btag_cut = 0.6459; // 77% working point
   //  double btag_cut = 0.1758; // 85% working point
   vector<Jet> Jets; 
-  GetJets(Jets, 20., 2.8, -0.4434); 
-  //GetJets(Jets, 20., 2.8, 0.6459); 
+  GetJets(Jets, 20., 2.8, -0.4434);  //mc15b
+  //GetJets(Jets, 20., 2.8, 0.6459); //mc15c
 
   vector<TLorentzVector> Muons; 
   GetMuons(Muons); 
@@ -313,6 +315,8 @@ void CompressedNtuple::FillOutputTree(){
   m_MW2 = 0;
   m_dphiCML1 = 0;
   m_dphiCML2 = 0;
+  m_dphiSL1 = 0;
+  m_dphiSL2 = 0;
   m_cosIL1 = 0;
   m_cosIL2 = 0;
   m_dRMinbl1 = -1.;
@@ -329,15 +333,21 @@ void CompressedNtuple::FillOutputTree(){
     TLorentzVector lep;
     lep.SetPtEtaPhiM(Muons[i].Pt(), 0.0,
 		     Muons[i].Phi(), max(0.,Muons[i].M()));
-    TLorentzVector vL_CM = CM->GetFourVector(lep);
+    TLorentzVector vL_CM   = CM->GetFourVector(lep);
+    TLorentzVector vL_S    = S->GetFourVector(lep);
     TLorentzVector vCM_lab = CM->GetFourVector();
-    TLorentzVector vI_CM = I->GetFourVector(*CM);
+    TLorentzVector vS_CM   = S->GetFourVector(*CM);
+    TLorentzVector vI_S    = I->GetFourVector(*S);
     if(m_NlV+m_NlISR == 1){
       m_dphiCML1 = acos( vL_CM.Vect().Unit().Dot(vCM_lab.Vect().Unit()) );
-      m_MW1 = (vL_CM + vI_CM).M();
-      TVector3 boostLI = (vL_CM + vI_CM).BoostVector();
-      vL_CM.Boost(-boostLI); 
-      m_cosIL1 = -boostLI.Unit().Dot(vL_CM.Vect().Unit());
+      
+      m_dphiSL1 = acos( vL_S.Vect().Unit().Dot(vS_CM.Vect().Unit()) );
+
+      m_MW1 = (vL_S + vI_S).M();
+      TVector3 boostLI = (vL_S + vI_S).BoostVector();
+      vL_S.Boost(-boostLI); 
+      m_cosIL1 = -boostLI.Unit().Dot(vL_S.Vect().Unit());
+      
       for(int j = 0; j < int(Btags.size()); j++)
 	if(m_dRMinbl1 > Muons[i].DeltaR(Btags[j]) || m_dRMinbl1 < 0.)
 	  m_dRMinbl1 = Muons[i].DeltaR(Btags[j]);
@@ -347,10 +357,14 @@ void CompressedNtuple::FillOutputTree(){
     }
     if(m_NlV+m_NlISR == 2){
       m_dphiCML2 = acos( vL_CM.Vect().Unit().Dot(vCM_lab.Vect().Unit()) );
-      m_MW2 = (vL_CM + vI_CM).M();
-      TVector3 boostLI = (vL_CM + vI_CM).BoostVector();
-      vL_CM.Boost(-boostLI); 
-      m_cosIL2 = -boostLI.Unit().Dot(vL_CM.Vect().Unit());
+      
+      m_dphiSL2 = acos( vL_S.Vect().Unit().Dot(vS_CM.Vect().Unit()) );
+
+      m_MW2 = (vL_S + vI_S).M();
+      TVector3 boostLI = (vL_S + vI_S).BoostVector();
+      vL_S.Boost(-boostLI); 
+      m_cosIL2 = -boostLI.Unit().Dot(vL_S.Vect().Unit());
+
       for(int j = 0; j < int(Btags.size()); j++)
 	if(m_dRMinbl2 > Muons[i].DeltaR(Btags[j]) || m_dRMinbl2 < 0.)
 	  m_dRMinbl2 = Muons[i].DeltaR(Btags[j]);
@@ -369,15 +383,21 @@ void CompressedNtuple::FillOutputTree(){
     TLorentzVector lep;
     lep.SetPtEtaPhiM(Elecs[i].Pt(), 0.0,
 		     Elecs[i].Phi(), max(0.,Elecs[i].M()));
-    TLorentzVector vL_CM = CM->GetFourVector(lep);
+    TLorentzVector vL_CM   = CM->GetFourVector(lep);
+    TLorentzVector vL_S    = S->GetFourVector(lep);
     TLorentzVector vCM_lab = CM->GetFourVector();
-    TLorentzVector vI_CM = I->GetFourVector(*CM);
+    TLorentzVector vS_CM   = S->GetFourVector(*CM);
+    TLorentzVector vI_S    = I->GetFourVector(*S);
     if(m_NlV+m_NlISR == 1){
       m_dphiCML1 = acos( vL_CM.Vect().Unit().Dot(vCM_lab.Vect().Unit()) );
-      m_MW1 = (vL_CM + vI_CM).M();
-      TVector3 boostLI = (vL_CM + vI_CM).BoostVector();
-      vL_CM.Boost(-boostLI); 
-      m_cosIL1 = -boostLI.Unit().Dot(vL_CM.Vect().Unit());
+      
+      m_dphiSL1 = acos( vL_S.Vect().Unit().Dot(vS_CM.Vect().Unit()) );
+
+      m_MW1 = (vL_S + vI_S).M();
+      TVector3 boostLI = (vL_S + vI_S).BoostVector();
+      vL_S.Boost(-boostLI); 
+      m_cosIL1 = -boostLI.Unit().Dot(vL_S.Vect().Unit());
+
       for(int j = 0; j < int(Btags.size()); j++)
 	if(m_dRMinbl1 > Elecs[i].DeltaR(Btags[j]) || m_dRMinbl1 < 0.)
 	  m_dRMinbl1 = Elecs[i].DeltaR(Btags[j]);
@@ -387,10 +407,14 @@ void CompressedNtuple::FillOutputTree(){
     }
     if(m_NlV+m_NlISR == 2){
       m_dphiCML2 = acos( vL_CM.Vect().Unit().Dot(vCM_lab.Vect().Unit()) );
-      m_MW2 = (vL_CM + vI_CM).M();
-      TVector3 boostLI = (vL_CM + vI_CM).BoostVector();
-      vL_CM.Boost(-boostLI); 
-      m_cosIL2 = -boostLI.Unit().Dot(vL_CM.Vect().Unit());
+      
+      m_dphiSL2 = acos( vL_S.Vect().Unit().Dot(vS_CM.Vect().Unit()) );
+
+      m_MW2 = (vL_S + vI_S).M();
+      TVector3 boostLI = (vL_S + vI_S).BoostVector();
+      vL_S.Boost(-boostLI); 
+      m_cosIL2 = -boostLI.Unit().Dot(vL_S.Vect().Unit());
+
       for(int j = 0; j < int(Btags.size()); j++)
 	if(m_dRMinbl2 > Elecs[i].DeltaR(Btags[j]) || m_dRMinbl2 < 0.)
 	  m_dRMinbl2 = Elecs[i].DeltaR(Btags[j]);
@@ -429,9 +453,9 @@ void CompressedNtuple::FillOutputTree(){
     m_dphiISRI = fabs(vP_ISR.DeltaPhi(vP_I));
 
     // SussexBase w/ b-tagging
-    if(m_NbV+m_NbISR != NbV+NbISR){
-      cout << m_NbV << " " << NbV << endl;
-    }
+    // if(m_NbV+m_NbISR != NbV+NbISR){
+    //   cout << m_NbV << " " << NbV << endl;
+    // }
     // m_pTbV1 = pTbV1;
     // m_pTbV2 = pTsbV2;
   }

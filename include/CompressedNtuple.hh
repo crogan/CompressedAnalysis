@@ -88,6 +88,8 @@ private:
   double m_MW2;
   double m_dphiCML1;
   double m_dphiCML2;
+  double m_dphiSL1;
+  double m_dphiSL2;
   double m_cosIL1;
   double m_cosIL2;
   
