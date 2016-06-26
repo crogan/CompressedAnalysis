@@ -3,6 +3,7 @@
 #include "AnalysisBase.hh"
 #include "HFntupleBase.hh"
 #include "SussexBase.hh"
+#include "HiggsinoBase.hh"
 
 using namespace std;
 
@@ -158,7 +159,7 @@ void AnalysisBase<Base>::GetElectrons(vector<TLorentzVector>& ELs,
 // specialized template method instances for different ntuple formats
 /////////////////////////////////////////////////////////////////////
 
-///////////////// HFntupleBase ///////////////////////////////////
+///////////////// SussexBase ///////////////////////////////////
 template <>
 double AnalysisBase<SussexBase>::GetEventWeight(){
   if(pileupweight <= 0.)
@@ -231,5 +232,77 @@ void AnalysisBase<SussexBase>::GetElectrons(vector<TLorentzVector>& ELs,
   }
 }
 
+///////////////// HiggsinoBase ///////////////////////////////////
+template <>
+double AnalysisBase<HiggsinoBase>::GetEventWeight(){
+  if(pileupWeight <= 0.)
+    pileupWeight = 1.;
+  return sampleWeight*eventWeight;
+}
+
+template <>
+TVector3 AnalysisBase<HiggsinoBase>::GetMET(){
+  TVector3 met;
+  met.SetXYZ(MET*cos(MET_phi), MET*sin(MET_phi), 0.0);
+  return met;
+}
+
+template <>
+void AnalysisBase<HiggsinoBase>::GetJets(vector<Jet>& JETs, double pt_cut, 
+					 double eta_cut, double btag_WP_cut){
+  JETs.clear();
+
+  int Njet = jet_pT->size();
+  for(int i = 0; i < Njet; i++){
+    Jet JET;
+    // units MeV -> GeV
+    JET.P.SetPtEtaPhiE(jet_pT->at(i), jet_eta->at(i),
+		       jet_phi->at(i), jet_E->at(i));
+    if((JET.P.Pt() >= pt_cut) && (fabs(JET.P.Eta()) < eta_cut || eta_cut < 0)){
+      //if(jet_MV2c20->at(i) > btag_WP_cut)
+      if(jet_btag->at(i) == 1)
+	JET.btag = true;
+      else
+	JET.btag = false;
+      JETs.push_back(JET);
+    }
+  }
+}
+
+template <>
+void AnalysisBase<HiggsinoBase>::GetMuons(vector<TLorentzVector>& MUs, 
+					double pt_cut, double eta_cut) {
+  MUs.clear();
+
+  int Nmu = mu_pT->size();
+  for(int i = 0; i < Nmu; i++){
+    TLorentzVector MU;
+    // units MeV -> GeV
+    MU.SetPtEtaPhiE(mu_pT->at(i), mu_eta->at(i),
+		    mu_phi->at(i), mu_E->at(i));
+    if((MU.Pt() >= pt_cut) && (fabs(MU.Eta()) < eta_cut || eta_cut < 0)){
+      MUs.push_back(MU);
+    }
+  }
+}
+
+template <>
+void AnalysisBase<HiggsinoBase>::GetElectrons(vector<TLorentzVector>& ELs, 
+					    double pt_cut, double eta_cut) {
+  ELs.clear();
+
+  int Nel = el_pT->size();
+  for(int i = 0; i < Nel; i++){
+    TLorentzVector EL;
+    EL.SetPtEtaPhiE(el_pT->at(i), el_phi->at(i),
+		  el_eta->at(i), el_E->at(i));
+    if((EL.Pt() >= pt_cut) && (fabs(EL.Eta()) < eta_cut || eta_cut < 0)){
+      ELs.push_back(EL);
+    }
+  }
+}
+
+
 template class AnalysisBase<HFntupleBase>;
 template class AnalysisBase<SussexBase>;
+template class AnalysisBase<HiggsinoBase>;

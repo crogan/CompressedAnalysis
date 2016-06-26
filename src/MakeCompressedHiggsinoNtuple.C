@@ -11,7 +11,7 @@
 #include <TChain.h>
 #include <TList.h>
 
-#include "CompressedNtuple.hh"
+#include "CompressedHiggsinoNtuple.hh"
 
 using namespace std;
 
@@ -29,9 +29,9 @@ int main(int argc, char* argv[]) {
   if ( argc < 2 ){
     cout << "Error at Input: please specify an input file name, a list of input ROOT files and/or a folder path"; 
     cout << " and an output filename:" << endl; 
-    cout << "  Example:      ./MakeCompressedNtuple.x -ifile=input.root -ofile=output.root"  << endl;
-    cout << "  Example:      ./MakeCompressedNtuple.x -ilist=input.list -ofile=output.root"  << endl;
-    cout << "  Example:      ./MakeCompressedNtuple.x -ifold=folder_path -ofile=output.root" << endl;
+    cout << "  Example:      ./MakeCompressedHiggsinoNtuple.x -ifile=input.root -ofile=output.root"  << endl;
+    cout << "  Example:      ./MakeCompressedHiggsinoNtuple.x -ilist=input.list -ofile=output.root"  << endl;
+    cout << "  Example:      ./MakeCompressedHiggsinoNtuple.x -ifold=folder_path -ofile=output.root" << endl;
     
     return 1;
   }
@@ -99,7 +99,7 @@ int main(int argc, char* argv[]) {
     vector<string> treenames;
     while(link){
       string name = link->GetObject()->GetName();
-      if(name == "HFntupleNONE"){
+      if(name == "outputTree"){
 	int Nt = treenames.size();
 	bool isnew = true;
 	for(int i = 0; i < Nt; i++){
@@ -121,7 +121,7 @@ int main(int argc, char* argv[]) {
       TChain* chain = new TChain(treenames[j].c_str());
       chain->Add(filenames[i].c_str());
       cout << "   Running tree " << treenames[j] << " " << chain->GetEntries() << endl;
-      CompressedNtuple* ntuple = new CompressedNtuple(chain);
+      CompressedHiggsinoNtuple* ntuple = new CompressedHiggsinoNtuple(chain);
       ntuple->WriteNtuple(string(outputFileName));
       delete ntuple;
     }

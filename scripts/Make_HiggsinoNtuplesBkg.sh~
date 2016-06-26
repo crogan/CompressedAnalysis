@@ -1,0 +1,4 @@
+mkdir -p HIGGSINONTUPLES
+./MakeCompressedHiggsinoNtuple.x -ofile=./NTUPLES/ttbar.root -ifile=/Users/crogan/Dropbox/SAMPLES/SussexNt/Top/ttbar.root
+./MakeCompressedHiggsinoNtuple.x -ofile=./NTUPLES/SingleTop.root -ifile=/Users/crogan/Dropbox/SAMPLES/SussexNt/Top/SingleTop.root
+./MakeCompressedHiggsinoNtuple.x -ofile=./NTUPLES/Wjets.root -ifile=/Users/crogan/Dropbox/SAMPLES/SussexNt/Wjets.root

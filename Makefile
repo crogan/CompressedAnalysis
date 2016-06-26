@@ -22,11 +22,15 @@ CC_FILES := $(wildcard src/*.cc)
 HH_FILES := $(wildcard include/*.hh)
 OBJ_FILES := $(addprefix $(OUTOBJ),$(notdir $(CC_FILES:.cc=.o)))
 
-all: MakeCompressedNtuple.x DoStop0LOptimization.x DoStop1LOptimization.x
+all: MakeCompressedStopNtuple.x MakeCompressedHiggsinoNtuple.x DoStop0LOptimization.x DoStop1LOptimization.x
 
-MakeCompressedNtuple.x:  $(SRCDIR)MakeCompressedNtuple.C $(OBJ_FILES) $(HH_FILES)
-	$(CXX) $(CXXFLAGS) -o MakeCompressedNtuple.x $(OUTOBJ)/*.o $(GLIBS) $ $<
-	touch MakeCompressedNtuple.x
+MakeCompressedStopNtuple.x:  $(SRCDIR)MakeCompressedStopNtuple.C $(OBJ_FILES) $(HH_FILES)
+	$(CXX) $(CXXFLAGS) -o MakeCompressedStopNtuple.x $(OUTOBJ)/*.o $(GLIBS) $ $<
+	touch MakeCompressedStopNtuple.x
+
+MakeCompressedHiggsinoNtuple.x:  $(SRCDIR)MakeCompressedHiggsinoNtuple.C $(OBJ_FILES) $(HH_FILES)
+	$(CXX) $(CXXFLAGS) -o MakeCompressedHiggsinoNtuple.x $(OUTOBJ)/*.o $(GLIBS) $ $<
+	touch MakeCompressedHiggsinoNtuple.x
 
 DoStop0LOptimization.x:  $(SRCDIR)DoStop0LOptimization.C $(OBJ_FILES) $(HH_FILES)
 	$(CXX) $(CXXFLAGS) -o DoStop0LOptimization.x $(OUTOBJ)/*.o $(GLIBS) $ $<

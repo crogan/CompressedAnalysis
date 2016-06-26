@@ -3,6 +3,7 @@
 #include "NtupleBase.hh"
 #include "HFntupleBase.hh"
 #include "SussexBase.hh"
+#include "HiggsinoBase.hh"
 
 template <class Base>
 NtupleBase<Base>::NtupleBase(TTree* tree)
@@ -43,5 +44,6 @@ void NtupleBase<Base>::WriteNtuple(const string& filename){
 
 template class NtupleBase<HFntupleBase>;
 template class NtupleBase<SussexBase>;
+template class NtupleBase<HiggsinoBase>;
 
 

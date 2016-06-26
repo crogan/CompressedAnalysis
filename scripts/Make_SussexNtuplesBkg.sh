@@ -1,0 +1,10 @@
+mkdir -p NTUPLES
+./MakeCompressedStopNtuple.x -ofile=./NTUPLES/ttbar.root -ifile=/Users/crogan/Dropbox/SAMPLES/SussexNt/Top/ttbar.root
+./MakeCompressedStopNtuple.x -ofile=./NTUPLES/SingleTop.root -ifile=/Users/crogan/Dropbox/SAMPLES/SussexNt/Top/SingleTop.root
+./MakeCompressedStopNtuple.x -ofile=./NTUPLES/Wjets.root -ifile=/Users/crogan/Dropbox/SAMPLES/SussexNt/Wjets.root
+./MakeCompressedStopNtuple.x -ofile=./NTUPLES/Zjets.root -ifile=/Users/crogan/Dropbox/SAMPLES/SussexNt/Zjets.root
+./MakeCompressedStopNtuple.x -ofile=./NTUPLES/Diboson.root -ifile=/Users/crogan/Dropbox/SAMPLES/SussexNt/Diboson.root
+./MakeCompressedStopNtuple.x -ofile=./NTUPLES/QCD.root -ifile=/Users/crogan/Dropbox/SAMPLES/SussexNt/QCD.root
+./MakeCompressedStopNtuple.x -ofile=./NTUPLES/ttbarV.root -ifile=/Users/crogan/Dropbox/SAMPLES/SussexNt/Top/ttbarV.root
+./MakeCompressedStopNtuple.x -ofile=./NTUPLES/SM4top.root -ifile=/Users/crogan/Dropbox/SAMPLES/SussexNt/Top/MadGraphPythia8EvtGen_A14NNPDF23_4topSM.root
+./MakeCompressedStopNtuple.x -ofile=./NTUPLES/ttbarWW.root -ifile=/Users/crogan/Dropbox/SAMPLES/SussexNt/Top/MadGraphPythia8EvtGen_A14NNPDF23_ttbarWW.root

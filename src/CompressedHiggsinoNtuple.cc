@@ -1,9 +1,9 @@
-#include "CompressedNtuple.hh"
+#include "CompressedHiggsinoNtuple.hh"
 
 using namespace RestFrames;
 
-CompressedNtuple::CompressedNtuple(TTree* tree)
-  : NtupleBase<SussexBase>(tree)
+CompressedHiggsinoNtuple::CompressedHiggsinoNtuple(TTree* tree)
+  : NtupleBase<HiggsinoBase>(tree)
 {
   // RestFrames stuff
 
@@ -52,7 +52,7 @@ CompressedNtuple::CompressedNtuple(TTree* tree)
    ////////////// Jigsaw rules set-up /////////////////
 }
 
-CompressedNtuple::~CompressedNtuple() {
+CompressedHiggsinoNtuple::~CompressedHiggsinoNtuple() {
   delete LAB;
   delete CM;
   delete S;
@@ -65,7 +65,7 @@ CompressedNtuple::~CompressedNtuple() {
   delete SplitVis;
 }
 
-void CompressedNtuple::InitOutputTree(){
+void CompressedHiggsinoNtuple::InitOutputTree(){
   if(m_Tree)
     delete m_Tree;
 
@@ -77,25 +77,22 @@ void CompressedNtuple::InitOutputTree(){
  
   m_Tree->Branch("MET", &m_MET);
   m_Tree->Branch("TrkMET", &m_TrkMET);
-  m_Tree->Branch("dphi_MET_TrkMET", &m_dphi_MET_TrkMET);
-  m_Tree->Branch("HLT_xe70_tc_lcw", &m_HLT_xe70_tc_lcw);
-
+  m_Tree->Branch("HLT_xe70", &m_HLT_xe70);
+  
   m_Tree->Branch("pT_1jet", &m_pT_1jet);
   m_Tree->Branch("pT_2jet", &m_pT_2jet);
   m_Tree->Branch("pT_3jet", &m_pT_3jet);
   m_Tree->Branch("pT_4jet", &m_pT_4jet);
-  m_Tree->Branch("mj0_12", &m_mj0_12);
-  m_Tree->Branch("mj1_12", &m_mj1_12);
-
-  m_Tree->Branch("LepVeto", &m_LepVeto);
-  m_Tree->Branch("TauVeto", &m_TauVeto);
 
   m_Tree->Branch("nEl", &m_nEl);
   m_Tree->Branch("nMu", &m_nMu);
-  m_Tree->Branch("MT", &m_MT);
+  m_Tree->Branch("MT2W", &m_MT2W);
+  m_Tree->Branch("MT2Top", &m_MT2Top);
   m_Tree->Branch("pT_1lep", &m_pT_1lep);
   m_Tree->Branch("pT_2lep", &m_pT_2lep);
 
+  m_Tree->Branch("channel", &m_channel);
+  
   m_Tree->Branch("weight", &m_weight);
   m_Tree->Branch("HT", &m_HT);
   m_Tree->Branch("dphiMin1", &m_dphiMin1);
@@ -105,8 +102,10 @@ void CompressedNtuple::InitOutputTree(){
   m_Tree->Branch("Mbb", &m_Mbb);
   m_Tree->Branch("dphiMinbl1", &m_dphiMinbl1);
   m_Tree->Branch("dphiMinbl2", &m_dphiMinbl2);
+  m_Tree->Branch("dphiMinbl3", &m_dphiMinbl3);
   m_Tree->Branch("dRMinbl1", &m_dRMinbl1);
   m_Tree->Branch("dRMinbl2", &m_dRMinbl2);
+  m_Tree->Branch("dRMinbl3", &m_dRMinbl3);
 
   // compressed tree variables
   m_Tree->Branch("PTISR", &m_PTISR);
@@ -118,6 +117,7 @@ void CompressedNtuple::InitOutputTree(){
   m_Tree->Branch("MV", &m_MV);
   m_Tree->Branch("MW1", &m_MW1);
   m_Tree->Branch("MW2", &m_MW2);
+  m_Tree->Branch("MW3", &m_MW3);
   m_Tree->Branch("dphiCMI", &m_dphiCMI);
   m_Tree->Branch("dphiISRI", &m_dphiISRI);
   m_Tree->Branch("dphiCML1", &m_dphiCML1);
@@ -126,6 +126,7 @@ void CompressedNtuple::InitOutputTree(){
   m_Tree->Branch("dphiSL2", &m_dphiSL2);
   m_Tree->Branch("cosIL1", &m_cosIL1);
   m_Tree->Branch("cosIL2", &m_cosIL2);
+  m_Tree->Branch("cosIL3", &m_cosIL3);
   m_Tree->Branch("pTjV1", &m_pTjV1);
   m_Tree->Branch("pTjV2", &m_pTjV2);
   m_Tree->Branch("pTjV3", &m_pTjV3);
@@ -143,37 +144,25 @@ void CompressedNtuple::InitOutputTree(){
 
 }
 
-void CompressedNtuple::FillOutputTree(){
+void CompressedHiggsinoNtuple::FillOutputTree(){
 
-  // MET filter
-  if (!(truthMETfilter < 200 || RunNumber == 407012 || 
-  	RunNumber == 407019 || RunNumber == 407021) ) 
-    return;
+  // preselection
 
-  // Event cleaning, GRL, cosmic mu baseline requirements
-  if(!passGRL)     
+  if (is_OS != 1)
     return;
 
-  if(!Cleaning) 
+  if (lep_pT->at(0) <= 10.0 || lep_pT->at(1) <= 4.0 )
     return;
 
-  if(!JetCleaning) 
+  if (bjet_n != 0)
     return;
 
-  if(!MuonCleaning) 
-    return;
-  
-  // cosmic mu rejection
-  if(nMu_cosmic > 0) 
-    return;
+  // commented out b/c it kills the current samples
+  // if (MET < 200)
+  //   return;
 
-  // vertex requirement
-  if(numVtx <= 0) 
-    return;
-
-  // trigger
-  if(!HLT_xe70_tc_lcw) 
-    return;
+  // if (!HLT_xe70)
+  //   return;
 
   TVector3 ETMiss = GetMET(); 
       
@@ -186,40 +175,52 @@ void CompressedNtuple::FillOutputTree(){
   //  double btag_cut = 0.6459; // 77% working point
   //  double btag_cut = 0.1758; // 85% working point
   vector<Jet> Jets; 
-  GetJets(Jets, 20., 2.8, -0.4434);  //mc15b
-  //GetJets(Jets, 20., 2.8, 0.6459); //mc15c
+  GetJets(Jets, 30., 2.8, -1);
 
   vector<TLorentzVector> Muons; 
   GetMuons(Muons); 
 
   vector<TLorentzVector> Elecs; 
-  GetElectrons(Elecs); 
+  GetElectrons(Elecs);
 
-  // need two jets to play
-  if(Jets.size() < 2) 
+  // need two objects to play
+  if(Jets.size() + Muons.size() + Elecs.size() < 2) 
     return; 
 
-  m_TrkMET = eT_miss_track;
-  m_dphi_MET_TrkMET = dPhi_met_trackmet;
-  m_HLT_xe70_tc_lcw = (HLT_xe70_tc_lcw > 0);
+  m_TrkMET = TrackMET;
+  //  m_dphi_MET_TrkMET = dPhi_met_trackmet;
+  //  m_HLT_xe70_tc_lcw = (HLT_xe70_tc_lcw > 0);
 
-  m_pT_1jet = pT_1jet;
-  m_pT_2jet = pT_2jet;
-  m_pT_3jet = pT_3jet;
-  m_pT_4jet = pT_4jet;
+  if (Jets.size() > 0)
+    m_pT_1jet = jet_pT->at(0);
+  else
+    m_pT_1jet = 0.;
+  if (Jets.size() > 1)
+    m_pT_2jet = jet_pT->at(1);
+  else
+    m_pT_2jet = 0.;
+  if (Jets.size() > 2)
+    m_pT_3jet = jet_pT->at(2);
+  else
+    m_pT_3jet = 0.;
+  if (Jets.size() > 3)
+    m_pT_4jet = jet_pT->at(3);
+  else
+    m_pT_4jet = 0.;
+  // m_mj0_12 = mj0_12;
+  // m_mj1_12 = mj1_12;
 
-  m_mj0_12 = mj0_12;
-  m_mj1_12 = mj1_12;
-
-  m_LepVeto = (nEl_baseline+nMu_baseline < 1);
-  m_TauVeto = (passtauveto > 0);
+  m_channel = channel;
+  // m_LepVeto = (nEl_baseline+nMu_baseline < 1);
+  // m_TauVeto = (passtauveto > 0);
   m_weight = GetEventWeight();
 
-  m_nEl = nEl;
-  m_nMu = nMu;
-  m_MT  = MT;
-  m_pT_1lep = pT_1lep;
-  m_pT_2lep = pT_2lep;
+  m_nEl = el_n;
+  m_nMu = mu_n;
+  m_MT2W  = MT2W;
+  m_MT2Top  = MT2Top;
+  m_pT_1lep = lep_pT->at(0);
+  m_pT_2lep = lep_pT->at(1);
 
   // other observables
   m_MET = ETMiss.Pt();
@@ -228,6 +229,8 @@ void CompressedNtuple::FillOutputTree(){
   m_dphiMin3   = DeltaPhiMin(Jets, ETMiss, 3);
   m_dphiMinAll = DeltaPhiMin(Jets, ETMiss);
 
+
+  
   // analyze event in RestFrames tree
   LAB->ClearEvent();
 
@@ -270,6 +273,7 @@ void CompressedNtuple::FillOutputTree(){
   m_pTjV6 = 0.;
   m_pTbV1 = 0.;
   m_pTbV2 = 0.;
+
   vector<TLorentzVector> Btags;
   // assuming pT ordered jets
   for(int i = 0; i < int(Jets.size()); i++){
@@ -313,16 +317,22 @@ void CompressedNtuple::FillOutputTree(){
   m_NlISR = 0;
   m_MW1 = 0;
   m_MW2 = 0;
+  m_MW3 = 0;
   m_dphiCML1 = 0;
   m_dphiCML2 = 0;
+  m_dphiCML3 = 0;
   m_dphiSL1 = 0;
   m_dphiSL2 = 0;
+  m_dphiSL3 = 0;
   m_cosIL1 = 0;
   m_cosIL2 = 0;
+  m_cosIL3 = 0;
   m_dRMinbl1 = -1.;
   m_dRMinbl2 = -1.;
+  m_dRMinbl3 = -1.;
   m_dphiMinbl1 = -1.;
   m_dphiMinbl2 = -1.;
+  m_dphiMinbl3 = -1.;
   // assuming pT ordered muons
   for(int i = 0; i < int(Muons.size()); i++){
     if(VIS->GetFrame(muID[i]) == *V) // sparticle group
@@ -372,7 +382,25 @@ void CompressedNtuple::FillOutputTree(){
 	if(m_dphiMinbl2 > fabs(Muons[i].DeltaR(Btags[j])) || m_dphiMinbl2 < 0.)
 	  m_dphiMinbl2 = fabs(Muons[i].DeltaR(Btags[j]));
     }
+    if(m_NlV+m_NlISR == 3){
+      m_dphiCML3 = acos( vL_CM.Vect().Unit().Dot(vCM_lab.Vect().Unit()) );
+      
+      m_dphiSL3 = acos( vL_S.Vect().Unit().Dot(vS_CM.Vect().Unit()) );
+
+      m_MW3 = (vL_S + vI_S).M();
+      TVector3 boostLI = (vL_S + vI_S).BoostVector();
+      vL_S.Boost(-boostLI); 
+      m_cosIL3 = -boostLI.Unit().Dot(vL_S.Vect().Unit());
+
+      for(int j = 0; j < int(Btags.size()); j++)
+	if(m_dRMinbl3 > Muons[i].DeltaR(Btags[j]) || m_dRMinbl3 < 0.)
+	  m_dRMinbl3 = Muons[i].DeltaR(Btags[j]);
+      for(int j = 0; j < int(Btags.size()); j++)
+	if(m_dphiMinbl3 > fabs(Muons[i].DeltaR(Btags[j])) || m_dphiMinbl3 < 0.)
+	  m_dphiMinbl3 = fabs(Muons[i].DeltaR(Btags[j]));
+    }
   }
+
   // assuming pT ordered electrons
   for(int i = 0; i < int(Elecs.size()); i++){
     if(VIS->GetFrame(elID[i]) == *V) // sparticle group
@@ -421,6 +449,23 @@ void CompressedNtuple::FillOutputTree(){
       for(int j = 0; j < int(Btags.size()); j++)
 	if(m_dphiMinbl2 > fabs(Elecs[i].DeltaR(Btags[j])) || m_dphiMinbl2 < 0.)
 	  m_dphiMinbl2 = fabs(Elecs[i].DeltaR(Btags[j]));
+    }
+    if(m_NlV+m_NlISR == 3){
+      m_dphiCML3 = acos( vL_CM.Vect().Unit().Dot(vCM_lab.Vect().Unit()) );
+      
+      m_dphiSL3 = acos( vL_S.Vect().Unit().Dot(vS_CM.Vect().Unit()) );
+
+      m_MW3 = (vL_S + vI_S).M();
+      TVector3 boostLI = (vL_S + vI_S).BoostVector();
+      vL_S.Boost(-boostLI); 
+      m_cosIL3 = -boostLI.Unit().Dot(vL_S.Vect().Unit());
+
+      for(int j = 0; j < int(Btags.size()); j++)
+	if(m_dRMinbl3 > Elecs[i].DeltaR(Btags[j]) || m_dRMinbl3 < 0.)
+	  m_dRMinbl3 = Elecs[i].DeltaR(Btags[j]);
+      for(int j = 0; j < int(Btags.size()); j++)
+	if(m_dphiMinbl3 > fabs(Elecs[i].DeltaR(Btags[j])) || m_dphiMinbl3 < 0.)
+	  m_dphiMinbl3 = fabs(Elecs[i].DeltaR(Btags[j]));
     }
   }
   

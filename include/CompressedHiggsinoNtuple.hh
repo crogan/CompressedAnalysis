@@ -1,48 +1,47 @@
-#ifndef CompressedNtuple_h
-#define CompressedNtuple_h
+#ifndef CompressedHiggsinoNtuple_h
+#define CompressedHiggsinoNtuple_h
 
 #include "NtupleBase.hh"
 #include "HFntupleBase.hh"
 #include "SussexBase.hh"
+#include "HiggsinoBase.hh"
 
 #include "RestFrames/RestFrames.hh"
 
 using namespace RestFrames;
 
-class CompressedNtuple : public NtupleBase<SussexBase> {
+class CompressedHiggsinoNtuple : public NtupleBase<HiggsinoBase> {
 
 public:
-  CompressedNtuple(TTree* tree = 0);
-  virtual ~CompressedNtuple();
+  CompressedHiggsinoNtuple(TTree* tree = 0);
+  virtual ~CompressedHiggsinoNtuple();
 
 private:
   void InitOutputTree();
   void FillOutputTree();
 
-  // Sussex format-specific variables
+  // Higgsino model format-specific variables
 
   double m_TrkMET;
-  double m_dphi_MET_TrkMET;
-
-  bool m_HLT_xe70_tc_lcw;
+  double m_HLT_xe70;
 
   double m_pT_1jet;
   double m_pT_2jet;
   double m_pT_3jet;
   double m_pT_4jet;
-  double m_mj0_12;
-  double m_mj1_12;
 
   // for vetoes, 1 -> pass, 0 -> fail
-  bool m_LepVeto;
-  bool m_TauVeto;
 
   // 1 lep control regions
   int m_nEl;
   int m_nMu;
-  double m_MT;
+  double m_MT2W;
+  double m_MT2Top;
   double m_pT_1lep;
   double m_pT_2lep;
+
+  // 1 for ee, 2/3 for emu, 0 for mumu
+  int m_channel;
   
   // common variables for output tree
   double m_weight;
@@ -55,8 +54,10 @@ private:
   double m_Mbb;
   double m_dphiMinbl1;
   double m_dphiMinbl2;
+  double m_dphiMinbl3;
   double m_dRMinbl1;
   double m_dRMinbl2;
+  double m_dRMinbl3;
 
   ///////////////////////
   // compressed variables
@@ -86,12 +87,16 @@ private:
   int m_NlISR;
   double m_MW1;
   double m_MW2;
+  double m_MW3;
   double m_dphiCML1;
   double m_dphiCML2;
+  double m_dphiCML3;
   double m_dphiSL1;
   double m_dphiSL2;
+  double m_dphiSL3;
   double m_cosIL1;
   double m_cosIL2;
+  double m_cosIL3;
   
   
   // RestFrames frames and friends
