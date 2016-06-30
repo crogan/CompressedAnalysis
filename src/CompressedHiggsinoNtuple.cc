@@ -66,6 +66,7 @@ CompressedHiggsinoNtuple::~CompressedHiggsinoNtuple() {
 }
 
 void CompressedHiggsinoNtuple::InitOutputTree(){
+
   if(m_Tree)
     delete m_Tree;
 
@@ -78,6 +79,7 @@ void CompressedHiggsinoNtuple::InitOutputTree(){
   m_Tree->Branch("MET", &m_MET);
   m_Tree->Branch("TrkMET", &m_TrkMET);
   m_Tree->Branch("HLT_xe70", &m_HLT_xe70);
+  m_Tree->Branch("is_OS", &m_is_OS);
   
   m_Tree->Branch("pT_1jet", &m_pT_1jet);
   m_Tree->Branch("pT_2jet", &m_pT_2jet);
@@ -88,8 +90,13 @@ void CompressedHiggsinoNtuple::InitOutputTree(){
   m_Tree->Branch("nMu", &m_nMu);
   m_Tree->Branch("MT2W", &m_MT2W);
   m_Tree->Branch("MT2Top", &m_MT2Top);
+  m_Tree->Branch("mll", &m_mll);
   m_Tree->Branch("pT_1lep", &m_pT_1lep);
+  m_Tree->Branch("id_1lep", &m_id_1lep);
   m_Tree->Branch("pT_2lep", &m_pT_2lep);
+  m_Tree->Branch("id_2lep", &m_id_2lep);
+  m_Tree->Branch("pT_3lep", &m_pT_3lep);
+  m_Tree->Branch("id_3lep", &m_id_3lep);
 
   m_Tree->Branch("channel", &m_channel);
   
@@ -118,6 +125,7 @@ void CompressedHiggsinoNtuple::InitOutputTree(){
   m_Tree->Branch("MW1", &m_MW1);
   m_Tree->Branch("MW2", &m_MW2);
   m_Tree->Branch("MW3", &m_MW3);
+  m_Tree->Branch("MZ", &m_MZ);
   m_Tree->Branch("dphiCMI", &m_dphiCMI);
   m_Tree->Branch("dphiISRI", &m_dphiISRI);
   m_Tree->Branch("dphiCML1", &m_dphiCML1);
@@ -127,6 +135,7 @@ void CompressedHiggsinoNtuple::InitOutputTree(){
   m_Tree->Branch("cosIL1", &m_cosIL1);
   m_Tree->Branch("cosIL2", &m_cosIL2);
   m_Tree->Branch("cosIL3", &m_cosIL3);
+  m_Tree->Branch("cosLLOS", &m_cosLLOS);
   m_Tree->Branch("pTjV1", &m_pTjV1);
   m_Tree->Branch("pTjV2", &m_pTjV2);
   m_Tree->Branch("pTjV3", &m_pTjV3);
@@ -141,15 +150,20 @@ void CompressedHiggsinoNtuple::InitOutputTree(){
   m_Tree->Branch("NjISR", &m_NjISR);
   m_Tree->Branch("NlV", &m_NlV);
   m_Tree->Branch("NlISR", &m_NlISR);
+  m_Tree->Branch("id_1lV", &m_id_1lV);
+  m_Tree->Branch("id_2lV", &m_id_2lV);
+  m_Tree->Branch("id_3lV", &m_id_3lV);
+  m_Tree->Branch("id_1lISR", &m_id_1lISR);
+  m_Tree->Branch("id_2lISR", &m_id_2lISR);
+  m_Tree->Branch("id_3lISR", &m_id_3lISR);
 
 }
 
 void CompressedHiggsinoNtuple::FillOutputTree(){
-
   // preselection
 
-  if (is_OS != 1)
-    return;
+  // if (is_OS != 1)
+  //   return;
 
   if (lep_pT->at(0) <= 10.0 || lep_pT->at(1) <= 4.0 )
     return;
@@ -177,9 +191,13 @@ void CompressedHiggsinoNtuple::FillOutputTree(){
   vector<Jet> Jets; 
   GetJets(Jets, 30., 2.8, -1);
 
+  vector<TLorentzVector> Leptons;
+  vector<int> LepIDs;
+  GetLeptons(Leptons,LepIDs); 
+
   vector<TLorentzVector> Muons; 
   GetMuons(Muons); 
-
+  
   vector<TLorentzVector> Elecs; 
   GetElectrons(Elecs);
 
@@ -188,6 +206,7 @@ void CompressedHiggsinoNtuple::FillOutputTree(){
     return; 
 
   m_TrkMET = TrackMET;
+  m_is_OS = is_OS;
   //  m_dphi_MET_TrkMET = dPhi_met_trackmet;
   //  m_HLT_xe70_tc_lcw = (HLT_xe70_tc_lcw > 0);
 
@@ -219,8 +238,32 @@ void CompressedHiggsinoNtuple::FillOutputTree(){
   m_nMu = mu_n;
   m_MT2W  = MT2W;
   m_MT2Top  = MT2Top;
-  m_pT_1lep = lep_pT->at(0);
-  m_pT_2lep = lep_pT->at(1);
+  m_mll = mll;
+  
+  if (lep_n > 0) {
+    m_pT_1lep = lep_pT->at(0);
+    m_id_1lep = lep_pdgId->at(0);
+  }
+  else {
+    m_pT_1lep = 0.;
+    m_id_1lep = 0;
+  }
+  if (lep_n > 1) {
+    m_pT_2lep = lep_pT->at(1);
+    m_id_2lep = lep_pdgId->at(1);
+  }
+  else {
+    m_pT_2lep = 0.;
+    m_id_2lep = 0;
+  }
+  if (lep_n > 2) {
+    m_pT_3lep = lep_pT->at(2);
+    m_id_3lep = lep_pdgId->at(2);
+  }
+  else {
+    m_pT_3lep = 0.;
+    m_id_3lep = 0;
+  }
 
   // other observables
   m_MET = ETMiss.Pt();
@@ -230,10 +273,9 @@ void CompressedHiggsinoNtuple::FillOutputTree(){
   m_dphiMinAll = DeltaPhiMin(Jets, ETMiss);
 
 
-  
   // analyze event in RestFrames tree
   LAB->ClearEvent();
-
+  
   m_HT = 0.;
   vector<RFKey> jetID; 
   for(int i = 0; i < int(Jets.size()); i++){
@@ -273,7 +315,12 @@ void CompressedHiggsinoNtuple::FillOutputTree(){
   m_pTjV6 = 0.;
   m_pTbV1 = 0.;
   m_pTbV2 = 0.;
-
+  m_id_1lV = 0;
+  m_id_2lV = 0;
+  m_id_3lV = 0;
+  m_id_1lISR = 0;
+  m_id_2lISR = 0;
+  m_id_3lISR = 0;
   vector<TLorentzVector> Btags;
   // assuming pT ordered jets
   for(int i = 0; i < int(Jets.size()); i++){
@@ -313,11 +360,23 @@ void CompressedHiggsinoNtuple::FillOutputTree(){
   else
     m_Mbb = 0.;
 
+  //quick and dirty way of looping through the muons to correspond to lepton pdgIDs
+  vector<int> MuonIDs;
+  vector<int> ElecIDs;
+
+  for (int i = 0; i < lep_n; i++) {
+    if (fabs(lep_pdgId->at(i)) == 13)
+      MuonIDs.push_back(lep_pdgId->at(i));
+    else
+      ElecIDs.push_back(lep_pdgId->at(i));
+  }
+  
   m_NlV = 0;
   m_NlISR = 0;
   m_MW1 = 0;
   m_MW2 = 0;
   m_MW3 = 0;
+  m_MZ = 0;
   m_dphiCML1 = 0;
   m_dphiCML2 = 0;
   m_dphiCML3 = 0;
@@ -327,19 +386,62 @@ void CompressedHiggsinoNtuple::FillOutputTree(){
   m_cosIL1 = 0;
   m_cosIL2 = 0;
   m_cosIL3 = 0;
+  m_cosLLOS = 0;
   m_dRMinbl1 = -1.;
   m_dRMinbl2 = -1.;
   m_dRMinbl3 = -1.;
   m_dphiMinbl1 = -1.;
   m_dphiMinbl2 = -1.;
   m_dphiMinbl3 = -1.;
+
+  bool foundOS = false;
+
+  // assuming pT ordered leptons
+  for(int i = 0; i < int(Leptons.size()); i++){
+    for(int j = 0; j < int(Leptons.size()); j++){
+      if (!foundOS) {
+	if (LepIDs[i] == -LepIDs[j]) {
+	  foundOS = true;
+	  TLorentzVector lep1;
+	  TLorentzVector lep2;
+	  lep1.SetPtEtaPhiM(Leptons[i].Pt(), 0.0,
+			    Leptons[i].Phi(), max(0.,Leptons[i].M()));
+	  lep2.SetPtEtaPhiM(Leptons[j].Pt(), 0.0,
+			    Leptons[j].Phi(), max(0.,Leptons[j].M()));
+	  TLorentzVector vL1_CM   = CM->GetFourVector(lep1);
+	  TLorentzVector vL2_CM   = CM->GetFourVector(lep2);
+	  TLorentzVector vL1_S    = S->GetFourVector(lep1);
+	  TLorentzVector vL2_S    = S->GetFourVector(lep2);
+	  TLorentzVector vCM_lab = CM->GetFourVector();
+	  TLorentzVector vS_CM   = S->GetFourVector(*CM);
+	  m_MZ = (vL1_S + vL2_S).M();
+	  TVector3 boostLL = (vL1_S + vL2_S).BoostVector();
+	  vL1_S.Boost(-boostLL);
+	  m_cosLLOS = -boostLL.Unit().Dot(vL1_S.Vect().Unit());
+	}
+      }
+    }
+  }
   // assuming pT ordered muons
   for(int i = 0; i < int(Muons.size()); i++){
-    if(VIS->GetFrame(muID[i]) == *V) // sparticle group
+    if(VIS->GetFrame(muID[i]) == *V) {// sparticle group 
       m_NlV++;
-    else
+      if (m_NlV == 1)
+	m_id_1lV = MuonIDs[i];
+      else if (m_NlV == 2)
+	m_id_2lV = MuonIDs[i];
+      else if (m_NlV == 3)
+	m_id_3lV = MuonIDs[i];
+    }
+    else {
       m_NlISR++;
-
+      if (m_NlISR == 1)
+	m_id_1lISR = MuonIDs[i];
+      else if (m_NlISR == 2)
+	m_id_2lISR = MuonIDs[i];
+      else if (m_NlISR == 3)
+	m_id_3lISR = MuonIDs[i];
+    }
     TLorentzVector lep;
     lep.SetPtEtaPhiM(Muons[i].Pt(), 0.0,
 		     Muons[i].Phi(), max(0.,Muons[i].M()));
@@ -401,13 +503,28 @@ void CompressedHiggsinoNtuple::FillOutputTree(){
     }
   }
 
+
+  
   // assuming pT ordered electrons
   for(int i = 0; i < int(Elecs.size()); i++){
-    if(VIS->GetFrame(elID[i]) == *V) // sparticle group
+    if(VIS->GetFrame(elID[i]) == *V) {// sparticle group
       m_NlV++;
-    else
+      if (m_NlV == 1)
+	m_id_1lV = ElecIDs[i];
+      else if (m_NlV == 2)
+	m_id_2lV = ElecIDs[i];
+      else if (m_NlV == 3)
+	m_id_3lV = ElecIDs[i];
+    }
+    else {
       m_NlISR++;
-
+      if (m_NlISR == 1)
+	m_id_1lISR = ElecIDs[i];
+      else if (m_NlISR == 2)
+	m_id_2lISR = ElecIDs[i];
+      else if (m_NlISR == 3)
+	m_id_3lISR = ElecIDs[i];
+    }
     TLorentzVector lep;
     lep.SetPtEtaPhiM(Elecs[i].Pt(), 0.0,
 		     Elecs[i].Phi(), max(0.,Elecs[i].M()));
@@ -468,7 +585,7 @@ void CompressedHiggsinoNtuple::FillOutputTree(){
 	  m_dphiMinbl3 = fabs(Elecs[i].DeltaR(Btags[j]));
     }
   }
-  
+
 
   // need at least one jet or lepton associated with sparticle-side of event
   if(m_NjV+m_NlV < 1){

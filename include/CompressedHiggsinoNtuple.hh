@@ -24,6 +24,7 @@ private:
 
   double m_TrkMET;
   double m_HLT_xe70;
+  int m_is_OS;
 
   double m_pT_1jet;
   double m_pT_2jet;
@@ -37,8 +38,13 @@ private:
   int m_nMu;
   double m_MT2W;
   double m_MT2Top;
+  double m_mll;
   double m_pT_1lep;
+  int m_id_1lep;
   double m_pT_2lep;
+  int m_id_2lep;
+  double m_pT_3lep;
+  int m_id_3lep;
 
   // 1 for ee, 2/3 for emu, 0 for mumu
   int m_channel;
@@ -85,9 +91,16 @@ private:
   int m_NjISR;
   int m_NlV;
   int m_NlISR;
+  int m_id_1lV;
+  int m_id_2lV;
+  int m_id_3lV;
+  int m_id_1lISR;
+  int m_id_2lISR;
+  int m_id_3lISR;
   double m_MW1;
   double m_MW2;
   double m_MW3;
+  double m_MZ;
   double m_dphiCML1;
   double m_dphiCML2;
   double m_dphiCML3;
@@ -97,7 +110,7 @@ private:
   double m_cosIL1;
   double m_cosIL2;
   double m_cosIL3;
-  
+  double m_cosLLOS;
   
   // RestFrames frames and friends
   LabRecoFrame*        LAB;

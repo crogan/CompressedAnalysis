@@ -148,6 +148,9 @@ void AnalysisBase<Base>::GetJets(vector<Jet>& JETs, double pt_cut,
 				 double eta_cut, double btag_WP_cut) {}
 
 template <class Base>
+void AnalysisBase<Base>::GetLeptons(vector<TLorentzVector>& LEPs, vector<int>& IDs,
+				    double pt_cut, double eta_cut) {}
+template <class Base>
 void AnalysisBase<Base>::GetMuons(vector<TLorentzVector>& MUs, 
 				  double pt_cut, double eta_cut) {}
 
@@ -232,12 +235,23 @@ void AnalysisBase<SussexBase>::GetElectrons(vector<TLorentzVector>& ELs,
   }
 }
 
+
+double xsec_3l =  517.259; //fb
+double bf_3l =  0.03266518922;
+double eff_3l =  6.564165*pow(10,-1);
+int nEvents_3l = 6600;
+double xsec_2l2j = 517.259; //fb
+double bf_2l2j = 0.068070618;
+double eff_2l2j = 4.912453*pow(10,-1);
+int nEvents_2l2j = 7734;
 ///////////////// HiggsinoBase ///////////////////////////////////
 template <>
 double AnalysisBase<HiggsinoBase>::GetEventWeight(){
   if(pileupWeight <= 0.)
     pileupWeight = 1.;
-  return sampleWeight*eventWeight;
+  //return weight1fb*eventWeight; //backgrounds
+  //return eventWeight*xsec_3l*bf_3l*eff_3l/nEvents_3l; // signals 3l
+  return eventWeight*xsec_2l2j*bf_2l2j*eff_2l2j/nEvents_2l2j; // signals 2l2j
 }
 
 template <>
@@ -270,6 +284,24 @@ void AnalysisBase<HiggsinoBase>::GetJets(vector<Jet>& JETs, double pt_cut,
 }
 
 template <>
+void AnalysisBase<HiggsinoBase>::GetLeptons(vector<TLorentzVector>& LEPs, vector<int>& IDs,
+					    double pt_cut, double eta_cut) {
+  LEPs.clear();
+  IDs.clear();
+  
+  int Nlep = lep_pT->size();
+  for(int i = 0; i < Nlep; i++){
+    TLorentzVector LEP;
+    LEP.SetPtEtaPhiE(lep_pT->at(i), lep_eta->at(i),
+		    lep_phi->at(i), lep_E->at(i));
+    if((LEP.Pt() >= pt_cut) && (fabs(LEP.Eta()) < eta_cut || eta_cut < 0)){
+      LEPs.push_back(LEP);
+      IDs.push_back(lep_pdgId->at(i));
+    }
+  }
+}
+
+template <>
 void AnalysisBase<HiggsinoBase>::GetMuons(vector<TLorentzVector>& MUs, 
 					double pt_cut, double eta_cut) {
   MUs.clear();
@@ -277,7 +309,6 @@ void AnalysisBase<HiggsinoBase>::GetMuons(vector<TLorentzVector>& MUs,
   int Nmu = mu_pT->size();
   for(int i = 0; i < Nmu; i++){
     TLorentzVector MU;
-    // units MeV -> GeV
     MU.SetPtEtaPhiE(mu_pT->at(i), mu_eta->at(i),
 		    mu_phi->at(i), mu_E->at(i));
     if((MU.Pt() >= pt_cut) && (fabs(MU.Eta()) < eta_cut || eta_cut < 0)){
@@ -285,6 +316,7 @@ void AnalysisBase<HiggsinoBase>::GetMuons(vector<TLorentzVector>& MUs,
     }
   }
 }
+
 
 template <>
 void AnalysisBase<HiggsinoBase>::GetElectrons(vector<TLorentzVector>& ELs, 

@@ -36,6 +36,9 @@ public:
   virtual void GetJets(vector<Jet>& JETs, double pt_cut = -1, 
 		       double eta_cut = -1, double btag_WP_cut = -0.4434);
 
+  virtual void GetLeptons(vector<TLorentzVector>& LEPs, vector<int>& IDs,
+			  double pt_cut = -1, double eta_cut = -1);
+
   virtual void GetMuons(vector<TLorentzVector>& MUs, double pt_cut = -1, 
 			double eta_cut = -1);
 
