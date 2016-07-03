@@ -1,5 +1,5 @@
-#ifndef CompressedHiggsinoNtuple_h
-#define CompressedHiggsinoNtuple_h
+#ifndef CompressedHiggsinoNtuple2L_h
+#define CompressedHiggsinoNtuple2L_h
 
 #include "NtupleBase.hh"
 #include "HFntupleBase.hh"
@@ -10,11 +10,11 @@
 
 using namespace RestFrames;
 
-class CompressedHiggsinoNtuple : public NtupleBase<HiggsinoBase> {
+class CompressedHiggsinoNtuple2L : public NtupleBase<HiggsinoBase> {
 
 public:
-  CompressedHiggsinoNtuple(TTree* tree = 0);
-  virtual ~CompressedHiggsinoNtuple();
+  CompressedHiggsinoNtuple2L(TTree* tree = 0);
+  virtual ~CompressedHiggsinoNtuple2L();
 
 private:
   void InitOutputTree();
@@ -57,13 +57,6 @@ private:
   double m_dphiMin2;
   double m_dphiMin3;
   double m_dphiMinAll;
-  double m_Mbb;
-  double m_dphiMinbl1;
-  double m_dphiMinbl2;
-  double m_dphiMinbl3;
-  double m_dRMinbl1;
-  double m_dRMinbl2;
-  double m_dRMinbl3;
 
   ///////////////////////
   // compressed variables
@@ -83,34 +76,18 @@ private:
   double m_pTjV4;
   double m_pTjV5;
   double m_pTjV6;
-  double m_pTbV1;
-  double m_pTbV2;
-  int m_NbV;
-  int m_NbISR;
   int m_NjV;
   int m_NjISR;
-  int m_NlV;
-  int m_NlISR;
-  int m_id_1lV;
-  int m_id_2lV;
-  int m_id_3lV;
-  int m_id_1lISR;
-  int m_id_2lISR;
-  int m_id_3lISR;
   double m_MW1;
   double m_MW2;
-  double m_MW3;
   double m_mllOS;
   double m_MZ;
   double m_dphiCML1;
   double m_dphiCML2;
-  double m_dphiCML3;
   double m_dphiSL1;
   double m_dphiSL2;
-  double m_dphiSL3;
   double m_cosIL1;
   double m_cosIL2;
-  double m_cosIL3;
   double m_cosLLOS;
   double m_dphiLLOS;
   
@@ -120,8 +97,10 @@ private:
   DecayRecoFrame*      S;
   VisibleRecoFrame*    ISR;
   VisibleRecoFrame*    V;
+  VisibleRecoFrame*    L;
   InvisibleRecoFrame*  I;
   InvisibleGroup*      INV;
+  Group*               LEP;
   SetMassInvJigsaw*    InvMass;
   CombinatoricGroup*   VIS;
   MinMassesCombJigsaw* SplitVis;

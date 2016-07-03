@@ -11,7 +11,7 @@
 #include <TChain.h>
 #include <TList.h>
 
-#include "CompressedHiggsinoNtuple.hh"
+#include "CompressedHiggsinoNtuple2L.hh"
 
 using namespace std;
 
@@ -121,7 +121,7 @@ int main(int argc, char* argv[]) {
       TChain* chain = new TChain(treenames[j].c_str());
       chain->Add(filenames[i].c_str());
       cout << "   Running tree " << treenames[j] << " " << chain->GetEntries() << endl;
-      CompressedHiggsinoNtuple* ntuple = new CompressedHiggsinoNtuple(chain);
+      CompressedHiggsinoNtuple2L* ntuple = new CompressedHiggsinoNtuple2L(chain);
       ntuple->WriteNtuple(string(outputFileName));
       delete ntuple;
     }
