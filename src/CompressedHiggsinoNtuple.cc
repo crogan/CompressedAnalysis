@@ -210,7 +210,7 @@ void CompressedHiggsinoNtuple::FillOutputTree(){
   m_TrkMET = TrackMET;
   m_is_OS = is_OS;
   //  m_dphi_MET_TrkMET = dPhi_met_trackmet;
-  //  m_HLT_xe70_tc_lcw = (HLT_xe70_tc_lcw > 0);
+  m_HLT_xe70 = HLT_xe70;
 
   if (Jets.size() > 0)
     m_pT_1jet = jet_pT->at(0);

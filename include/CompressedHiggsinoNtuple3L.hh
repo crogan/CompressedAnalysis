@@ -1,5 +1,5 @@
-#ifndef CompressedHiggsinoNtuple2L_h
-#define CompressedHiggsinoNtuple2L_h
+#ifndef CompressedHiggsinoNtuple3L_h
+#define CompressedHiggsinoNtuple3L_h
 
 #include "NtupleBase.hh"
 #include "HFntupleBase.hh"
@@ -10,11 +10,11 @@
 
 using namespace RestFrames;
 
-class CompressedHiggsinoNtuple2L : public NtupleBase<HiggsinoBase> {
+class CompressedHiggsinoNtuple3L : public NtupleBase<HiggsinoBase> {
 
 public:
-  CompressedHiggsinoNtuple2L(TTree* tree = 0);
-  virtual ~CompressedHiggsinoNtuple2L();
+  CompressedHiggsinoNtuple3L(TTree* tree = 0);
+  virtual ~CompressedHiggsinoNtuple3L();
 
 private:
   void InitOutputTree();
@@ -67,16 +67,10 @@ private:
   double m_cosS;
   double m_MS;
   double m_MISR;
-  double m_MV;
   double m_dphiCMI;
   double m_dphiISRI;
-  double m_pTjV1;
-  double m_pTjV2;
-  double m_pTjV3;
-  double m_pTjV4;
-  double m_pTjV5;
-  double m_pTjV6;
-  int m_NjV;
+  double m_pTjISR1;
+  double m_pTjISR2;
   int m_NjISR;
   double m_MW1;
   double m_MW2;
@@ -96,13 +90,11 @@ private:
   DecayRecoFrame*      CM;
   DecayRecoFrame*      S;
   VisibleRecoFrame*    ISR;
-  VisibleRecoFrame*    V;
   VisibleRecoFrame*    L;
   InvisibleRecoFrame*  I;
   InvisibleGroup*      INV;
   SetMassInvJigsaw*    InvMass;
-  CombinatoricGroup*   VIS;
-  MinMassesCombJigsaw* SplitVis;
+  SetRapidityInvJigsaw*    InvRapidity;
 
 };
 

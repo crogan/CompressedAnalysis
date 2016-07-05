@@ -1,8 +1,8 @@
-#include "CompressedHiggsinoNtuple2L.hh"
+#include "CompressedHiggsinoNtuple3L.hh"
 
 using namespace RestFrames;
 
-CompressedHiggsinoNtuple2L::CompressedHiggsinoNtuple2L(TTree* tree)
+CompressedHiggsinoNtuple3L::CompressedHiggsinoNtuple3L(TTree* tree)
   : NtupleBase<HiggsinoBase>(tree)
 {
   // RestFrames stuff
@@ -12,14 +12,12 @@ CompressedHiggsinoNtuple2L::CompressedHiggsinoNtuple2L(TTree* tree)
   CM = new DecayRecoFrame("CM","CM");
   S = new DecayRecoFrame("S","S");
   ISR = new VisibleRecoFrame("ISR","ISR");
-  V = new VisibleRecoFrame("V","Vis");
   L = new VisibleRecoFrame("L","Lep");
   I = new InvisibleRecoFrame("I","Inv");
 
   LAB->SetChildFrame(*CM);
   CM->AddChildFrame(*ISR);
   CM->AddChildFrame(*S);
-  S->AddChildFrame(*V);
   S->AddChildFrame(*I);
   S->AddChildFrame(*L);
 
@@ -31,45 +29,31 @@ CompressedHiggsinoNtuple2L::CompressedHiggsinoNtuple2L(TTree* tree)
   INV = new InvisibleGroup("INV","Invisible System");
   INV->AddFrame(*I);
 
-  VIS = new CombinatoricGroup("VIS","Visible Objects");
-  VIS->AddFrame(*ISR);
-  VIS->SetNElementsForFrame(*ISR,1,false);
-  VIS->AddFrame(*V);
-  VIS->SetNElementsForFrame(*V,0,false);
-
   // set the invisible system mass to zero
   InvMass = new SetMassInvJigsaw("InvMass", "Invisible system mass Jigsaw");
   INV->AddJigsaw(*InvMass);
 
-  // define the rule for partitioning objects between "ISR" and "V"
-  SplitVis = new MinMassesCombJigsaw("SplitVis","Minimize M_{ISR} and M_{S} Jigsaw");
-  VIS->AddJigsaw(*SplitVis);
-  // "0" group (ISR)
-  SplitVis->AddFrame(*ISR, 0);
-  // "1" group (V + I + L)
-  SplitVis->AddFrame(*V,1);
-  SplitVis->AddFrame(*I,1);
-  SplitVis->AddFrame(*L,1);
+  // set the invisible system rapidity to that of visible
+  InvRapidity = new SetRapidityInvJigsaw("InvRapidity", "Invisible system rapidity Jigsaw");
+  INV->AddJigsaw(*InvRapidity);
+  InvRapidity->AddVisibleFrames(S->GetListVisibleFrames());
   
   LAB->InitializeAnalysis(); 
    ////////////// Jigsaw rules set-up /////////////////
 }
 
-CompressedHiggsinoNtuple2L::~CompressedHiggsinoNtuple2L() {
+CompressedHiggsinoNtuple3L::~CompressedHiggsinoNtuple3L() {
   delete LAB;
   delete CM;
   delete S;
   delete ISR;
-  delete V;
   delete I;
   delete L;
-  delete INV;
   delete InvMass;
-  delete VIS;
-  delete SplitVis;
+  delete InvRapidity;
 }
 
-void CompressedHiggsinoNtuple2L::InitOutputTree(){
+void CompressedHiggsinoNtuple3L::InitOutputTree(){
 
   if(m_Tree)
     delete m_Tree;
@@ -118,7 +102,6 @@ void CompressedHiggsinoNtuple2L::InitOutputTree(){
   m_Tree->Branch("cosS", &m_cosS);
   m_Tree->Branch("MS", &m_MS);
   m_Tree->Branch("MISR", &m_MISR);
-  m_Tree->Branch("MV", &m_MV);
   m_Tree->Branch("MW1", &m_MW1);
   m_Tree->Branch("MW2", &m_MW2);
   m_Tree->Branch("mllOS", &m_mllOS);
@@ -133,18 +116,13 @@ void CompressedHiggsinoNtuple2L::InitOutputTree(){
   m_Tree->Branch("cosIL2", &m_cosIL2);
   m_Tree->Branch("cosLLOS", &m_cosLLOS);
   m_Tree->Branch("dphiLLOS", &m_dphiLLOS);
-  m_Tree->Branch("pTjV1", &m_pTjV1);
-  m_Tree->Branch("pTjV2", &m_pTjV2);
-  m_Tree->Branch("pTjV3", &m_pTjV3);
-  m_Tree->Branch("pTjV4", &m_pTjV4);
-  m_Tree->Branch("pTjV5", &m_pTjV5);
-  m_Tree->Branch("pTjV6", &m_pTjV6);
-  m_Tree->Branch("NjV", &m_NjV);
+  m_Tree->Branch("pTjISR1", &m_pTjISR1);
+  m_Tree->Branch("pTjISR2", &m_pTjISR2);
   m_Tree->Branch("NjISR", &m_NjISR);
 
 }
 
-void CompressedHiggsinoNtuple2L::FillOutputTree(){
+void CompressedHiggsinoNtuple3L::FillOutputTree(){
   // preselection
 
   // if (is_OS != 1)
@@ -265,60 +243,41 @@ void CompressedHiggsinoNtuple2L::FillOutputTree(){
   LAB->ClearEvent();
   
   m_HT = 0.;
-  vector<RFKey> jetID; 
+  TLorentzVector jetSys;
+  jetSys.SetPtEtaPhiM(0.0,0.0,0.0,0.0);
   for(int i = 0; i < int(Jets.size()); i++){
     TLorentzVector jet = Jets[i].P;
-    // transverse view of jet 4-vectors
-    jet.SetPtEtaPhiM(jet.Pt(),0.0,jet.Phi(),jet.M());
-    jetID.push_back(VIS->AddLabFrameFourVector(jet));
+    // full view of jet 4-vectors
+    jet.SetPtEtaPhiM(jet.Pt(),jet.Eta(),jet.Phi(),jet.M());
+    jetSys = jetSys + jet;
     m_HT += jet.Pt();
   }
+  ISR->SetLabFrameFourVector(jetSys);
 
-  //  vector<RFKey> lepID;
   TLorentzVector lepSys;
   lepSys.SetPtEtaPhiM(0.0,0.0,0.0,0.0);
   for(int i = 0; i < int(Leptons.size()); i++){
     TLorentzVector lep1;
-    // transverse view of mu 4-vectors
-    lep1.SetPtEtaPhiM(Leptons[i].Pt(),0.0,Leptons[i].Phi(),Leptons[i].M());
+    // full view of lep 4-vectors
+    lep1.SetPtEtaPhiM(Leptons[i].Pt(),Leptons[i].Eta(),Leptons[i].Phi(),Leptons[i].M());
     lepSys = lepSys + lep1;
   }  
   L->SetLabFrameFourVector(lepSys);
-  //  L2->SetLabFrameFourVector(Leptons[1]);
-  //L->SetMass(lepSys.M());
 
   INV->SetLabFrameThreeVector(ETMiss);
   if(!LAB->AnalyzeEvent()) cout << "Something went wrong..." << endl;
 
   // Compressed variables from tree
-  m_NjV = 0;
-  m_NjISR = 0;
-  m_pTjV1 = 0.;
-  m_pTjV2 = 0.;
-  m_pTjV3 = 0.;
-  m_pTjV4 = 0.;
-  m_pTjV5 = 0.;
-  m_pTjV6 = 0.;
+  m_NjISR = 0.;
+  m_pTjISR1 = 0.;
+  m_pTjISR2 = 0.;
   // assuming pT ordered jets
   for(int i = 0; i < int(Jets.size()); i++){
-    if(VIS->GetFrame(jetID[i]) == *V){ // sparticle group
-      m_NjV++;
-      if(m_NjV == 1)
-	m_pTjV1 = Jets[i].P.Pt();
-      if(m_NjV == 2)
-	m_pTjV2 = Jets[i].P.Pt();
-      if(m_NjV == 3)
-	m_pTjV3 = Jets[i].P.Pt();
-      if(m_NjV == 4)
-	m_pTjV4 = Jets[i].P.Pt();
-      if(m_NjV == 5)
-	m_pTjV5 = Jets[i].P.Pt();
-      if(m_NjV == 6)
-	m_pTjV6 = Jets[i].P.Pt();
-      
-    } else {
-      m_NjISR++;
-    }
+    m_NjISR++;
+    if (m_NjISR == 1)
+      m_pTjISR1 = Jets[i].P.Pt();
+    if (m_NjISR == 2)
+      m_pTjISR2 = Jets[i].P.Pt();
   }
 
 
@@ -361,12 +320,6 @@ void CompressedHiggsinoNtuple2L::FillOutputTree(){
 	  lep2.SetPtEtaPhiM(Leptons[j].Pt(), Leptons[i].Eta(),
 			    Leptons[j].Phi(), Leptons[j].M());
 	  m_mllOS = (lep1 + lep2).M();
-	  lep1.Clear();
-	  lep2.Clear();
-	  lep1.SetPtEtaPhiM(Leptons[i].Pt(), 0.0,
-			    Leptons[i].Phi(), max(0.,Leptons[i].M()));
-	  lep2.SetPtEtaPhiM(Leptons[j].Pt(), 0.0,
-			    Leptons[j].Phi(), max(0.,Leptons[j].M()));
 	  TLorentzVector vL1_CM   = CM->GetFourVector(lep1);
 	  TLorentzVector vL2_CM   = CM->GetFourVector(lep2);
 	  TLorentzVector vL1_S    = S->GetFourVector(lep1);
@@ -410,7 +363,6 @@ void CompressedHiggsinoNtuple2L::FillOutputTree(){
     m_RISR = 0.;
     m_cosS = 0.;
     m_MS = 0.;
-    m_MV = 0.;
     m_MISR = 0.;
     m_dphiCMI = 0.;
     m_dphiISRI = 0.;
@@ -425,18 +377,9 @@ void CompressedHiggsinoNtuple2L::FillOutputTree(){
     m_RISR = fabs(vP_I.Dot(vP_ISR.Unit())) / m_PTISR;
     m_cosS = S->GetCosDecayAngle();
     m_MS = S->GetMass();
-    m_MV = V->GetMass();
     m_MISR = ISR->GetMass();
     m_dphiCMI = acos(-1.)-fabs(CM->GetDeltaPhiBoostVisible());
     m_dphiISRI = fabs(vP_ISR.DeltaPhi(vP_I));
-
-    // SussexBase w/ b-tagging
-    // if(m_NbV+m_NbISR != NbV+NbISR){
-    //   cout << m_NbV << " " << NbV << endl;
-    // }
-    // m_pTbV1 = pTbV1;
-    // m_pTbV2 = pTsbV2;
-//  }
 
   if(m_Tree)
     m_Tree->Fill();
