@@ -249,9 +249,9 @@ template <>
 double AnalysisBase<HiggsinoBase>::GetEventWeight(){
   if(pileupWeight <= 0.)
     pileupWeight = 1.;
-  //return weight1fb*eventWeight; //backgrounds
+  return weight1fb; //backgrounds
   //return eventWeight*xsec_3l*bf_3l*eff_3l/nEvents_3l; // signals 3l
-  return eventWeight*xsec_2l2j*bf_2l2j*eff_2l2j/nEvents_2l2j; // signals 2l2j
+  //return eventWeight*xsec_2l2j*bf_2l2j*eff_2l2j/nEvents_2l2j; // signals 2l2j
 }
 
 template <>
