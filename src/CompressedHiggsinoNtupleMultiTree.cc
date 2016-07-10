@@ -208,7 +208,6 @@ CompressedHiggsinoNtupleMultiTree::CompressedHiggsinoNtupleMultiTree(TTree* tree
 CompressedHiggsinoNtupleMultiTree::~CompressedHiggsinoNtupleMultiTree() {
   // combinatoric (transverse) tree
   // for jet assignment
-  /*
   delete LAB_comb;
   delete CM_comb;
   delete S_comb;
@@ -274,7 +273,6 @@ CompressedHiggsinoNtupleMultiTree::~CompressedHiggsinoNtupleMultiTree() {
   delete InvMass_2L1L;
   delete InvRapidity_2L1L;
   delete SplitINV_2L1L;
-  */
 }
 
 void CompressedHiggsinoNtupleMultiTree::InitOutputTree(){
@@ -520,8 +518,7 @@ void CompressedHiggsinoNtupleMultiTree::FillOutputTree(){
     } else{
       // 2LNJ
       if(m_NjS > 0){
-	//	m_Is_2LNJ = true;
-	m_Is_2LNJ = false; // need to fix first
+	m_Is_2LNJ = true;
       }
     }
   }
@@ -542,7 +539,7 @@ void CompressedHiggsinoNtupleMultiTree::FillOutputTree(){
     int NJ = jetID.size();
     TLorentzVector vISR(0.,0.,0.,0.);
     for(int i = 0; i < NJ; i++){
-      if(JETS_comb->GetFrame(jetID[i]) == *S_comb){
+      if(JETS_comb->GetFrame(jetID[i]) == *J_comb){
 	JETS_2LNJ->AddLabFrameFourVector(Jets[i].P);
       } else {
 	vISR += Jets[i].P;
@@ -556,7 +553,7 @@ void CompressedHiggsinoNtupleMultiTree::FillOutputTree(){
     L2_2LNJ->SetLabFrameFourVector(Leptons[1]);
 
     INV_2LNJ->SetLabFrameThreeVector(ETMiss);
-    
+
     if(!LAB_2LNJ->AnalyzeEvent())
       cout << "Something went wrong with \"2LNJ\" tree event analysis" << endl;
   }
@@ -633,7 +630,6 @@ void CompressedHiggsinoNtupleMultiTree::FillOutputTree(){
   
   // common to analysis trees
   m_PTCM = 0.;
-  
   m_PTISR = 0.;
   m_RISR = 0.;
   m_cosCM = 0.;
@@ -660,18 +656,19 @@ void CompressedHiggsinoNtupleMultiTree::FillOutputTree(){
   if(!m_Is_2LNJ && !m_Is_1L1L && !m_Is_2L1L)
     return;
 
-  TVector3 vP_ISR;
-  TVector3 vP_I;
+  TLorentzVector vP_CM;
+  TLorentzVector vP_ISR;
+  TLorentzVector vP_I;
   
   if(m_Is_2LNJ){
-    m_PTCM = CM_2LNJ->GetFourVector().Pt();
 
-    vP_ISR  = ISR_2LNJ->GetFourVector(*CM_2LNJ).Vect();
-    vP_I    = (*Ia_2LNJ+*Ib_2LNJ).GetFourVector(*CM_2LNJ).Vect();
+    vP_CM  = CM_2LNJ->GetFourVector();
+    vP_ISR = ISR_2LNJ->GetFourVector();
+    vP_I   = (*Ia_2LNJ+*Ib_2LNJ).GetFourVector();
    
     m_cosCM = CM_2LNJ->GetCosDecayAngle();
     m_cosS  = S_2LNJ->GetCosDecayAngle();
-    m_MISR = ISR_2LNJ->GetCosDecayAngle();
+    m_MISR = ISR_2LNJ->GetMass();
     m_dphiCMI = acos(-1.)-fabs(CM_2LNJ->GetDeltaPhiBoostVisible());
     m_dphiSI  = acos(-1.)-fabs(S_2LNJ->GetDeltaPhiBoostVisible());
 
@@ -696,14 +693,14 @@ void CompressedHiggsinoNtupleMultiTree::FillOutputTree(){
   }
 
   if(m_Is_1L1L){
-    m_PTCM = CM_1L1L->GetFourVector().Pt();
-
-    vP_ISR  = ISR_1L1L->GetFourVector(*CM_1L1L).Vect();
-    vP_I    = (*Ia_1L1L+*Ib_1L1L).GetFourVector(*CM_1L1L).Vect();
+    
+    vP_CM  = CM_1L1L->GetFourVector();
+    vP_ISR = ISR_1L1L->GetFourVector();
+    vP_I   = (*Ia_1L1L+*Ib_1L1L).GetFourVector();
    
     m_cosCM = CM_1L1L->GetCosDecayAngle();
     m_cosS  = S_1L1L->GetCosDecayAngle();
-    m_MISR = ISR_1L1L->GetCosDecayAngle();
+    m_MISR = ISR_1L1L->GetMass();
     m_dphiCMI = acos(-1.)-fabs(CM_1L1L->GetDeltaPhiBoostVisible());
     m_dphiSI  = acos(-1.)-fabs(S_1L1L->GetDeltaPhiBoostVisible());
 
@@ -722,18 +719,18 @@ void CompressedHiggsinoNtupleMultiTree::FillOutputTree(){
   }
 
   if(m_Is_2L1L){
-    m_PTCM = CM_2L1L->GetFourVector().Pt();
-
-    vP_ISR  = ISR_2L1L->GetFourVector(*CM_2L1L).Vect();
-    vP_I    = (*Ia_2L1L+*Ib_2L1L).GetFourVector(*CM_2L1L).Vect();
+    
+    vP_CM  = CM_2L1L->GetFourVector();
+    vP_ISR = ISR_2L1L->GetFourVector();
+    vP_I   = (*Ia_2L1L+*Ib_2L1L).GetFourVector();
    
     m_cosCM = CM_2L1L->GetCosDecayAngle();
     m_cosS  = S_2L1L->GetCosDecayAngle();
-    m_MISR = ISR_2L1L->GetCosDecayAngle();
+    m_MISR = ISR_2L1L->GetMass();
     m_dphiCMI = acos(-1.)-fabs(CM_2L1L->GetDeltaPhiBoostVisible());
     m_dphiSI  = acos(-1.)-fabs(S_2L1L->GetDeltaPhiBoostVisible());
     
-     m_HN2S = Z_2L1L->GetFourVector(*S_2L1L).E() +
+    m_HN2S = Z_2L1L->GetFourVector(*S_2L1L).E() +
       Lb_2L1L->GetFourVector(*S_2L1L).E() +
       Ia_2L1L->GetFourVector(*S_2L1L).P() +
       Ib_2L1L->GetFourVector(*S_2L1L).P();
@@ -749,13 +746,28 @@ void CompressedHiggsinoNtupleMultiTree::FillOutputTree(){
     m_MZ = Z_2L1L->GetMass();
     m_cosZ = Z_2L1L->GetCosDecayAngle();
   }
+  m_PTCM = vP_CM.Pt();
 
-  vP_ISR.SetZ(0.);
-  vP_I.SetZ(0.);
+  TVector3 boostZ = vP_CM.BoostVector();
+  boostZ.SetX(0.);
+  boostZ.SetY(0.);
+
+  vP_CM.Boost(-boostZ);
+  vP_ISR.Boost(-boostZ);
+  vP_I.Boost(-boostZ);
+
+  TVector3 boostT = vP_CM.BoostVector();
+  vP_ISR.Boost(-boostT);
+  vP_I.Boost(-boostT);
+
+  TVector3 vPt_ISR = vP_ISR.Vect();
+  TVector3 vPt_I   = vP_I.Vect();
+  vPt_ISR -= vPt_ISR.Dot(boostZ.Unit())*boostZ.Unit();
+  vPt_I   -= vPt_I.Dot(boostZ.Unit())*boostZ.Unit();
   
-  m_PTISR =  vP_ISR.Mag();
-  m_RISR  = -vP_I.Dot(vP_ISR.Unit()) / m_PTISR;
-  m_dphiISRI = fabs(vP_ISR.DeltaPhi(vP_I));
+  m_PTISR =  vPt_ISR.Mag();
+  m_RISR  = -vPt_I.Dot(vPt_ISR.Unit()) / m_PTISR;
+  m_dphiISRI = fabs(vPt_ISR.Angle(vPt_I));
 
   if(m_Tree)
     m_Tree->Fill();
