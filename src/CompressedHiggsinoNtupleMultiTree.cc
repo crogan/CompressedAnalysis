@@ -601,7 +601,7 @@ void CompressedHiggsinoNtupleMultiTree::FillOutputTree(){
     for(int i = 0; i < 2; i++){
       for(int j = i+1; j < 3; j++){
 	if(LepIDs[i]+LepIDs[j] == 0){
-	  if(mSFOS < -1. ||
+	  if(mSFOS < 0. ||
 	     (Leptons[i]+Leptons[j]).M() < mSFOS){
 	    mSFOS = (Leptons[i]+Leptons[j]).M();
 	    iSFOS.first  = i;
