@@ -5,12 +5,13 @@
 #include "HFntupleBase.hh"
 #include "SussexBase.hh"
 #include "HiggsinoBase.hh"
+#include "SimpleBase.hh"
 
 #include "RestFrames/RestFrames.hh"
 
 using namespace RestFrames;
 
-class CompressedHiggsinoNtupleMultiTree : public NtupleBase<HiggsinoBase> {
+class CompressedHiggsinoNtupleMultiTree : public NtupleBase<SimpleBase> {
 
 public:
   CompressedHiggsinoNtupleMultiTree(TTree* tree = 0);

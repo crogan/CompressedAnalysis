@@ -3,7 +3,7 @@
 using namespace RestFrames;
 
 CompressedHiggsinoNtupleMultiTree::CompressedHiggsinoNtupleMultiTree(TTree* tree)
-  : NtupleBase<HiggsinoBase>(tree)
+  : NtupleBase<SimpleBase>(tree)
 {
   // RestFrames stuff
 
@@ -286,7 +286,7 @@ void CompressedHiggsinoNtupleMultiTree::InitOutputTree(){
 
   m_Tree = (TTree*) new TTree(name.c_str(), name.c_str());
 
-   m_Tree->Branch("weight", &m_weight);
+  m_Tree->Branch("weight", &m_weight);
   
   m_Tree->Branch("MET", &m_MET);
   m_Tree->Branch("TrkMET", &m_TrkMET);
@@ -356,14 +356,20 @@ void CompressedHiggsinoNtupleMultiTree::InitOutputTree(){
 void CompressedHiggsinoNtupleMultiTree::FillOutputTree(){
   // preselection
 
-  if (lep_pT->at(0) <= 10.0 || lep_pT->at(1) <= 4.0 )
+  if (lep_pT->size() < 2){
     return;
+  }
 
+  if (lep_pT->at(0) <= 10.0 || lep_pT->at(1) <= 4.0 ) 
+    return;
+  
   // really need this?
-  if (bjet_n != 0)
-    return;
+  //*****
+  // commented out for the simple MC signals
+  //*****
+  // if (bjet_n != 0)
+  //   return;
 
-  // commented out b/c it kills the current samples
   // can apply offline
   // if (MET < 200)
   //   return;
@@ -382,29 +388,29 @@ void CompressedHiggsinoNtupleMultiTree::FillOutputTree(){
 
   vector<TLorentzVector> Leptons;
   vector<int> LepIDs;
-  GetLeptons(Leptons, LepIDs, 4.); 
+  GetLeptons(Leptons, LepIDs, 4.);
 
-  vector<TLorentzVector> Muons; 
-  GetMuons(Muons); 
+  // vector<TLorentzVector> Muons; 
+  // GetMuons(Muons); 
   
-  vector<TLorentzVector> Elecs; 
-  GetElectrons(Elecs);
+  // vector<TLorentzVector> Elecs; 
+  // GetElectrons(Elecs);
 
   // need two objects to play - should
   // be satisfied by previous requirements
-  if(Jets.size() + Muons.size() + Elecs.size() < 2) 
+  if(Jets.size() + Leptons.size() < 2) 
     return; 
 
   m_weight = GetEventWeight();
   
   // MET-related observables
-  m_TrkMET = TrackMET;
+  //  m_TrkMET = TrackMET;
   m_MET = ETMiss.Pt();
-  m_dphiMin1   = DeltaPhiMin(Jets, ETMiss, 1);
-  m_dphiMin2   = DeltaPhiMin(Jets, ETMiss, 2);
-  m_dphiMin3   = DeltaPhiMin(Jets, ETMiss, 3);
-  m_dphiMinAll = DeltaPhiMin(Jets, ETMiss);
-  m_HLT_xe70 = HLT_xe70;
+  //  m_dphiMin1   = DeltaPhiMin(Jets, ETMiss, 1);
+  //  m_dphiMin2   = DeltaPhiMin(Jets, ETMiss, 2);
+  //  m_dphiMin3   = DeltaPhiMin(Jets, ETMiss, 3);
+  //  m_dphiMinAll = DeltaPhiMin(Jets, ETMiss);
+  //  m_HLT_xe70 = HLT_xe70;
 
   if (Jets.size() > 0)
     m_pT_1jet = jet_pT->at(0);
@@ -423,12 +429,14 @@ void CompressedHiggsinoNtupleMultiTree::FillOutputTree(){
   else
     m_pT_4jet = 0.;
 
-  m_nEl = el_n;
-  m_nMu = mu_n;
-  m_MT2W  = MT2W;
-  m_MT2Top  = MT2Top;
+  // m_nEl = el_n;
+  // m_nMu = mu_n;
+  // m_MT2W  = MT2W;
+  // m_MT2Top  = MT2Top;
+
+
   
-  if (lep_n > 0) {
+  if (Leptons.size() > 0) {
     m_pT_1lep = lep_pT->at(0);
     m_id_1lep = lep_pdgId->at(0);
   }
@@ -436,7 +444,7 @@ void CompressedHiggsinoNtupleMultiTree::FillOutputTree(){
     m_pT_1lep = 0.;
     m_id_1lep = 0;
   }
-  if (lep_n > 1) {
+  if (Leptons.size() > 1) {
     m_pT_2lep = lep_pT->at(1);
     m_id_2lep = lep_pdgId->at(1);
   }
@@ -444,7 +452,7 @@ void CompressedHiggsinoNtupleMultiTree::FillOutputTree(){
     m_pT_2lep = 0.;
     m_id_2lep = 0;
   }
-  if (lep_n > 2) {
+  if (Leptons.size() > 2) {
     m_pT_3lep = lep_pT->at(2);
     m_id_3lep = lep_pdgId->at(2);
   }
@@ -477,6 +485,7 @@ void CompressedHiggsinoNtupleMultiTree::FillOutputTree(){
   INV_comb->SetLabFrameThreeVector(ETMiss);
   if(!LAB_comb->AnalyzeEvent())
     cout << "Something went wrong with \"comb\" tree event analysis" << endl;
+
 
   // Jet counting from comb tree
   m_NjS   = 0;

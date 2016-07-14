@@ -4,6 +4,7 @@
 #include "HFntupleBase.hh"
 #include "SussexBase.hh"
 #include "HiggsinoBase.hh"
+#include "SimpleBase.hh"
 
 using namespace std;
 
@@ -244,13 +245,14 @@ double xsec_2l2j = 517.259; //fb
 double bf_2l2j = 0.068070618;
 double eff_2l2j = 4.912453*pow(10,-1);
 int nEvents_2l2j = 7734;
+
 ///////////////// HiggsinoBase ///////////////////////////////////
 template <>
 double AnalysisBase<HiggsinoBase>::GetEventWeight(){
   if(pileupWeight <= 0.)
-    pileupWeight = 1.;
+      pileupWeight = 1.;
   return weight1fb; //backgrounds
-  //return eventWeight*xsec_3l*bf_3l*eff_3l/nEvents_3l; // signals 3l
+  //  return eventWeight*xsec_3l*bf_3l*eff_3l/nEvents_3l; // signals 3l
   //return eventWeight*xsec_2l2j*bf_2l2j*eff_2l2j/nEvents_2l2j; // signals 2l2j
 }
 
@@ -274,10 +276,11 @@ void AnalysisBase<HiggsinoBase>::GetJets(vector<Jet>& JETs, double pt_cut,
 		       jet_phi->at(i), jet_E->at(i));
     if((JET.P.Pt() >= pt_cut) && (fabs(JET.P.Eta()) < eta_cut || eta_cut < 0)){
       //if(jet_MV2c20->at(i) > btag_WP_cut)
-      if(jet_btag->at(i) == 1)
+      //commented out for simple samples
+      //      if(jet_btag->at(i) == 1)
 	JET.btag = true;
-      else
-	JET.btag = false;
+	//      else
+	//	JET.btag = false;
       JETs.push_back(JET);
     }
   }
@@ -334,7 +337,64 @@ void AnalysisBase<HiggsinoBase>::GetElectrons(vector<TLorentzVector>& ELs,
   }
 }
 
+double xsec155 = 2913.86; //fb
+int nEvents155 = 36141;
+double xsec170 = 2096.61; //fb
+int nEvents170 = 37614;
+double xsec190 = 1407.54; //fb
+int nEvents190 = 36909;
+
+///////////////// SimpleBase ///////////////////////////////////
+template <>
+double AnalysisBase<SimpleBase>::GetEventWeight(){
+  return 1*xsec190/nEvents190; 
+}
+
+template <>
+TVector3 AnalysisBase<SimpleBase>::GetMET(){
+  TVector3 met;
+  met.SetXYZ(MET*cos(MET_phi), MET*sin(MET_phi), 0.0);
+  return met;
+}
+
+template <>
+void AnalysisBase<SimpleBase>::GetJets(vector<Jet>& JETs, double pt_cut, 
+					 double eta_cut, double btag_WP_cut){
+  JETs.clear();
+
+  int Njet = jet_pT->size();
+  for(int i = 0; i < Njet; i++){
+    Jet JET;
+    // units MeV -> GeV
+    JET.P.SetPtEtaPhiE(jet_pT->at(i), jet_eta->at(i),
+		       jet_phi->at(i), jet_E->at(i));
+    if((JET.P.Pt() >= pt_cut) && (fabs(JET.P.Eta()) < eta_cut || eta_cut < 0)){
+      JET.btag = false; //assume no b-tagged jets for simple samples
+      JETs.push_back(JET);
+    }
+  }
+}
+
+template <>
+void AnalysisBase<SimpleBase>::GetLeptons(vector<TLorentzVector>& LEPs, vector<int>& IDs,
+					    double pt_cut, double eta_cut) {
+  LEPs.clear();
+  IDs.clear();
+  
+  int Nlep = lep_pT->size();
+  for(int i = 0; i < Nlep; i++){
+    TLorentzVector LEP;
+    LEP.SetPtEtaPhiE(lep_pT->at(i), lep_eta->at(i),
+		    lep_phi->at(i), lep_E->at(i));
+    if((LEP.Pt() >= pt_cut) && (fabs(LEP.Eta()) < eta_cut || eta_cut < 0)){
+      LEPs.push_back(LEP);
+      IDs.push_back(lep_pdgId->at(i));
+    }
+  }
+}
+
 
 template class AnalysisBase<HFntupleBase>;
 template class AnalysisBase<SussexBase>;
 template class AnalysisBase<HiggsinoBase>;
+template class AnalysisBase<SimpleBase>;
