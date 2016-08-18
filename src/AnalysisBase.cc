@@ -337,17 +337,31 @@ void AnalysisBase<HiggsinoBase>::GetElectrons(vector<TLorentzVector>& ELs,
   }
 }
 
-double xsec155 = 2913.86; //fb
-int nEvents155 = 36141;
-double xsec170 = 2096.61; //fb
-int nEvents170 = 37614;
-double xsec190 = 1407.54; //fb
-int nEvents190 = 36909;
+// Event weight numbers for Ruo's generated samples
+
+double xsec155 = 2105; //fb
+double eff155 = 0.07244277;
+int nEvents155 = 50000;
+double xsec160 = 1964; //fb
+double eff160 = 0.1154156;
+int nEvents160 = 50000;
+double xsec170 = 1728; //fb
+double eff170 = 0.1182419;
+int nEvents170 = 50000;
+double xsec190_150 = 1360; //fb
+double eff190_150 = 0.1271336;
+int nEvents190_150 = 50000;
+double xsec190_170 = 1130; //fb
+double eff190_170 = 0.13;
+int nEvents190_170 = 20000;
+double xsec210_190 = 767.4; //fb
+double eff210_190 = 0.142;
+int nEvents210_190 = 20000;
 
 ///////////////// SimpleBase ///////////////////////////////////
 template <>
 double AnalysisBase<SimpleBase>::GetEventWeight(){
-  return 1*xsec190/nEvents190; 
+  return 1*xsec210_190*eff210_190/nEvents210_190; 
 }
 
 template <>
