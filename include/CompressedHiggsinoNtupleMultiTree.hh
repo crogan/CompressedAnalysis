@@ -6,12 +6,13 @@
 #include "SussexBase.hh"
 #include "HiggsinoBase.hh"
 #include "SimpleBase.hh"
+#include "Incl1LBase.hh"
 
 #include "RestFrames/RestFrames.hh"
 
 using namespace RestFrames;
 
-class CompressedHiggsinoNtupleMultiTree : public NtupleBase<SimpleBase> {
+class CompressedHiggsinoNtupleMultiTree : public NtupleBase<Incl1LBase> {
 
 public:
   CompressedHiggsinoNtupleMultiTree(TTree* tree = 0);
@@ -58,9 +59,12 @@ private:
   int m_NjISR;
 
   // which tree are we using?
+  bool m_Is_1L;
   bool m_Is_2LNJ;
   bool m_Is_1L1L;
+  bool m_Is_1L1Lnu;
   bool m_Is_2L1L;
+  bool m_Is_2L1Lnu;
   
   // compressed observables
   // common to all trees
@@ -75,6 +79,7 @@ private:
   double m_dphiISRI;
 
   double m_HN2S;
+  double m_HN2SR;
   double m_H11S;
   double m_HN1Ca;
   double m_HN1Cb;
@@ -147,6 +152,30 @@ private:
   SetRapidityInvJigsaw* InvRapidity_1L1L;
   ContraBoostInvJigsaw* SplitINV_1L1L;
 
+  // 1L+1L tree (Z/W->l + Z/W->l), with neutrino ~ lepton
+  LabRecoFrame*        LAB_1L1Lnu;
+  DecayRecoFrame*      CM_1L1Lnu;
+  DecayRecoFrame*      S_1L1Lnu;
+  VisibleRecoFrame*    ISR_1L1Lnu;
+
+  DecayRecoFrame*      Ca_1L1Lnu;  
+  DecayRecoFrame*      Wa_1L1Lnu;
+  VisibleRecoFrame*    La_1L1Lnu;
+  VisibleRecoFrame*    Na_1L1Lnu;
+
+  DecayRecoFrame*      Cb_1L1Lnu;  
+  DecayRecoFrame*      Wb_1L1Lnu;
+  VisibleRecoFrame*    Lb_1L1Lnu;
+  VisibleRecoFrame*    Nb_1L1Lnu;
+  
+  InvisibleRecoFrame*  Ia_1L1Lnu;
+  InvisibleRecoFrame*  Ib_1L1Lnu;
+
+  InvisibleGroup*       INV_1L1Lnu;
+  SetMassInvJigsaw*     InvMass_1L1Lnu;
+  SetRapidityInvJigsaw* InvRapidity_1L1Lnu;
+  ContraBoostInvJigsaw* SplitINV_1L1Lnu;
+
   // 2L+1L tree (Z->ll + Z/W->l)
   LabRecoFrame*        LAB_2L1L;
   DecayRecoFrame*      CM_2L1L;
@@ -168,7 +197,31 @@ private:
   SetMassInvJigsaw*     InvMass_2L1L;
   SetRapidityInvJigsaw* InvRapidity_2L1L;
   ContraBoostInvJigsaw* SplitINV_2L1L;
- 
+
+  // 2L+1L tree (Z->ll + Z/W->l), with neutrino ~ lepton
+  LabRecoFrame*        LAB_2L1Lnu;
+  DecayRecoFrame*      CM_2L1Lnu;
+  DecayRecoFrame*      S_2L1Lnu;
+  VisibleRecoFrame*    ISR_2L1Lnu;
+
+  DecayRecoFrame*      Ca_2L1Lnu;
+  DecayRecoFrame*      Z_2L1Lnu;  
+  VisibleRecoFrame*    L1_2L1Lnu;
+  VisibleRecoFrame*    L2_2L1Lnu;
+
+  DecayRecoFrame*      Cb_2L1Lnu;  
+  DecayRecoFrame*      W_2L1Lnu;  
+  VisibleRecoFrame*    Lb_2L1Lnu;
+  VisibleRecoFrame*    Nb_2L1Lnu;
+  
+  InvisibleRecoFrame*  Ia_2L1Lnu;
+  InvisibleRecoFrame*  Ib_2L1Lnu;
+
+  InvisibleGroup*       INV_2L1Lnu;
+  SetMassInvJigsaw*     InvMass_2L1Lnu;
+  SetRapidityInvJigsaw* InvRapidity_2L1Lnu;
+  ContraBoostInvJigsaw* SplitINV_2L1Lnu;
+  
 
 };
 

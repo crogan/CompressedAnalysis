@@ -5,6 +5,7 @@
 #include "SussexBase.hh"
 #include "HiggsinoBase.hh"
 #include "SimpleBase.hh"
+#include "Incl1LBase.hh"
 
 template <class Base>
 NtupleBase<Base>::NtupleBase(TTree* tree)
@@ -47,5 +48,6 @@ template class NtupleBase<HFntupleBase>;
 template class NtupleBase<SussexBase>;
 template class NtupleBase<HiggsinoBase>;
 template class NtupleBase<SimpleBase>;
+template class NtupleBase<Incl1LBase>;
 
 

@@ -5,6 +5,7 @@
 #include "SussexBase.hh"
 #include "HiggsinoBase.hh"
 #include "SimpleBase.hh"
+#include "Incl1LBase.hh"
 
 using namespace std;
 
@@ -236,7 +237,6 @@ void AnalysisBase<SussexBase>::GetElectrons(vector<TLorentzVector>& ELs,
   }
 }
 
-
 double xsec_3l =  517.259; //fb
 double bf_3l =  0.03266518922;
 double eff_3l =  6.564165*pow(10,-1);
@@ -277,10 +277,10 @@ void AnalysisBase<HiggsinoBase>::GetJets(vector<Jet>& JETs, double pt_cut,
     if((JET.P.Pt() >= pt_cut) && (fabs(JET.P.Eta()) < eta_cut || eta_cut < 0)){
       //if(jet_MV2c20->at(i) > btag_WP_cut)
       //commented out for simple samples
-      //      if(jet_btag->at(i) == 1)
+      if(jet_btag->at(i) == 1)
 	JET.btag = true;
-	//      else
-	//	JET.btag = false;
+      else
+	JET.btag = false;
       JETs.push_back(JET);
     }
   }
@@ -361,7 +361,7 @@ int nEvents210_190 = 20000;
 ///////////////// SimpleBase ///////////////////////////////////
 template <>
 double AnalysisBase<SimpleBase>::GetEventWeight(){
-  return 1*xsec210_190*eff210_190/nEvents210_190; 
+  return 1*xsec190_150*eff190_150/nEvents190_150;
 }
 
 template <>
@@ -407,8 +407,157 @@ void AnalysisBase<SimpleBase>::GetLeptons(vector<TLorentzVector>& LEPs, vector<i
   }
 }
 
+///////////////// ********** /////////////////////////////////// 
+///////////////// Incl1LBase /////////////////////////////////// 
+///////////////// ********** /////////////////////////////////// 
+template <>
+double AnalysisBase<Incl1LBase>::GetEventWeight(){
+  return pileupWeight*eventWeight*genWeight*jvtWeight*leptonWeight*SherpaVjetsNjetsWeight;
+
+  // 300-200 //  *(-0.3163*0.5825/20000);
+  // 170-150 //  *(-1.724*0.29055/50000);
+  // 120-100 //  *(-6.54*0.231/20000);   
+}
+
+template <>
+TVector3 AnalysisBase<Incl1LBase>::GetMET(){
+  TVector3 MET;
+  MET.SetXYZ(met*cos(metPhi), met*sin(metPhi), 0.0);
+  return MET;
+}
+
+template <>
+void AnalysisBase<Incl1LBase>::GetJets(vector<Jet>& JETs, double pt_cut, 
+				       double eta_cut, double btag_WP_cut){
+  JETs.clear();
+
+  // A bit ugly, but it allow us to keep flat ntuples... (c'est la vie :-))
+  vector<float> jpt  = {jet1Pt,jet2Pt,jet3Pt,jet4Pt,jet5Pt,jet6Pt,jet7Pt,jet8Pt};
+  vector<float> jeta = {jet1Eta,jet2Eta,jet3Eta,jet4Eta,jet5Eta,jet6Eta,jet7Eta,jet8Eta};
+  vector<float> jphi = {jet1Phi,jet2Phi,jet3Phi,jet4Phi,jet5Phi,jet6Phi,jet7Phi,jet8Phi};
+  vector<float> jE   = {jet1E,jet2E,jet3E,jet4E,jet5E,jet6E,jet7E,jet8E};
+  vector<float> jmv2 = {jet1Mv2c10,jet2Mv2c10,jet3Mv2c10,jet4Mv2c10,jet5Mv2c10,jet6Mv2c10,jet7Mv2c10,jet8Mv2c10};
+  
+  int Njets = jpt.size();
+  for(int i = 0; i < Njets; i++) {
+    if(jpt[i]>0) {
+      Jet JET;
+      JET.P.SetPtEtaPhiE(jpt[i],jeta[i],jphi[i],jE[i]);
+      if( jmv2[i] > btag_WP_cut && fabs(jeta[i])<2.5 )
+	JET.btag = true;
+      else
+	JET.btag = false;
+      JETs.push_back(JET);
+    }
+  }
+}
+
+template <>
+void AnalysisBase<Incl1LBase>::GetMuons(vector<TLorentzVector>& MUs, 
+					double pt_cut, double eta_cut) {
+  MUs.clear();
+  
+  if(AnalysisType==2) {
+    if( lep1Pt >= pt_cut && (fabs(lep1Eta) < eta_cut || eta_cut < 0) ){
+      TLorentzVector MU;
+      MU.SetPtEtaPhiM(lep1Pt,lep1Eta,lep1Phi,0.105658); 
+      MUs.push_back(MU);
+    }
+  }
+  if(AnalysisType_lep2==2) {
+    if( lep2Pt >= pt_cut && (fabs(lep2Eta) < eta_cut || eta_cut < 0) ){
+      TLorentzVector MU;
+      MU.SetPtEtaPhiM(lep2Pt,lep2Eta,lep2Phi,0.105658);
+      MUs.push_back(MU);
+    }
+  }
+  if(AnalysisType_lep3==2) {
+    if( lep3Pt >= pt_cut && (fabs(lep3Eta) < eta_cut || eta_cut < 0) ){
+      TLorentzVector MU;
+      MU.SetPtEtaPhiM(lep3Pt,lep3Eta,lep3Phi,0.105658);
+      MUs.push_back(MU);
+    }
+  }
+  if(AnalysisType_lep4==2) {
+    if( lep4Pt >= pt_cut && (fabs(lep4Eta) < eta_cut || eta_cut < 0) ){
+      TLorentzVector MU;
+      MU.SetPtEtaPhiM(lep4Pt,lep4Eta,lep4Phi,0.105658);
+      MUs.push_back(MU);
+    }
+  }
+}
+
+template <>
+void AnalysisBase<Incl1LBase>::GetElectrons(vector<TLorentzVector>& ELs, 
+					    double pt_cut, double eta_cut) {
+  ELs.clear();
+
+  if(AnalysisType==1) {
+    if( lep1Pt >= pt_cut && (fabs(lep1Eta) < eta_cut || eta_cut < 0) ){
+      TLorentzVector EL;
+      EL.SetPtEtaPhiM(lep1Pt,lep1Eta,lep1Phi,0.00051);
+      ELs.push_back(EL);
+    }
+  }
+  if(AnalysisType_lep2==1) {
+    if( lep2Pt >= pt_cut && (fabs(lep2Eta) < eta_cut || eta_cut < 0) ){
+      TLorentzVector EL;
+      EL.SetPtEtaPhiM(lep2Pt,lep2Eta,lep2Phi,0.00051);
+      ELs.push_back(EL);
+    }
+  }
+  if(AnalysisType_lep3==1) {
+    if( lep3Pt >= pt_cut && (fabs(lep3Eta) < eta_cut || eta_cut < 0) ){
+      TLorentzVector EL;
+      EL.SetPtEtaPhiM(lep3Pt,lep3Eta,lep3Phi,0.00051);
+      ELs.push_back(EL);
+    }
+  }
+  if(AnalysisType_lep4==1) {
+    if( lep4Pt >= pt_cut && (fabs(lep4Eta) < eta_cut || eta_cut < 0) ){
+      TLorentzVector EL;
+      EL.SetPtEtaPhiM(lep4Pt,lep4Eta,lep4Phi,0.00051);
+      ELs.push_back(EL);
+    }
+  }
+}
+
+template <>
+void AnalysisBase<Incl1LBase>::GetLeptons(vector<TLorentzVector>& LEPs, vector<int>& IDs,
+                                            double pt_cut, double eta_cut) {
+  LEPs.clear();
+  IDs.clear();
+  
+  if( lep1Pt >= pt_cut && (fabs(lep1Eta) < eta_cut || eta_cut < 0) ){
+    TLorentzVector LEP;
+    LEP.SetPtEtaPhiM(lep1Pt,lep1Eta,lep1Phi, ( AnalysisType==1 ? 0.00051 : 0.105658 ) );
+    LEPs.push_back(LEP);
+    IDs.push_back(lep1Charge*AnalysisType);
+  }
+  if( lep2Pt >= pt_cut && (fabs(lep2Eta) < eta_cut || eta_cut < 0) ){
+    TLorentzVector LEP;
+    LEP.SetPtEtaPhiM(lep2Pt,lep2Eta,lep2Phi, ( AnalysisType_lep2==1 ? 0.00051 : 0.105658 ) );
+    LEPs.push_back(LEP);
+    IDs.push_back(lep2Charge*AnalysisType_lep2);
+  }
+  if( lep3Pt >= pt_cut && (fabs(lep3Eta) < eta_cut || eta_cut < 0) ){
+    TLorentzVector LEP;
+    LEP.SetPtEtaPhiM(lep3Pt,lep3Eta,lep3Phi, ( AnalysisType_lep3==1 ? 0.00051 : 0.105658 ) );
+    LEPs.push_back(LEP);
+    IDs.push_back(lep3Charge*AnalysisType_lep3);
+  }
+  if( lep4Pt >= pt_cut && (fabs(lep4Eta) < eta_cut || eta_cut < 0) ){
+    TLorentzVector LEP;
+    LEP.SetPtEtaPhiM(lep4Pt,lep4Eta,lep4Phi, ( AnalysisType_lep4==1 ? 0.00051 : 0.105658 ) );
+    LEPs.push_back(LEP);
+    IDs.push_back(lep4Charge*AnalysisType_lep4);
+  }
+}
+
+
 
 template class AnalysisBase<HFntupleBase>;
 template class AnalysisBase<SussexBase>;
 template class AnalysisBase<HiggsinoBase>;
 template class AnalysisBase<SimpleBase>;
+template class AnalysisBase<Incl1LBase>;

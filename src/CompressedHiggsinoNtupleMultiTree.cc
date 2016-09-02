@@ -3,7 +3,7 @@
 using namespace RestFrames;
 
 CompressedHiggsinoNtupleMultiTree::CompressedHiggsinoNtupleMultiTree(TTree* tree)
-  : NtupleBase<SimpleBase>(tree)
+  : NtupleBase<Incl1LBase>(tree)
 {
   // RestFrames stuff
 
@@ -80,6 +80,39 @@ CompressedHiggsinoNtupleMultiTree::CompressedHiggsinoNtupleMultiTree(TTree* tree
 
   LAB_1L1L->InitializeTree(); 
 
+  // 1L+1L tree (Z/W->l + Z/W->l), neutrino ~ lepton
+  LAB_1L1Lnu = new LabRecoFrame("LAB_1L1Lnu","LAB");
+  CM_1L1Lnu  = new DecayRecoFrame("CM_1L1Lnu","CM");
+  S_1L1Lnu   = new DecayRecoFrame("S_1L1Lnu","S");
+  ISR_1L1Lnu = new VisibleRecoFrame("ISR_1L1Lnu","ISR");
+  Ca_1L1Lnu  = new DecayRecoFrame("Ca_1L1Lnu","C_{a}");  
+  Wa_1L1Lnu  = new DecayRecoFrame("Wa_1L1Lnu","W_{a}");  
+  La_1L1Lnu  = new VisibleRecoFrame("La_1L1Lnu","#it{l}_{a}");
+  Na_1L1Lnu  = new VisibleRecoFrame("Na_1L1Lnu","#nu_{a}");
+  Cb_1L1Lnu  = new DecayRecoFrame("Ca_1L1Lnu","C_{b}");  
+  Wb_1L1Lnu  = new DecayRecoFrame("Wb_1L1Lnu","W_{b}");
+  Lb_1L1Lnu  = new VisibleRecoFrame("Lb_1L1Lnu","#it{l}_{b}");
+  Nb_1L1Lnu  = new VisibleRecoFrame("Nb_1L1Lnu","#nu_{b}");
+  Ia_1L1Lnu  = new InvisibleRecoFrame("Ia_1L1Lnu","I_{a}");
+  Ib_1L1Lnu  = new InvisibleRecoFrame("Ia_1L1Lnu","I_{b}");
+
+  LAB_1L1Lnu->SetChildFrame(*CM_1L1Lnu);
+  CM_1L1Lnu->AddChildFrame(*ISR_1L1Lnu);
+  CM_1L1Lnu->AddChildFrame(*S_1L1Lnu);
+  S_1L1Lnu->AddChildFrame(*Ca_1L1Lnu);
+  S_1L1Lnu->AddChildFrame(*Cb_1L1Lnu);
+  Ca_1L1Lnu->AddChildFrame(*Wa_1L1Lnu);
+  Ca_1L1Lnu->AddChildFrame(*Ia_1L1Lnu);
+  Cb_1L1Lnu->AddChildFrame(*Wb_1L1Lnu);
+  Cb_1L1Lnu->AddChildFrame(*Ib_1L1Lnu);
+  Wa_1L1Lnu->AddChildFrame(*La_1L1Lnu);
+  Wa_1L1Lnu->AddChildFrame(*Na_1L1Lnu);
+  Wb_1L1Lnu->AddChildFrame(*Lb_1L1Lnu);
+  Wb_1L1Lnu->AddChildFrame(*Nb_1L1Lnu);
+
+  LAB_1L1Lnu->InitializeTree(); 
+
+  
   // 2L+1L tree (Z->ll + Z/W->l)
   LAB_2L1L = new LabRecoFrame("LAB_2L1L","LAB");
   CM_2L1L  = new DecayRecoFrame("CM_2L1L","CM");
@@ -108,6 +141,38 @@ CompressedHiggsinoNtupleMultiTree::CompressedHiggsinoNtupleMultiTree(TTree* tree
 
   LAB_2L1L->InitializeTree(); 
 
+  // 2L+1L tree (Z->ll + Z/W->l), with neutrino ~ lepton
+  LAB_2L1Lnu = new LabRecoFrame("LAB_2L1Lnu","LAB");
+  CM_2L1Lnu  = new DecayRecoFrame("CM_2L1Lnu","CM");
+  S_2L1Lnu   = new DecayRecoFrame("S_2L1Lnu","S");
+  ISR_2L1Lnu = new VisibleRecoFrame("ISR_2L1Lnu","ISR");
+  Ca_2L1Lnu  = new DecayRecoFrame("Ca_2L1Lnu","C_{a}");
+  Z_2L1Lnu   = new DecayRecoFrame("Z_2L1Lnu","Z");  
+  L1_2L1Lnu  = new VisibleRecoFrame("L1_2L1Lnu","#it{l}_{1}");
+  L2_2L1Lnu  = new VisibleRecoFrame("L2_2L1Lnu","#it{l}_{2}");
+  Cb_2L1Lnu  = new DecayRecoFrame("Cb_2L1Lnu","C_{b}");  
+  W_2L1Lnu   = new DecayRecoFrame("W_2L1Lnu","W");  
+  Lb_2L1Lnu  = new VisibleRecoFrame("Lb_2L1Lnu","#it{l}_{b}");
+  Nb_2L1Lnu  = new VisibleRecoFrame("Nb_2L1Lnu","#it{l}_{b}"); // visible since we will define its 4vector explicitly
+  Ia_2L1Lnu  = new InvisibleRecoFrame("Ia_2L1Lnu","I_{a}");
+  Ib_2L1Lnu  = new InvisibleRecoFrame("Ia_2L1Lnu","I_{b}");
+
+  LAB_2L1Lnu->SetChildFrame(*CM_2L1Lnu);
+  CM_2L1Lnu->AddChildFrame(*ISR_2L1Lnu);
+  CM_2L1Lnu->AddChildFrame(*S_2L1Lnu);
+  S_2L1Lnu->AddChildFrame(*Ca_2L1Lnu);
+  S_2L1Lnu->AddChildFrame(*Cb_2L1Lnu);
+  Ca_2L1Lnu->AddChildFrame(*Z_2L1Lnu);
+  Ca_2L1Lnu->AddChildFrame(*Ia_2L1Lnu);
+  Z_2L1Lnu->AddChildFrame(*L1_2L1Lnu);
+  Z_2L1Lnu->AddChildFrame(*L2_2L1Lnu);
+  Cb_2L1Lnu->AddChildFrame(*W_2L1Lnu);
+  Cb_2L1Lnu->AddChildFrame(*Ib_2L1Lnu);
+  W_2L1Lnu->AddChildFrame(*Lb_2L1Lnu);
+  W_2L1Lnu->AddChildFrame(*Nb_2L1Lnu);
+  LAB_2L1Lnu->InitializeTree(); 
+
+  
   ////////////// Jigsaw rules set-up /////////////////
 
   // combinatoric (transverse) tree
@@ -180,6 +245,28 @@ CompressedHiggsinoNtupleMultiTree::CompressedHiggsinoNtupleMultiTree(TTree* tree
   if(!LAB_1L1L->InitializeAnalysis()){
     cout << "Problem initializing \"1L1L\" analysis" << endl;
   }
+
+  // 1L+1L tree (Z/W->l + Z/W->l), with neutrino ~ lepton
+  INV_1L1Lnu = new InvisibleGroup("INV_1L1Lnu","Invisible System");
+  INV_1L1Lnu->AddFrame(*Ia_1L1Lnu);
+  INV_1L1Lnu->AddFrame(*Ib_1L1Lnu);
+  
+  InvMass_1L1Lnu = new SetMassInvJigsaw("InvMass_1L1Lnu", "Invisible system mass Jigsaw");
+  INV_1L1Lnu->AddJigsaw(*InvMass_1L1Lnu);
+  InvRapidity_1L1Lnu = new SetRapidityInvJigsaw("InvRapidity_1L1Lnu", "Set inv. system rapidity");
+  INV_1L1Lnu->AddJigsaw(*InvRapidity_1L1Lnu);
+  InvRapidity_1L1Lnu->AddVisibleFrames(S_1L1Lnu->GetListVisibleFrames());
+  SplitINV_1L1Lnu = new ContraBoostInvJigsaw("SplitINV_1L1Lnu", "INV -> I_{a}+ I_{b} jigsaw");
+  INV_1L1Lnu->AddJigsaw(*SplitINV_1L1Lnu);
+  SplitINV_1L1Lnu->AddVisibleFrames(Ca_1L1Lnu->GetListVisibleFrames(), 0);
+  SplitINV_1L1Lnu->AddVisibleFrames(Cb_1L1Lnu->GetListVisibleFrames(), 1);
+  SplitINV_1L1Lnu->AddInvisibleFrame(*Ia_1L1Lnu, 0);
+  SplitINV_1L1Lnu->AddInvisibleFrame(*Ib_1L1Lnu, 1);
+
+  if(!LAB_1L1Lnu->InitializeAnalysis()){
+    cout << "Problem initializing \"1L1Lnu\" analysis" << endl;
+  }
+
   
   // 2L+1L tree (Z->ll + Z/W->l)
   INV_2L1L = new InvisibleGroup("INV_2L1L","Invisible System");
@@ -200,6 +287,27 @@ CompressedHiggsinoNtupleMultiTree::CompressedHiggsinoNtupleMultiTree(TTree* tree
 
   if(!LAB_2L1L->InitializeAnalysis()){
     cout << "Problem initializing \"2L1L\" analysis" << endl;
+  }
+
+  // 2L+1L tree (Z->ll + Z/W->l), with neutrino ~ lepton
+  INV_2L1Lnu = new InvisibleGroup("INV_2L1Lnu","Invisible System");
+  INV_2L1Lnu->AddFrame(*Ia_2L1Lnu);
+  INV_2L1Lnu->AddFrame(*Ib_2L1Lnu);
+  
+  InvMass_2L1Lnu = new SetMassInvJigsaw("InvMass_2L1Lnu", "Invisible system mass Jigsaw");
+  INV_2L1Lnu->AddJigsaw(*InvMass_2L1Lnu);
+  InvRapidity_2L1Lnu = new SetRapidityInvJigsaw("InvRapidity_2L1Lnu", "Set inv. system rapidity");
+  INV_2L1Lnu->AddJigsaw(*InvRapidity_2L1Lnu);
+  InvRapidity_2L1Lnu->AddVisibleFrames(S_2L1Lnu->GetListVisibleFrames());
+  SplitINV_2L1Lnu = new ContraBoostInvJigsaw("SplitINV_2L1Lnu", "INV -> I_{a}+ I_{b} jigsaw");
+  INV_2L1Lnu->AddJigsaw(*SplitINV_2L1Lnu);
+  SplitINV_2L1Lnu->AddVisibleFrames(Ca_2L1Lnu->GetListVisibleFrames(), 0);
+  SplitINV_2L1Lnu->AddVisibleFrames(Cb_2L1Lnu->GetListVisibleFrames(), 1);
+  SplitINV_2L1Lnu->AddInvisibleFrame(*Ia_2L1Lnu, 0);
+  SplitINV_2L1Lnu->AddInvisibleFrame(*Ib_2L1Lnu, 1);
+
+  if(!LAB_2L1Lnu->InitializeAnalysis()){
+    cout << "Problem initializing \"2L1Lnu\" analysis" << endl;
   }
 
   ////////////// Jigsaw rules set-up /////////////////
@@ -256,6 +364,26 @@ CompressedHiggsinoNtupleMultiTree::~CompressedHiggsinoNtupleMultiTree() {
   delete InvRapidity_1L1L;
   delete SplitINV_1L1L;
 
+  // 1L+1L tree (Z/W->l + Z/W->l), with neutrino ~ lepton
+  delete LAB_1L1Lnu;
+  delete CM_1L1Lnu;
+  delete S_1L1Lnu;
+  delete ISR_1L1Lnu;
+  delete Ca_1L1Lnu;  
+  delete Wa_1L1Lnu;  
+  delete La_1L1Lnu;
+  delete Na_1L1Lnu;  
+  delete Cb_1L1Lnu;  
+  delete Wb_1L1Lnu;  
+  delete Lb_1L1Lnu;
+  delete Nb_1L1Lnu;  
+  delete Ia_1L1Lnu;
+  delete Ib_1L1Lnu;
+  delete INV_1L1Lnu;
+  delete InvMass_1L1Lnu;
+  delete InvRapidity_1L1Lnu;
+  delete SplitINV_1L1Lnu;
+
   // 2L+1L tree (Z->ll + Z/W->l)
   delete LAB_2L1L;
   delete CM_2L1L;
@@ -273,6 +401,26 @@ CompressedHiggsinoNtupleMultiTree::~CompressedHiggsinoNtupleMultiTree() {
   delete InvMass_2L1L;
   delete InvRapidity_2L1L;
   delete SplitINV_2L1L;
+
+  // 2L+1L tree (Z->ll + Z/W->l), with neutrino ~ lepton
+  delete LAB_2L1Lnu;
+  delete CM_2L1Lnu;
+  delete S_2L1Lnu;
+  delete ISR_2L1Lnu;
+  delete Ca_2L1Lnu;
+  delete Z_2L1Lnu;  
+  delete L1_2L1Lnu;
+  delete L2_2L1Lnu;
+  delete Cb_2L1Lnu;  
+  delete W_2L1Lnu;  
+  delete Lb_2L1Lnu;
+  delete Nb_2L1Lnu;
+  delete Ia_2L1Lnu;
+  delete Ib_2L1Lnu;
+  delete INV_2L1Lnu;
+  delete InvMass_2L1Lnu;
+  delete InvRapidity_2L1Lnu;
+  delete SplitINV_2L1Lnu;
 }
 
 void CompressedHiggsinoNtupleMultiTree::InitOutputTree(){
@@ -322,9 +470,12 @@ void CompressedHiggsinoNtupleMultiTree::InitOutputTree(){
   m_Tree->Branch("NjISR", &m_NjISR);
 
   // which tree are we using for event?
+  m_Tree->Branch("Is_1L", &m_Is_1L);
   m_Tree->Branch("Is_2LNJ", &m_Is_2LNJ);
   m_Tree->Branch("Is_1L1L", &m_Is_1L1L);
+  m_Tree->Branch("Is_1L1Lnu", &m_Is_1L1Lnu);
   m_Tree->Branch("Is_2L1L", &m_Is_2L1L);
+  m_Tree->Branch("Is_2L1Lnu", &m_Is_2L1Lnu);
   
   // compressed tree variables
   // commone to all analysis trees
@@ -339,6 +490,7 @@ void CompressedHiggsinoNtupleMultiTree::InitOutputTree(){
   m_Tree->Branch("dphiISRI", &m_dphiISRI);
 
   m_Tree->Branch("HN2S", &m_HN2S);
+  m_Tree->Branch("HN2SR", &m_HN2SR);
   m_Tree->Branch("H11S", &m_H11S);
   m_Tree->Branch("HN1Ca", &m_HN1Ca);
   m_Tree->Branch("HN1Cb", &m_HN1Cb);
@@ -354,47 +506,51 @@ void CompressedHiggsinoNtupleMultiTree::InitOutputTree(){
 }
 
 void CompressedHiggsinoNtupleMultiTree::FillOutputTree(){
+
+  //TOGGLE ON AND OFF//
+  bool withnu = false; //flag for whether you want the neutrino as a separate frame
+
   // preselection
 
-  if (lep_pT->size() < 2){
-    return;
-  }
-
-  if (lep_pT->at(0) <= 10.0 || lep_pT->at(1) <= 4.0 ) 
-    return;
-  
-  // really need this?
-  //*****
-  // commented out for the simple MC signals
-  //*****
-  // if (bjet_n != 0)
-  //   return;
-
-  // can apply offline
-  // if (MET < 200)
-  //   return;
-
-  // if (!HLT_xe70)
+  // cout << "BJET VETO" << endl;
+  // if (bjet_n != 0) //this is b-jet veto for background samples given by Ben
   //   return;
 
   TVector3 ETMiss = GetMET(); 
       
   vector<Jet> Jets; 
-  GetJets(Jets, 30., 2.8, -1);
+  //GetJets(Jets, 30., 2.8, -1); //old cuts
+  //GetJets(Jets, 20., 2.8, 0.6459); //mc15c
+  GetJets(Jets, 30., 2.8, 0.6459); //mc15c
 
   // Need one jet to play
   if (Jets.size() < 1) 
     return;
 
+  //  b-jet veto for Incl1L samples
+  int nBJets = 0;
+  for( int i=0; i< int(Jets.size()); i++ ) {
+    if ( Jets[i].btag == true ) nBJets++;
+  }
+  if( nBJets !=0 ) {
+    return;
+  }
+  
   vector<TLorentzVector> Leptons;
   vector<int> LepIDs;
   GetLeptons(Leptons, LepIDs, 4.);
 
-  // vector<TLorentzVector> Muons; 
-  // GetMuons(Muons); 
-  
-  // vector<TLorentzVector> Elecs; 
-  // GetElectrons(Elecs);
+  // if (Leptons[0].Pt() <= 6.0 || Leptons[1].Pt() <= 4.0 ) 
+  //   return;
+  //  cout << "NumLeps: " << Leptons.size() << endl;
+  if ((Leptons[0].Pt() <= 10.0 || Leptons[1].Pt() <= 4.0 ) && Leptons.size() > 1) { 
+    return;
+  }
+  else if (Leptons.size() == 1 && Leptons[0].Pt() <= 4.0 ) {
+    return;
+  }
+  // if (Leptons[0].Pt() <= 10.0 || Leptons[1].Pt() <= 4.0 ) 
+  //   return;
 
   // need two objects to play - should
   // be satisfied by previous requirements
@@ -413,19 +569,19 @@ void CompressedHiggsinoNtupleMultiTree::FillOutputTree(){
   //  m_HLT_xe70 = HLT_xe70;
 
   if (Jets.size() > 0)
-    m_pT_1jet = jet_pT->at(0);
+    m_pT_1jet = Jets[0].P.Pt(); // for old samples HIGGSINO, this was jet_pT->at(0)
   else
     m_pT_1jet = 0.;
   if (Jets.size() > 1)
-    m_pT_2jet = jet_pT->at(1);
+    m_pT_2jet = Jets[1].P.Pt();
   else
     m_pT_2jet = 0.;
   if (Jets.size() > 2)
-    m_pT_3jet = jet_pT->at(2);
+    m_pT_3jet = Jets[2].P.Pt();
   else
     m_pT_3jet = 0.;
   if (Jets.size() > 3)
-    m_pT_4jet = jet_pT->at(3);
+    m_pT_4jet = Jets[3].P.Pt();
   else
     m_pT_4jet = 0.;
 
@@ -437,24 +593,24 @@ void CompressedHiggsinoNtupleMultiTree::FillOutputTree(){
 
   
   if (Leptons.size() > 0) {
-    m_pT_1lep = lep_pT->at(0);
-    m_id_1lep = lep_pdgId->at(0);
+    m_pT_1lep = Leptons[0].Pt();
+    m_id_1lep = LepIDs[0];
   }
   else {
     m_pT_1lep = 0.;
     m_id_1lep = 0;
   }
   if (Leptons.size() > 1) {
-    m_pT_2lep = lep_pT->at(1);
-    m_id_2lep = lep_pdgId->at(1);
+    m_pT_2lep = Leptons[1].Pt();
+    m_id_2lep = LepIDs[1];
   }
   else {
     m_pT_2lep = 0.;
     m_id_2lep = 0;
   }
   if (Leptons.size() > 2) {
-    m_pT_3lep = lep_pT->at(2);
-    m_id_3lep = lep_pdgId->at(2);
+    m_pT_3lep = Leptons[2].Pt();
+    m_id_3lep = LepIDs[2];
   }
   else {
     m_pT_3lep = 0.;
@@ -512,18 +668,28 @@ void CompressedHiggsinoNtupleMultiTree::FillOutputTree(){
   }
 
   // figure out which tree to use
+  m_Is_1L = false;
   m_Is_2LNJ = false;
   m_Is_1L1L = false;
+  m_Is_1L1Lnu = false;
   m_Is_2L1L = false;
+  m_Is_2L1Lnu = false;
   int NL = Leptons.size();
   // only analyze these events for now
-  if(NL < 2 || NL > 3)
+  if(NL > 3)
     return;
+  // if(NL < 2 || NL > 3)
+  //   return;
 
+  if(NL == 1)
+    m_Is_1L = true;
   if(NL == 2){
     // SS and/or OF leptons
     if(LepIDs[0]+LepIDs[1] != 0){
-      m_Is_1L1L = true;
+      if (withnu == false)
+	m_Is_1L1L = true;
+      else
+	m_Is_1L1Lnu = true;
     } else{
       // 2LNJ
       if(m_NjS > 0){
@@ -536,7 +702,10 @@ void CompressedHiggsinoNtupleMultiTree::FillOutputTree(){
     if(LepIDs[0]+LepIDs[1] == 0 ||
        LepIDs[0]+LepIDs[2] == 0 ||
        LepIDs[1]+LepIDs[2] == 0){
-      m_Is_2L1L = true;
+      if (withnu == false)
+	m_Is_2L1L = true;
+      else
+	m_Is_2L1Lnu = true;
     }
   }
   
@@ -590,6 +759,38 @@ void CompressedHiggsinoNtupleMultiTree::FillOutputTree(){
       cout << "Something went wrong with \"1L1L\" tree event analysis" << endl;
   }
 
+  // 1L1L analysis with neutrino ~ lepton
+  if(m_Is_1L1Lnu){
+    LAB_1L1Lnu->ClearEvent();
+
+    // put jets in their place
+    int NJ = jetID.size();
+    TLorentzVector vISR(0.,0.,0.,0.);
+    for(int i = 0; i < NJ; i++){
+      vISR += Jets[i].P;
+    }
+
+    ISR_1L1Lnu->SetLabFrameFourVector(vISR);
+
+    TLorentzVector Nu_a;
+    TLorentzVector Nu_b;
+
+    
+    // put leptons in their place
+    La_1L1Lnu->SetLabFrameFourVector(Leptons[0]);
+    Lb_1L1Lnu->SetLabFrameFourVector(Leptons[1]);
+    Nu_a.SetPxPyPzE(Leptons[0].Px(),Leptons[0].Py(),Leptons[0].Pz(),Leptons[0].P()); 
+    Nu_b.SetPxPyPzE(Leptons[1].Px(),Leptons[1].Py(),Leptons[1].Pz(),Leptons[1].P()); 
+    Na_1L1Lnu->SetLabFrameFourVector(Nu_a);
+    Nb_1L1Lnu->SetLabFrameFourVector(Nu_b);
+
+    INV_1L1Lnu->SetLabFrameThreeVector(ETMiss-Nu_a.Vect()-Nu_b.Vect());
+    
+    if(!LAB_1L1Lnu->AnalyzeEvent())
+      cout << "Something went wrong with \"1L1Lnu\" tree event analysis" << endl;
+  }
+
+  
   // 2L1L analysis
   if(m_Is_2L1L){
     LAB_2L1L->ClearEvent();
@@ -635,6 +836,56 @@ void CompressedHiggsinoNtupleMultiTree::FillOutputTree(){
       cout << "Something went wrong with \"2L1L\" tree event analysis" << endl;
   }
 
+    // 2L1L with neutrino ~ lepton analysis
+  if(m_Is_2L1Lnu){
+    LAB_2L1Lnu->ClearEvent();
+
+    // put jets in their place
+    int NJ = jetID.size();
+    TLorentzVector vISR(0.,0.,0.,0.);
+    for(int i = 0; i < NJ; i++){
+      vISR += Jets[i].P;
+    }
+
+    ISR_2L1Lnu->SetLabFrameFourVector(vISR);
+    
+    // put leptons in their place
+    // find min mass SF/OS pair
+    pair<int,int> iSFOS;
+    double        mSFOS = -1.;
+    for(int i = 0; i < 2; i++){
+      for(int j = i+1; j < 3; j++){
+	if(LepIDs[i]+LepIDs[j] == 0){
+	  if(mSFOS < 0. ||
+	     (Leptons[i]+Leptons[j]).M() < mSFOS){
+	    mSFOS = (Leptons[i]+Leptons[j]).M();
+	    iSFOS.first  = i;
+	    iSFOS.second = j;
+	  }
+	}
+      }
+    }
+
+    TLorentzVector Nu;
+    
+    for(int i = 0; i < 3; i++){
+      if(i == iSFOS.first)
+	L1_2L1Lnu->SetLabFrameFourVector(Leptons[i]);
+      if(i == iSFOS.second)
+	L2_2L1Lnu->SetLabFrameFourVector(Leptons[i]);
+      if(i != iSFOS.first && i != iSFOS.second) { 
+	Lb_2L1Lnu->SetLabFrameFourVector(Leptons[i]);
+	Nu.SetPxPyPzE(Leptons[i].Px(),Leptons[i].Py(),Leptons[i].Pz(),Leptons[i].P()); 
+	Nb_2L1Lnu->SetLabFrameFourVector(Nu);
+      }
+    }
+
+    INV_2L1Lnu->SetLabFrameThreeVector(ETMiss-Nu.Vect()); // subtract out the "neutrino"
+    
+    if(!LAB_2L1Lnu->AnalyzeEvent())
+      cout << "Something went wrong with \"2L1Lnu\" tree event analysis" << endl;
+  }
+
   // calculate analysis observables
   
   // common to analysis trees
@@ -649,6 +900,7 @@ void CompressedHiggsinoNtupleMultiTree::FillOutputTree(){
   m_dphiISRI = 0.;
 
   m_HN2S = 0.;
+  m_HN2SR = 0.;
   m_H11S = 0.;
   m_HN1Ca = 0.;
   m_HN1Cb = 0.;
@@ -662,7 +914,7 @@ void CompressedHiggsinoNtupleMultiTree::FillOutputTree(){
   m_cosJ = 0.;
 
   // no tree satisfied? Bounce
-  if(!m_Is_2LNJ && !m_Is_1L1L && !m_Is_2L1L)
+  if(!m_Is_2LNJ && !m_Is_1L1L && !m_Is_1L1Lnu && !m_Is_2L1L && !m_Is_2L1Lnu && !m_Is_1L)
     return;
 
   TLorentzVector vP_CM;
@@ -727,6 +979,37 @@ void CompressedHiggsinoNtupleMultiTree::FillOutputTree(){
     m_cosC  = Ca_1L1L->GetCosDecayAngle();
   }
 
+  if(m_Is_1L1Lnu){
+    
+    vP_CM  = CM_1L1Lnu->GetFourVector();
+    vP_ISR = ISR_1L1Lnu->GetFourVector();
+    vP_I   = (*Ia_1L1Lnu+*Ib_1L1Lnu).GetFourVector();
+   
+    m_cosCM = CM_1L1Lnu->GetCosDecayAngle();
+    m_cosS  = S_1L1Lnu->GetCosDecayAngle();
+    m_MISR = ISR_1L1Lnu->GetMass();
+    m_dphiCMI = acos(-1.)-fabs(CM_1L1Lnu->GetDeltaPhiBoostVisible());
+    m_dphiSI  = acos(-1.)-fabs(S_1L1Lnu->GetDeltaPhiBoostVisible());
+
+    m_HN2S = La_1L1Lnu->GetFourVector(*S_1L1Lnu).E() +
+      Lb_1L1Lnu->GetFourVector(*S_1L1Lnu).E() +
+      Na_1L1Lnu->GetFourVector(*S_1L1Lnu).P() +
+      Nb_1L1Lnu->GetFourVector(*S_1L1Lnu).P() +
+      Ia_1L1Lnu->GetFourVector(*S_1L1Lnu).P() +
+      Ib_1L1Lnu->GetFourVector(*S_1L1Lnu).P();
+    m_H11S = 2.*(*Ia_1L1Lnu+*Ib_1L1Lnu).GetFourVector(*S_1L1Lnu).P();
+    m_HN1Ca = La_1L1Lnu->GetFourVector(*Ca_1L1Lnu).E()+
+      Na_1L1Lnu->GetFourVector(*Ca_1L1Lnu).P()+
+      Ia_1L1Lnu->GetFourVector(*Ca_1L1Lnu).P();
+    m_HN1Cb = Lb_1L1Lnu->GetFourVector(*Cb_1L1Lnu).E()+
+      Nb_1L1Lnu->GetFourVector(*Cb_1L1Lnu).P()+
+      Ib_1L1Lnu->GetFourVector(*Cb_1L1Lnu).P();
+    m_H11Ca = 2.*Ia_1L1Lnu->GetFourVector(*Ca_1L1Lnu).P();
+    m_H11Cb = 2.*Ib_1L1Lnu->GetFourVector(*Cb_1L1Lnu).P();
+    m_cosC  = Ca_1L1Lnu->GetCosDecayAngle();
+  }
+
+  
   if(m_Is_2L1L){
     
     vP_CM  = CM_2L1L->GetFourVector();
@@ -755,6 +1038,37 @@ void CompressedHiggsinoNtupleMultiTree::FillOutputTree(){
     m_MZ = Z_2L1L->GetMass();
     m_cosZ = Z_2L1L->GetCosDecayAngle();
   }
+
+  if(m_Is_2L1Lnu){
+    
+    vP_CM  = CM_2L1Lnu->GetFourVector();
+    vP_ISR = ISR_2L1Lnu->GetFourVector();
+    vP_I   = (*Ia_2L1Lnu+*Ib_2L1Lnu).GetFourVector();
+   
+    m_cosCM = CM_2L1Lnu->GetCosDecayAngle();
+    m_cosS  = S_2L1Lnu->GetCosDecayAngle();
+    m_MISR = ISR_2L1Lnu->GetMass();
+    m_dphiCMI = acos(-1.)-fabs(CM_2L1Lnu->GetDeltaPhiBoostVisible());
+    m_dphiSI  = acos(-1.)-fabs(S_2L1Lnu->GetDeltaPhiBoostVisible());
+    
+    m_HN2S = Z_2L1Lnu->GetFourVector(*S_2L1Lnu).E() +
+      Lb_2L1Lnu->GetFourVector(*S_2L1Lnu).E() +
+      Nb_2L1Lnu->GetFourVector(*S_2L1Lnu).E() +
+      Ia_2L1Lnu->GetFourVector(*S_2L1Lnu).P() +
+      Ib_2L1Lnu->GetFourVector(*S_2L1Lnu).P();
+    m_H11S = 2.*(*Ia_2L1Lnu+*Ib_2L1Lnu).GetFourVector(*S_2L1Lnu).P();
+    m_HN1Ca = Z_2L1Lnu->GetFourVector(*Ca_2L1Lnu).E()+
+      Ia_2L1Lnu->GetFourVector(*Ca_2L1Lnu).P();
+    m_HN1Cb = W_2L1Lnu->GetFourVector(*Cb_2L1Lnu).E()+
+      Ib_2L1Lnu->GetFourVector(*Cb_2L1Lnu).P();
+    m_H11Ca = 2.*Ia_2L1Lnu->GetFourVector(*Ca_2L1Lnu).P();
+    m_H11Cb = 2.*Ib_2L1Lnu->GetFourVector(*Cb_2L1Lnu).P();
+    m_cosC  = Ca_2L1Lnu->GetCosDecayAngle();
+    
+    m_MZ = Z_2L1Lnu->GetMass();
+    m_cosZ = Z_2L1Lnu->GetCosDecayAngle();
+  }
+
   m_PTCM = vP_CM.Pt();
 
   TVector3 boostZ = vP_CM.BoostVector();
@@ -776,6 +1090,7 @@ void CompressedHiggsinoNtupleMultiTree::FillOutputTree(){
   
   m_PTISR =  vPt_ISR.Mag();
   m_RISR  = -vPt_I.Dot(vPt_ISR.Unit()) / m_PTISR;
+  m_HN2SR = m_HN2S/m_RISR;
   m_dphiISRI = fabs(vPt_ISR.Angle(vPt_I));
 
   if(m_Tree)
