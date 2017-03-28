@@ -6,6 +6,7 @@
 #include "HiggsinoBase.hh"
 #include "SimpleBase.hh"
 #include "Incl1LBase.hh"
+#include "SusySkimHiggsinoBase.hh"
 
 using namespace std;
 
@@ -124,7 +125,6 @@ void AnalysisBase<Base>::GetPartition(vector<Jet>& V_JETs, vector<Jet>& ISR_JETs
   for(int i = 0; i < 5; i++){
     thresh[i] = -1.*double(i)*50.;
   }
-
   V_JETs.clear();
   ISR_JETs.clear();
   for(int i = 0; i < Ninput-1; i++){
@@ -554,6 +554,144 @@ void AnalysisBase<Incl1LBase>::GetLeptons(vector<TLorentzVector>& LEPs, vector<i
   }
 }
 
+///////////////// ********** /////////////////////////////////// 
+///////////////// SusySkimHiggsinoBase /////////////////////////////////// 
+///////////////// ********** /////////////////////////////////// 
+template <>
+double AnalysisBase<SusySkimHiggsinoBase>::GetEventWeight(){
+  return pileupWeight*eventWeight*genWeight*jvtWeight*leptonWeight*bTagWeight*SherpaVjetsNjetsWeight;
+  //  return pileupWeight*eventWeight*genWeight*jvtWeight*leptonWeight*bTagWeight*SherpaVjetsNjetsWeight;
+}
+
+template <>
+TVector3 AnalysisBase<SusySkimHiggsinoBase>::GetMET(){
+  TVector3 MET;
+  MET.SetXYZ(met_Et*cos(met_Phi), met_Et*sin(met_Phi), 0.0);
+  return MET;
+}
+
+template <>
+void AnalysisBase<SusySkimHiggsinoBase>::GetJets(vector<Jet>& JETs, double pt_cut, 
+				       double eta_cut, double btag_WP_cut){
+  JETs.clear();
+
+  int Njet = jetPt->size();
+  for(int i = 0; i < Njet; i++){
+    Jet JET;
+    JET.P.SetPtEtaPhiM(jetPt->at(i), jetEta->at(i),
+		       jetPhi->at(i), jetM->at(i));
+    if((JET.P.Pt() >= pt_cut) && (fabs(JET.P.Eta()) < eta_cut || eta_cut < 0)){
+      //if(jet_MV2c20->at(i) > btag_WP_cut)
+      //commented out b/c missing???
+      // set false for now
+      JET.btag = false;
+      JETs.push_back(JET);
+    }
+  }
+}
+
+template <>
+void AnalysisBase<SusySkimHiggsinoBase>::GetMuons(vector<TLorentzVector>& MUs, 
+					double pt_cut, double eta_cut) {
+  MUs.clear();
+  
+  if(lep1Flavor==2) {
+    if( lep1Pt >= pt_cut && (fabs(lep1Eta) < eta_cut || eta_cut < 0) ){
+      TLorentzVector MU;
+      MU.SetPtEtaPhiM(lep1Pt,lep1Eta,lep1Phi,0.105658); 
+      MUs.push_back(MU);
+    }
+  }
+  if(lep2Flavor==2) {
+    if( lep2Pt >= pt_cut && (fabs(lep2Eta) < eta_cut || eta_cut < 0) ){
+      TLorentzVector MU;
+      MU.SetPtEtaPhiM(lep2Pt,lep2Eta,lep2Phi,0.105658);
+      MUs.push_back(MU);
+    }
+  }
+  if(lep3Flavor==2) {
+    if( lep3Pt >= pt_cut && (fabs(lep3Eta) < eta_cut || eta_cut < 0) ){
+      TLorentzVector MU;
+      MU.SetPtEtaPhiM(lep3Pt,lep3Eta,lep3Phi,0.105658);
+      MUs.push_back(MU);
+    }
+  }
+  if(lep4Flavor==2) {
+    if( lep4Pt >= pt_cut && (fabs(lep4Eta) < eta_cut || eta_cut < 0) ){
+      TLorentzVector MU;
+      MU.SetPtEtaPhiM(lep4Pt,lep4Eta,lep4Phi,0.105658);
+      MUs.push_back(MU);
+    }
+  }
+}
+
+template <>
+void AnalysisBase<SusySkimHiggsinoBase>::GetElectrons(vector<TLorentzVector>& ELs, 
+					    double pt_cut, double eta_cut) {
+  ELs.clear();
+
+  if(lep1Flavor==1) {
+    if( lep1Pt >= pt_cut && (fabs(lep1Eta) < eta_cut || eta_cut < 0) ){
+      TLorentzVector EL;
+      EL.SetPtEtaPhiM(lep1Pt,lep1Eta,lep1Phi,0.00051);
+      ELs.push_back(EL);
+    }
+  }
+  if(lep2Flavor==1) {
+    if( lep2Pt >= pt_cut && (fabs(lep2Eta) < eta_cut || eta_cut < 0) ){
+      TLorentzVector EL;
+      EL.SetPtEtaPhiM(lep2Pt,lep2Eta,lep2Phi,0.00051);
+      ELs.push_back(EL);
+    }
+  }
+  if(lep3Flavor==1) {
+    if( lep3Pt >= pt_cut && (fabs(lep3Eta) < eta_cut || eta_cut < 0) ){
+      TLorentzVector EL;
+      EL.SetPtEtaPhiM(lep3Pt,lep3Eta,lep3Phi,0.00051);
+      ELs.push_back(EL);
+    }
+  }
+  if(lep4Flavor==1) {
+    if( lep4Pt >= pt_cut && (fabs(lep4Eta) < eta_cut || eta_cut < 0) ){
+      TLorentzVector EL;
+      EL.SetPtEtaPhiM(lep4Pt,lep4Eta,lep4Phi,0.00051);
+      ELs.push_back(EL);
+    }
+  }
+}
+
+template <>
+void AnalysisBase<SusySkimHiggsinoBase>::GetLeptons(vector<TLorentzVector>& LEPs, vector<int>& IDs,
+                                            double pt_cut, double eta_cut) {
+  LEPs.clear();
+  IDs.clear();
+  
+  if( lep1Pt >= pt_cut && (fabs(lep1Eta) < eta_cut || eta_cut < 0) ){
+    TLorentzVector LEP;
+    LEP.SetPtEtaPhiM(lep1Pt,lep1Eta,lep1Phi, ( lep1Flavor==1 ? 0.00051 : 0.105658 ) );
+    LEPs.push_back(LEP);
+    IDs.push_back(lep1Charge*lep1Flavor);
+  }
+  if( lep2Pt >= pt_cut && (fabs(lep2Eta) < eta_cut || eta_cut < 0) ){
+    TLorentzVector LEP;
+    LEP.SetPtEtaPhiM(lep2Pt,lep2Eta,lep2Phi, ( lep2Flavor==1 ? 0.00051 : 0.105658 ) );
+    LEPs.push_back(LEP);
+    IDs.push_back(lep2Charge*lep2Flavor);
+  }
+  if( lep3Pt >= pt_cut && (fabs(lep3Eta) < eta_cut || eta_cut < 0) ){
+    TLorentzVector LEP;
+    LEP.SetPtEtaPhiM(lep3Pt,lep3Eta,lep3Phi, ( lep3Flavor==1 ? 0.00051 : 0.105658 ) );
+    LEPs.push_back(LEP);
+    IDs.push_back(lep3Charge*lep3Flavor);
+  }
+  if( lep4Pt >= pt_cut && (fabs(lep4Eta) < eta_cut || eta_cut < 0) ){
+    TLorentzVector LEP;
+    LEP.SetPtEtaPhiM(lep4Pt,lep4Eta,lep4Phi, ( lep4Flavor==1 ? 0.00051 : 0.105658 ) );
+    LEPs.push_back(LEP);
+    IDs.push_back(lep4Charge*lep4Flavor);
+  }
+}
+
 
 
 template class AnalysisBase<HFntupleBase>;
@@ -561,3 +699,4 @@ template class AnalysisBase<SussexBase>;
 template class AnalysisBase<HiggsinoBase>;
 template class AnalysisBase<SimpleBase>;
 template class AnalysisBase<Incl1LBase>;
+template class AnalysisBase<SusySkimHiggsinoBase>;

@@ -3,7 +3,7 @@
 using namespace RestFrames;
 
 CompressedHiggsinoNtupleMultiTree::CompressedHiggsinoNtupleMultiTree(TTree* tree)
-  : NtupleBase<Incl1LBase>(tree)
+  : NtupleBase<SusySkimHiggsinoBase>(tree)
 {
   // RestFrames stuff
 
@@ -535,7 +535,7 @@ void CompressedHiggsinoNtupleMultiTree::FillOutputTree(){
   if( nBJets !=0 ) {
     return;
   }
-  
+  cout << "Warning! Btag information not used." << endl;
   vector<TLorentzVector> Leptons;
   vector<int> LepIDs;
   GetLeptons(Leptons, LepIDs, 4.);
@@ -543,7 +543,7 @@ void CompressedHiggsinoNtupleMultiTree::FillOutputTree(){
   // if (Leptons[0].Pt() <= 6.0 || Leptons[1].Pt() <= 4.0 ) 
   //   return;
   //  cout << "NumLeps: " << Leptons.size() << endl;
-  if ((Leptons[0].Pt() <= 10.0 || Leptons[1].Pt() <= 4.0 ) && Leptons.size() > 1) { 
+  if ((Leptons[0].Pt() <= 4.0 || Leptons[1].Pt() <= 4.0 ) && Leptons.size() > 1) { 
     return;
   }
   else if (Leptons.size() == 1 && Leptons[0].Pt() <= 4.0 ) {

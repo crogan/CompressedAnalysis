@@ -102,7 +102,8 @@ int main(int argc, char* argv[]) {
       string name = link->GetObject()->GetName();
       // if( name == "tree_NoSys" || name == "singletop_NoSys" || name == "ttbar_NoSys" || name == "diboson_NoSys"
       // 	  || name == "wjets_Sherpa22_NoSys" || name == "zjets_Sherpa22_NoSys"){
-      if( name == "tree_NoSys" || name == "wjets_Sherpa22_NoSys" ){
+      if( name.find("_NoSys")!=std::string::npos){
+	//      if( name == "tree_NoSys" || name == "wjets_Sherpa22_NoSys" ){
 	//if(name == "outputTree"){
 	int Nt = treenames.size();
 	bool isnew = true;
