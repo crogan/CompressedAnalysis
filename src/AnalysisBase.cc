@@ -432,13 +432,20 @@ void AnalysisBase<Incl1LBase>::GetJets(vector<Jet>& JETs, double pt_cut,
   JETs.clear();
 
   // A bit ugly, but it allow us to keep flat ntuples... (c'est la vie :-))
-  vector<float> jpt  = {jet1Pt,jet2Pt,jet3Pt,jet4Pt,jet5Pt,jet6Pt,jet7Pt,jet8Pt};
-  vector<float> jeta = {jet1Eta,jet2Eta,jet3Eta,jet4Eta,jet5Eta,jet6Eta,jet7Eta,jet8Eta};
-  vector<float> jphi = {jet1Phi,jet2Phi,jet3Phi,jet4Phi,jet5Phi,jet6Phi,jet7Phi,jet8Phi};
-  vector<float> jE   = {jet1E,jet2E,jet3E,jet4E,jet5E,jet6E,jet7E,jet8E};
-  vector<float> jmv2 = {jet1Mv2c10,jet2Mv2c10,jet3Mv2c10,jet4Mv2c10,jet5Mv2c10,jet6Mv2c10,jet7Mv2c10,jet8Mv2c10};
+  // vector<float> jpt  = {jet1Pt,jet2Pt,jet3Pt,jet4Pt,jet5Pt,jet6Pt,jet7Pt,jet8Pt};
+  // vector<float> jeta = {jet1Eta,jet2Eta,jet3Eta,jet4Eta,jet5Eta,jet6Eta,jet7Eta,jet8Eta};
+  // vector<float> jphi = {jet1Phi,jet2Phi,jet3Phi,jet4Phi,jet5Phi,jet6Phi,jet7Phi,jet8Phi};
+  // vector<float> jE   = {jet1E,jet2E,jet3E,jet4E,jet5E,jet6E,jet7E,jet8E};
+  // vector<float> jmv2 = {jet1Mv2c10,jet2Mv2c10,jet3Mv2c10,jet4Mv2c10,jet5Mv2c10,jet6Mv2c10,jet7Mv2c10,jet8Mv2c10};
+
+  float jpt[8]  = {jet1Pt,jet2Pt,jet3Pt,jet4Pt,jet5Pt,jet6Pt,jet7Pt,jet8Pt};
+  float jeta[8] = {jet1Eta,jet2Eta,jet3Eta,jet4Eta,jet5Eta,jet6Eta,jet7Eta,jet8Eta};
+  float jphi[8] = {jet1Phi,jet2Phi,jet3Phi,jet4Phi,jet5Phi,jet6Phi,jet7Phi,jet8Phi};
+  float jE[8]   = {jet1E,jet2E,jet3E,jet4E,jet5E,jet6E,jet7E,jet8E};
+  float jmv2[8] = {jet1Mv2c10,jet2Mv2c10,jet3Mv2c10,jet4Mv2c10,jet5Mv2c10,jet6Mv2c10,jet7Mv2c10,jet8Mv2c10};
   
-  int Njets = jpt.size();
+  //int Njets = jpt.size();
+  int Njets = 8;
   for(int i = 0; i < Njets; i++) {
     if(jpt[i]>0) {
       Jet JET;
@@ -666,25 +673,25 @@ void AnalysisBase<SusySkimHiggsinoBase>::GetLeptons(vector<TLorentzVector>& LEPs
   LEPs.clear();
   IDs.clear();
   
-  if( lep1Pt >= pt_cut && (fabs(lep1Eta) < eta_cut || eta_cut < 0) ){
+  if( lep1Pt >= pt_cut && (fabs(lep1Eta) < eta_cut || eta_cut < 0) && lep1Signal){
     TLorentzVector LEP;
     LEP.SetPtEtaPhiM(lep1Pt,lep1Eta,lep1Phi, ( lep1Flavor==1 ? 0.00051 : 0.105658 ) );
     LEPs.push_back(LEP);
     IDs.push_back(lep1Charge*lep1Flavor);
   }
-  if( lep2Pt >= pt_cut && (fabs(lep2Eta) < eta_cut || eta_cut < 0) ){
+  if( lep2Pt >= pt_cut && (fabs(lep2Eta) < eta_cut || eta_cut < 0) && lep2Signal){
     TLorentzVector LEP;
     LEP.SetPtEtaPhiM(lep2Pt,lep2Eta,lep2Phi, ( lep2Flavor==1 ? 0.00051 : 0.105658 ) );
     LEPs.push_back(LEP);
     IDs.push_back(lep2Charge*lep2Flavor);
   }
-  if( lep3Pt >= pt_cut && (fabs(lep3Eta) < eta_cut || eta_cut < 0) ){
+  if( lep3Pt >= pt_cut && (fabs(lep3Eta) < eta_cut || eta_cut < 0) && lep3Signal){
     TLorentzVector LEP;
     LEP.SetPtEtaPhiM(lep3Pt,lep3Eta,lep3Phi, ( lep3Flavor==1 ? 0.00051 : 0.105658 ) );
     LEPs.push_back(LEP);
     IDs.push_back(lep3Charge*lep3Flavor);
   }
-  if( lep4Pt >= pt_cut && (fabs(lep4Eta) < eta_cut || eta_cut < 0) ){
+  if( lep4Pt >= pt_cut && (fabs(lep4Eta) < eta_cut || eta_cut < 0) && lep4Signal){
     TLorentzVector LEP;
     LEP.SetPtEtaPhiM(lep4Pt,lep4Eta,lep4Phi, ( lep4Flavor==1 ? 0.00051 : 0.105658 ) );
     LEPs.push_back(LEP);

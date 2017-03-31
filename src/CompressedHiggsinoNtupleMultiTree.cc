@@ -452,6 +452,8 @@ void CompressedHiggsinoNtupleMultiTree::InitOutputTree(){
   // pre-computed lepton variables
   m_Tree->Branch("nEl", &m_nEl);
   m_Tree->Branch("nMu", &m_nMu);
+  m_Tree->Branch("nBjet", &m_nBjet);
+  m_Tree->Branch("MTW", &m_MTW);
   m_Tree->Branch("MT2W", &m_MT2W);
   m_Tree->Branch("MT2Top", &m_MT2Top);
   m_Tree->Branch("pT_1lep", &m_pT_1lep);
@@ -466,6 +468,10 @@ void CompressedHiggsinoNtupleMultiTree::InitOutputTree(){
   m_Tree->Branch("pTjS2", &m_pTjS2);
   m_Tree->Branch("pTjS3", &m_pTjS3);
   m_Tree->Branch("pTjS4", &m_pTjS4);
+  m_Tree->Branch("etajS1", &m_etajS1);
+  m_Tree->Branch("etajS2", &m_etajS2);
+  m_Tree->Branch("etajS3", &m_etajS3);
+  m_Tree->Branch("etajS4", &m_etajS4);
   m_Tree->Branch("NjS", &m_NjS);
   m_Tree->Branch("NjISR", &m_NjISR);
 
@@ -587,9 +593,11 @@ void CompressedHiggsinoNtupleMultiTree::FillOutputTree(){
 
   // m_nEl = el_n;
   // m_nMu = mu_n;
-  // m_MT2W  = MT2W;
-  // m_MT2Top  = MT2Top;
 
+  m_nBjet = nBJet30_MV2c10;
+  
+  m_MT2W  = mt2leplsp_0;
+  // m_MT2Top  = MT2Top;
 
   
   if (Leptons.size() > 0) {
@@ -650,18 +658,30 @@ void CompressedHiggsinoNtupleMultiTree::FillOutputTree(){
   m_pTjS2 = 0.;
   m_pTjS3 = 0.;
   m_pTjS4 = 0.;
+  m_etajS1 = 0.;
+  m_etajS2 = 0.;
+  m_etajS3 = 0.;
+  m_etajS4 = 0.;
   // assuming pT ordered jets
   for(int i = 0; i < int(Jets.size()); i++){
     if(JETS_comb->GetFrame(jetID[i]) == *J_comb){ // sparticle group
       m_NjS++;
-      if(m_NjS == 1)
+      if(m_NjS == 1){
 	m_pTjS1 = Jets[i].P.Pt();
-      if(m_NjS == 2)
+	m_etajS1 = Jets[i].P.Eta();
+      }
+      if(m_NjS == 2){
 	m_pTjS2 = Jets[i].P.Pt();
-      if(m_NjS == 3)
+	m_etajS2 = Jets[i].P.Eta();
+      }
+      if(m_NjS == 3){
 	m_pTjS3 = Jets[i].P.Pt();
-      if(m_NjS == 4)
+	m_etajS3 = Jets[i].P.Eta();
+      }
+      if(m_NjS == 4){
 	m_pTjS4 = Jets[i].P.Pt();
+	m_etajS4 = Jets[i].P.Eta();
+      }
     } else {
       m_NjISR++;
     }
@@ -933,6 +953,9 @@ void CompressedHiggsinoNtupleMultiTree::FillOutputTree(){
     m_dphiCMI = acos(-1.)-fabs(CM_2LNJ->GetDeltaPhiBoostVisible());
     m_dphiSI  = acos(-1.)-fabs(S_2LNJ->GetDeltaPhiBoostVisible());
 
+    m_MTW = min( sqrt(2.*(Leptons[0].Pt()*ETMiss.Pt() - Leptons[0].Vect().Dot(ETMiss))),
+		 sqrt(2.*(Leptons[1].Pt()*ETMiss.Pt() - Leptons[1].Vect().Dot(ETMiss))) );
+
     m_HN2S = Z_2LNJ->GetFourVector(*S_2LNJ).E() +
       J_2LNJ->GetFourVector(*S_2LNJ).E() +
       Ia_2LNJ->GetFourVector(*S_2LNJ).P() +
@@ -964,6 +987,9 @@ void CompressedHiggsinoNtupleMultiTree::FillOutputTree(){
     m_MISR = ISR_1L1L->GetMass();
     m_dphiCMI = acos(-1.)-fabs(CM_1L1L->GetDeltaPhiBoostVisible());
     m_dphiSI  = acos(-1.)-fabs(S_1L1L->GetDeltaPhiBoostVisible());
+
+    m_MTW = min( sqrt(2.*(Leptons[0].Pt()*ETMiss.Pt() - Leptons[0].Vect().Dot(ETMiss))),
+		 sqrt(2.*(Leptons[1].Pt()*ETMiss.Pt() - Leptons[1].Vect().Dot(ETMiss))) );
 
     m_HN2S = La_1L1L->GetFourVector(*S_1L1L).E() +
       Lb_1L1L->GetFourVector(*S_1L1L).E() +
@@ -1021,6 +1047,9 @@ void CompressedHiggsinoNtupleMultiTree::FillOutputTree(){
     m_MISR = ISR_2L1L->GetMass();
     m_dphiCMI = acos(-1.)-fabs(CM_2L1L->GetDeltaPhiBoostVisible());
     m_dphiSI  = acos(-1.)-fabs(S_2L1L->GetDeltaPhiBoostVisible());
+
+    TVector3 vP_L = Lb_2L1L->GetFourVector(*Cb_2L1L).Vect();
+    m_MTW = sqrt(2.*(vP_L.Pt()*ETMiss.Pt() - vP_L.Dot(ETMiss)));
     
     m_HN2S = Z_2L1L->GetFourVector(*S_2L1L).E() +
       Lb_2L1L->GetFourVector(*S_2L1L).E() +

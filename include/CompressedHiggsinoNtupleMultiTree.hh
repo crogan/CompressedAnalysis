@@ -40,6 +40,8 @@ private:
 
   int m_nEl;
   int m_nMu;
+  int m_nBjet;
+  double m_MTW;
   double m_MT2W;
   double m_MT2Top;
   double m_pT_1lep;
@@ -56,6 +58,10 @@ private:
   double m_pTjS2;
   double m_pTjS3;
   double m_pTjS4;
+  double m_etajS1;
+  double m_etajS2;
+  double m_etajS3;
+  double m_etajS4;
   int m_NjS;
   int m_NjISR;
 
